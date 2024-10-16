@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 "use client";
 
 import { useForm } from "react-hook-form";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "$/app/utils";
+import { cn } from "$/app/utils/utils";
 import { Button } from "$/app/components/ui/button";
 import { Calendar } from "$/app/components/ui/calendar";
 import {
@@ -183,7 +182,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
+                    disabled={(date: Date) =>
                       date < new Date() || date < new Date("1900-01-01")
                     }
                     initialFocus

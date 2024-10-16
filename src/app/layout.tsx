@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import "./styles/globals.css"
+import "./styles/globals.css";
 import { SimpleNav } from "./components/simple-nav";
-
+import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,17 +14,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <header>
-          <nav>
-            <SimpleNav/>
-          </nav>
-        </header>
-        <main>
-          {children}
-        </main> 
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="en">
+        <body>
+          <header>
+            <nav>
+              <SimpleNav />
+            </nav>
+          </header>
+          <main>{children}</main>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }
