@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "infrastructureit": "file:",
     "next": "14.2.15",
     "next-auth": "^4.24.8",
     "react": "^18",
