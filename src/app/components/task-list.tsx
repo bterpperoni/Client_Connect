@@ -26,8 +26,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "$/app/components/ui/dropdown-menu";
-import { type Task } from "@prisma/client";
+import { TaskCategory, type Task } from "@prisma/client";
 import CustomModal from "./ui/modal";
+import { fetchTasks } from "$/server/actions/actions"
 
 type TaskListProps = {
   tasks: Task[];
@@ -45,20 +46,38 @@ const statusColors: { [key in Task["status"]]: string } = {
 
 export default function TaskListComponent({
   tasks: initialTasks,
-  category,
   classList,
   onEditTask,
 }: TaskListProps) {
-  const [tasks, setTasks] = useState<Task[]>([]);
 
-
-  useEffect(() => {
-    if (Array.isArray(initialTasks)) {
-      setTasks(initialTasks);
-    }
-  }, [initialTasks]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+// States
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Task form fields
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+  const [importanceScore, setImportanceScore] = useState<number>(0);
+  const [deadline, setDeadline] = useState<string>('');
+  const [category, setCategory] = useState<TaskCategory>(TaskCategory.General);
+
+useEffect(() => {
+    async function loadTasks() {
+      try {
+        const fetchedTasks = await fetchTasks();
+        setTasks(fetchedTasks);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadTasks();
+  }, []);
 
   const openModal = () => {
     setIsModalOpen(true);

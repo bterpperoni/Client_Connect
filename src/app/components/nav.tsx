@@ -20,7 +20,6 @@ import { Task } from "@prisma/client";
 export function SimpleNav() {
   const { data: session } = useSession();
   const router = useRouter();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [taskID, setTaskID] = useState<number>();
@@ -101,7 +100,7 @@ export function SimpleNav() {
               </Sheet>
             </div>
             <div onClick={() => openModal()} className="cursor-pointer" >
-              {window.location.href === "http://localhost:3000/dashboard" && (
+              { location.pathname === "/dashboard" && (
                 <Btn classList=" relative float-right w-[200%]">
                   SCHEDULE TASK
                 </Btn>
