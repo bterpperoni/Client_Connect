@@ -15,7 +15,8 @@ import {
 } from "$/app/components/ui/sheet";
 import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
-import { Task } from "@prisma/client";
+import { Task, TaskStatus } from "@prisma/client";
+import { createTask } from "$/server/actions/actions";
 
 export function SimpleNav() {
   const { data: session, status } = useSession();
@@ -34,8 +35,22 @@ export function SimpleNav() {
     setIsModalOpen(false);
   };
 
-  function handleSubmit(data: TaskFormData): void {
-    throw new Error("Function not implemented.");
+  async function handleSubmit(data: TaskFormData): Promise<void> {
+    const task = {
+      title: data.title,
+      content: data.description,
+      importanceScore: data.importanceScore,
+      deadline: data.deadline,
+      category: data.category,
+      status: TaskStatus.TODO,
+    };
+    try {
+      await createTask(task);
+      closeModal();
+      alert("OK");
+    } catch (error) {
+      console.error("Error creating task", error);
+    }
   }
 
   const [taskHook, setTaskHook] = useState<Task>();
@@ -89,28 +104,31 @@ export function SimpleNav() {
                       </Btn>
                     </div>
                     <br />
-                    { status=="authenticated" &&
+                    {status == "authenticated" && (
                       <div className="my-6">
-                        <SheetTitle className="text-center">Services</SheetTitle>
-                        <Btn classList="mt-4 w-full" onClick={() => openModal()}>
+                        <SheetTitle className="text-center">
+                          Services
+                        </SheetTitle>
+                        <Btn
+                          classList="mt-4 w-full"
+                          onClick={() => openModal()}
+                        >
                           SCHEDULE TASK
                         </Btn>
                       </div>
-                    } 
+                    )}
                   </div>
                 </SheetContent>
               </Sheet>
             </div>
-            <div onClick={() => openModal()} className="cursor-pointer" >
-              { location.pathname === "/dashboard" && (
+            <div onClick={() => openModal()} className="cursor-pointer">
+              {location.pathname === "/dashboard" && (
                 <Btn classList=" relative float-right w-[200%]">
                   SCHEDULE TASK
                 </Btn>
               )}
             </div>
-            
-            
-            
+
             <CustomModal
               isOpen={isModalOpen}
               onRequestClose={closeModal}

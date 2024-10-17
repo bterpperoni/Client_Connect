@@ -3,7 +3,7 @@
 import { ScrollArea } from "$/app/components/ui/scroll-area";
 
 import { useState, useEffect } from "react";
-import { Button } from "$/app/components/ui/button";
+import { Buttonn } from "$/app/components/ui/button";
 import { Trash, MoreHorizontal } from "lucide-react";
 import {
   Card,
@@ -28,7 +28,7 @@ import {
 } from "$/app/components/ui/dropdown-menu";
 import { TaskCategory, type Task } from "@prisma/client";
 import CustomModal from "./ui/modal";
-import { fetchTasks } from "$/server/actions/actions"
+import { updateTaskStatus } from "$/server/actions/actions";
 
 type TaskListProps = {
   tasks: Task[];
@@ -47,63 +47,36 @@ const statusColors: { [key in Task["status"]]: string } = {
 export default function TaskListComponent({
   tasks: initialTasks,
   classList,
-  onEditTask,
+// onEditTask,
+  category,
 }: TaskListProps) {
 
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-// States
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Task form fields
-  const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
-  const [importanceScore, setImportanceScore] = useState<number>(0);
-  const [deadline, setDeadline] = useState<string>('');
-  const [category, setCategory] = useState<TaskCategory>(TaskCategory.General);
-
-useEffect(() => {
-    async function loadTasks() {
-      try {
-        const fetchedTasks = await fetchTasks();
-        setTasks(fetchedTasks);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadTasks();
-  }, []);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleUpdateTaskStatus = (taskId: number, status: Task["status"]) => {
+  const handleUpdateTaskStatus = async (
+    taskId: number,
+    status: Task["status"]
+  ) => {
     setTasks((prevTasks) =>
-      prevTasks.map(
-        (task) => (task.id === taskId ? { ...task, status } : task)
-      ),
+      prevTasks.map((task: Task) =>
+        task.id === taskId ? { ...task, status } : task
+      )
     );
-  };
-
-  const handleEditTask = (taskId: number) => {
-    if (typeof onEditTask === "function") {
-      onEditTask(taskId);
-    } else {
-      console.warn("onEditTask is not defined or a function");
+    try {
+      await updateTaskStatus(taskId, status);
+    } catch (error) {
+      console.error("Error updating task status", error);
     }
   };
 
+  // const handleEditTask = (taskId: number) => {
+  //   if (typeof onEditTask === "function") {
+  //     onEditTask(taskId);
+  //   } else {
+  //     console.warn("onEditTask is not defined or a function");
+  //   }
+  // };
 
+  const tasks: Task[] = initialTasks;
   const filteredTasks = tasks.filter((task) => task.category === category);
 
   return (
@@ -133,7 +106,9 @@ useEffect(() => {
                     >
                       <div className="flex flex-grow items-center space-x-2">
                         <span
-                          className={`rounded-full px-1 py-1 text-xs font-semibold ${statusColors[task.status]}`}
+                          className={`rounded-full px-1 py-1 text-xs font-semibold ${
+                            statusColors[task.status]
+                          }`}
                         >
                           {task.status.replace("_", " ")}
                         </span>
@@ -146,16 +121,16 @@ useEffect(() => {
                       <div className="flex space-x-1">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Buttonn variant="ghost" size="icon">
                               <MoreHorizontal className="h-3 w-4" />
                               <span className="sr-only">Open menu</span>
-                            </Button>
+                            </Buttonn>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                              onSelect={() => handleEditTask(task.id)}
+                              onSelect={() => handleUpdateTaskStatus(task.id, task.status)}
                             >
                               Edit
                             </DropdownMenuItem>
@@ -182,12 +157,12 @@ useEffect(() => {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                        <Button variant="ghost" size="icon">
+                        <Buttonn variant="ghost" size="icon">
                           <Trash
                             className="h-4 w-4"
-                            onClick={() => openModal()}
+                            onClick={() => console.log("Open Modal")}
                           />
-                          <CustomModal
+                          {/* <CustomModal
                             isOpen={isModalOpen}
                             onRequestClose={closeModal}
                             title=""
@@ -197,24 +172,24 @@ useEffect(() => {
                                 Are you sure you want to delete this task?
                               </span>
                               <br />
-                              <Button
+                              <Buttonn
                                 onClick={() => {
-                                  closeModal();
+                                  console.log("Close modal")
                                 }}
                                 className="px mr-5 rounded-full border-2 border-black bg-red-700 py-2 font-bold text-white hover:bg-red-600"
                               >
                                 Yes
-                              </Button>
-                              <Button
+                              </Buttonn>
+                              <Buttonn
                                 className="px rounded-full border-2 border-black bg-green-700 py-2 font-bold text-white hover:bg-green-600"
-                                onClick={closeModal}
+                                onClick={() => console.log('No delete task')}
                               >
                                 No
-                              </Button>
+                              </Buttonn>
                             </div>
-                          </CustomModal>
+                          </CustomModal> */}
                           <span className="sr-only">Delete task</span>
-                        </Button>
+                        </Buttonn>
                       </div>
                     </li>
                   </ul>
@@ -226,4 +201,7 @@ useEffect(() => {
       </CardContent>
     </Card>
   );
+}
+function setTasks(arg0: (prevTasks: any) => any, p0?: unknown) {
+  throw new Error("Function not implemented.");
 }

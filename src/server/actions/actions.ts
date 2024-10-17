@@ -1,4 +1,4 @@
-// "use server"
+"use server"
 
 // import { Task, TaskStatus, TaskCategory } from '@prisma/client';
 
