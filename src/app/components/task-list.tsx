@@ -1,6 +1,7 @@
 "use client";
 
 import { ScrollArea } from "$/app/components/ui/scroll-area";
+import { getAllTasks } from "$/server/actions/actions";
 
 import { useState, useEffect } from "react";
 import { Buttonn } from "$/app/components/ui/button";
@@ -51,7 +52,17 @@ export default function TaskListComponent({
   category,
 }: TaskListProps) {
 
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // States
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  // Task form fields
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [importanceScore, setImportanceScore] = useState<number>(0);
+  const [deadline, setDeadline] = useState<string>("");
+  const [taskCategory, setTaskCategory] = useState<TaskCategory>(TaskCategory.General);
 
 
   const handleUpdateTaskStatus = async (
@@ -78,13 +89,37 @@ export default function TaskListComponent({
     }
   };
 
+  let filteredTasks = tasks.filter((task) => task.category === category); 
 
-  const filteredTasks = tasks.filter((task) => task.category === category);
+  useEffect(() => {
+    async function loadTasks() {
+      try {
+        const fetchedTasks = await getAllTasks();
+        setTasks(fetchedTasks);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadTasks();
+  }, []);
+
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+ 
 
   return (
     <Card className={classList}>
       <CardContent>
-        {filteredTasks.length === 0 ? (
+        { loading || filteredTasks.length === 0 ? (
           <>
             <CardHeader>
               <CardTitle>{category}</CardTitle>
