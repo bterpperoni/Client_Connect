@@ -1,7 +1,10 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+import { Button } from "$/app/components/ui/button";
 import { useEffect, useState } from "react";
-import { type TaskFormData } from "$/app/components/task-form";
+import CustomModal from "$/app/components/ui/modal";
+import TaskForm, { type TaskFormData } from "$/app/components/task-form";
 import TaskList from "$/app/components/task-list";
 import { type Task, TaskStatus } from "@prisma/client";
 
@@ -13,14 +16,13 @@ enum TaskCategory {
 
 import ChartDonut from "$/app/components/ui/chart-donut";
 import Loader from "$/app/components/ui/loader";
-import { getAllTasks } from "$/server/actions/actions";
 
 export default function Dashboard() {
+  const { data: session } = useSession();
 
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [taskID, setTaskID] = useState<number>()
+  const [taskID, setTaskID] = useState<number>();
   const [isLoading, setIsLoading] = useState(true);
-
+  const [tasks, setTasks] = useState<Task[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -31,13 +33,22 @@ export default function Dashboard() {
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const tasksT = await getAllTasks();
-      setTasks(tasksT);
+  async function handleSubmit(data: TaskFormData) {
+    const newUpdate = {
+      title: data.title,
+      content: data.description,
+      importanceScore: data.importanceScore,
+      deadline: data.deadline,
+      status: TaskStatus.TODO,
+      category: data.category,
+      taskID: taskID ?? 0, // Ensure taskID is included
     };
-    fetchTasks();
-  }, []);
+    try {
+      closeModal();
+    } catch (error) {
+      console.error("Error creating task:", error);
+    }
+  }
 
   // or any other category you want to filter by
   const filteredTasksDefensive = (tasks ?? []).filter(
