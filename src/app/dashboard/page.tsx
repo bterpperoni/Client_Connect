@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { type TaskFormData } from "$/app/components/task-form";
-import TaskList from "$/app/components/task-list";
+import TaskListComponent from "$/app/components/task-list";
 import { type Task, TaskStatus } from "@prisma/client";
 
 enum TaskCategory {
@@ -35,6 +35,7 @@ export default function Dashboard() {
     const fetchTasks = async () => {
       const tasksT = await getAllTasks();
       setTasks(tasksT);
+      setIsLoading(false)
     };
     fetchTasks();
   }, []);
@@ -52,9 +53,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Simulate loading data
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2500);
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 2500);
   }, []);
 
   const percentageDefensive =
@@ -78,7 +79,9 @@ export default function Dashboard() {
       <div className="container flex min-w-[85%] flex-col items-center justify-center gap-4 px-4 py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8"></div>
         <div className="flex flex-col items-center gap-2">
+
           {/* --------------------------Dashboard content ----------------------------------------------------- */}
+          
           <div className="grid grid-cols-3 gap-4 rounded-xl bg-indigo-600">
             <div className="flex h-[85vh] flex-col items-center bg-white">
               {isLoading ? (
@@ -90,7 +93,7 @@ export default function Dashboard() {
                   tasks={filteredTasksDefensive}
                 />
               )}
-              <TaskList
+              <TaskListComponent
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Defensive"}
@@ -101,18 +104,21 @@ export default function Dashboard() {
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
-                <ChartDonut
-                  percentage={Math.floor(percentageGeneral)}
-                  category={TaskCategory.General}
-                  tasks={filteredTasksGeneral}
-                />
+                <>
+                  <ChartDonut
+                    percentage={Math.floor(percentageGeneral)}
+                    category={TaskCategory.General}
+                    tasks={filteredTasksGeneral}
+                  />
+                  <TaskListComponent
+                  tasks={tasks ?? []}
+                  onEditTask={(taskID) => setTaskID(taskID)}
+                  category={"General"}
+                  classList="min-w-[30%] my-5"
+                  />
+                </>
               )}
-              <TaskList
-                tasks={tasks ?? []}
-                onEditTask={(taskID) => setTaskID(taskID)}
-                category={"General"}
-                classList="min-w-[30%] my-5"
-              />
+              
             </div>
             <div className="flex h-[85vh] flex-col items-center bg-white">
               {isLoading ? (
@@ -124,7 +130,7 @@ export default function Dashboard() {
                   tasks={filteredTasksOffensive}
                 />
               )}
-              <TaskList
+              <TaskListComponent
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Offensive"}
