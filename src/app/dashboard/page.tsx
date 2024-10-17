@@ -1,11 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { Button } from "$/app/components/ui/button";
 import { useEffect, useState } from "react";
-import CustomModal from "$/app/components/ui/modal";
-import TaskForm, { type TaskFormData } from "$/app/components/task-form";
-import TaskList from "$/app/components/task-list";
+
 import { type Task, TaskStatus } from "@prisma/client";
 
 enum TaskCategory {
@@ -16,6 +13,8 @@ enum TaskCategory {
 
 import ChartDonut from "$/app/components/ui/chart-donut";
 import Loader from "$/app/components/ui/loader";
+import { getAllTasks } from "$/server/actions/actions";
+import TaskListComponent from "$/app/components/task-list";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -33,22 +32,13 @@ export default function Dashboard() {
     setIsModalOpen(false);
   };
 
-  async function handleSubmit(data: TaskFormData) {
-    const newUpdate = {
-      title: data.title,
-      content: data.description,
-      importanceScore: data.importanceScore,
-      deadline: data.deadline,
-      status: TaskStatus.TODO,
-      category: data.category,
-      taskID: taskID ?? 0, // Ensure taskID is included
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const tasksT = await getAllTasks();
+      setTasks(tasksT);
     };
-    try {
-      closeModal();
-    } catch (error) {
-      console.error("Error creating task:", error);
-    }
-  }
+    fetchTasks();
+  }, []);
 
   // or any other category you want to filter by
   const filteredTasksDefensive = (tasks ?? []).filter(
@@ -60,13 +50,6 @@ export default function Dashboard() {
   const filteredTasksOffensive = (tasks ?? []).filter(
     (task) => task.category === TaskCategory.Offensive
   );
-
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2500);
-  }, []);
 
   const percentageDefensive =
     (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
@@ -89,7 +72,9 @@ export default function Dashboard() {
       <div className="container flex min-w-[85%] flex-col items-center justify-center gap-4 px-4 py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8"></div>
         <div className="flex flex-col items-center gap-2">
+
           {/* --------------------------Dashboard content ----------------------------------------------------- */}
+          
           <div className="grid grid-cols-3 gap-4 rounded-xl bg-indigo-600">
             <div className="flex h-[85vh] flex-col items-center bg-white">
               {isLoading ? (
@@ -101,7 +86,7 @@ export default function Dashboard() {
                   tasks={filteredTasksDefensive}
                 />
               )}
-              <TaskList
+              <TaskListComponent
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Defensive"}
@@ -112,18 +97,21 @@ export default function Dashboard() {
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
-                <ChartDonut
-                  percentage={Math.floor(percentageGeneral)}
-                  category={TaskCategory.General}
-                  tasks={filteredTasksGeneral}
-                />
+                <>
+                  <ChartDonut
+                    percentage={Math.floor(percentageGeneral)}
+                    category={TaskCategory.General}
+                    tasks={filteredTasksGeneral}
+                  />
+                  <TaskListComponent
+                  tasks={tasks ?? []}
+                  onEditTask={(taskID) => setTaskID(taskID)}
+                  category={"General"}
+                  classList="min-w-[30%] my-5"
+                  />
+                </>
               )}
-              <TaskList
-                tasks={tasks ?? []}
-                onEditTask={(taskID) => setTaskID(taskID)}
-                category={"General"}
-                classList="min-w-[30%] my-5"
-              />
+              
             </div>
             <div className="flex h-[85vh] flex-col items-center bg-white">
               {isLoading ? (
@@ -135,7 +123,7 @@ export default function Dashboard() {
                   tasks={filteredTasksOffensive}
                 />
               )}
-              <TaskList
+              <TaskListComponent
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Offensive"}
