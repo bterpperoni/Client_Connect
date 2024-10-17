@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "$/lib/utils/utils";
-import { Buttonn } from "$/app/components/ui/button";
+import { Button } from "$/app/components/ui/button";
 import { Calendar } from "$/app/components/ui/calendar";
 import {
   Form,
@@ -161,7 +161,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
-                    <Buttonn
+                    <Button
                       variant={"outline"}
                       className={cn(
                         "w-[240px] pl-3 text-left font-normal",
@@ -174,7 +174,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
                         <span>Pick a date</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Buttonn>
+                    </Button>
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -195,7 +195,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
             </FormItem>
           )}
         />
-        <Buttonn type="submit">{task ? "Update Task" : "Create Task"}</Buttonn>
+        <Button type="submit">{task ? "Update Task" : "Create Task"}</Button>
       </form>
     </Form>
   );
