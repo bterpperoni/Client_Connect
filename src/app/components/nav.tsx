@@ -122,11 +122,11 @@ export default function SimpleNav() {
               </Sheet>
             </div>
             <div onClick={() => openModal()} className="cursor-pointer">
-              {location.pathname === "/dashboard" && (
+              {location.pathname === "/dashboard" && status == "authenticated" ? 
                 <Btn classList=" relative float-right w-[200%]">
                   SCHEDULE TASK
-                </Btn>
-              )}
+                </Btn>: <></>
+              }
             </div>
 
             <CustomModal
