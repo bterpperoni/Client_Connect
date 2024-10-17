@@ -51,7 +51,7 @@ export default function Home() {
             </span>
           </p>
           <Btn href={session ? '/api/auth/signout' :  '/api/auth/signin'}>
-            {session ? "signout" : "signin"}
+            {session ? "Sign out" : "Sign in"}
           </Btn>
         </div>
       </div>

@@ -19,7 +19,7 @@ function Button({ href, onClick, children, classList, ...props }: ButtonProps) {
       
       <Link
         href={href}
-        className={`${classList} group relative inline-flex items-center overflow-hidden rounded-full border-2 border-purple-950 bg-white px-12 py-3 text-lg font-medium text-purple-950 hover:bg-gray-50 hover:text-white`}
+        className={`${classList} group relative inline-flex items-center overflow-hidden rounded-full border-2 border-purple-950 bg-white px-12 py-3 text-md font-medium text-purple-950 hover:bg-gray-50 hover:text-white`}
       >
         
         <span className="duration-400 ease absolute left-0 top-1/2 block h-0 w-full bg-purple-950 opacity-100 transition-all group-hover:top-0 group-hover:h-full"></span>
@@ -34,7 +34,7 @@ function Button({ href, onClick, children, classList, ...props }: ButtonProps) {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              stroke-width="2"
+              strokeWidth="2"
               d="M14 5l7 7m0 0l-7 7m7-7H3"
             ></path>
           </svg>
@@ -48,7 +48,7 @@ function Button({ href, onClick, children, classList, ...props }: ButtonProps) {
     return (
       <>
         <button
-          className={`group relative m-1 cursor-pointer overflow-hidden rounded-xl border-2 border-purple-950 px-3.5 py-2 text-[1.5rem] font-medium text-purple-950 ${classList}`}
+          className={`group relative m-1 cursor-pointer overflow-hidden rounded-xl border-2 border-purple-950 px-3.5 py-2 text-md font-medium text-purple-950 ${classList}`}
           onClick={onClick}
           {...props}
         >
