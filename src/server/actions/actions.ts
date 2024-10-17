@@ -134,3 +134,15 @@ export async function updateTaskData(id: number, data: Partial<Omit<Task, 'id' |
   }
 }
 
+// Fonction pour supprimer une tâche
+export async function deleteTask(id: number): Promise<Task> {
+  try {
+    const deletedTask = await db.task.delete({
+      where: { id },
+    });
+    return deletedTask;
+  } catch (error) {
+    throw new Error('Error deleting task');
+  }
+}
+

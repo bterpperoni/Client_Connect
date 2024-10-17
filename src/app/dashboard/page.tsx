@@ -53,9 +53,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Simulate loading data
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    // }, 2500);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
   }, []);
 
   const percentageDefensive =
@@ -75,15 +75,14 @@ export default function Dashboard() {
     100;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
-      <div className="container flex min-w-[85%] flex-col items-center justify-center gap-4 px-4 py-8">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8"></div>
-        <div className="flex flex-col items-center gap-2">
+    <div className=" flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
+      <div className=" items-center justify-center gap-4 px-4 py-8">
+        <div className="">
 
           {/* --------------------------Dashboard content ----------------------------------------------------- */}
           
-          <div className="grid grid-cols-3 gap-4 rounded-xl bg-indigo-600">
-            <div className="flex h-[85vh] flex-col items-center bg-white">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="group flex h-[85vh] flex-col items-center bg-white">
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
@@ -97,10 +96,10 @@ export default function Dashboard() {
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Defensive"}
-                classList=" min-w-[30%] my-5"
+                classList="  my-5"
               />
             </div>
-            <div className="flex h-[85vh] min-w-[400px] flex-col items-center rounded-xl bg-white">
+            <div className="group flex h-[85vh] min-w-[400px] flex-col items-center rounded-xl bg-white">
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
@@ -114,7 +113,7 @@ export default function Dashboard() {
                   tasks={tasks ?? []}
                   onEditTask={(taskID) => setTaskID(taskID)}
                   category={"General"}
-                  classList="min-w-[30%] my-5"
+                  classList=" my-5"
                   />
                 </>
               )}
@@ -134,12 +133,12 @@ export default function Dashboard() {
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Offensive"}
-                classList="min-w-[30%] my-5"
+                classList=" my-5"
               />
             </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

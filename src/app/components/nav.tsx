@@ -104,7 +104,7 @@ export default function SimpleNav() {
                       </Btn>
                     </div>
                     <br />
-                    {status == "authenticated" && (
+                    {status === "authenticated" && (
                       <div className="my-6">
                         <SheetTitle className="text-center">
                           Services
@@ -122,7 +122,7 @@ export default function SimpleNav() {
               </Sheet>
             </div>
             <div onClick={() => openModal()} className="cursor-pointer">
-              {location.pathname === "/dashboard" && status == "authenticated" ? 
+              {status === "authenticated" ? 
                 <Btn classList=" relative float-right w-[200%]">
                   SCHEDULE TASK
                 </Btn>: <></>

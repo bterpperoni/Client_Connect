@@ -7,7 +7,7 @@ export default function Home() {
   const { data: session, status } = useSession();
 
   return (
-    <div className="container flex min-w-[75%] flex-col items-center justify-center gap-12 bg-white px-4 py-16">
+    <div className="container grid grid-cols-3 gap-4 auto-rows-[minmax(100px,_auto)] items-center justify-center bg-white px-4 py-16">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8"></div>
       <div className="flex flex-col items-center justify-center gap-2">
         <div className="box-border flex flex-col items-center justify-center gap-4 border-2 border-white bg-white p-4 text-purple-800">

@@ -1,10 +1,10 @@
 "use client";
 
 import { ScrollArea } from "$/app/components/ui/scroll-area";
-import { getAllTasks } from "$/server/actions/actions";
+import { deleteTask, getAllTasks } from "$/server/actions/actions";
 
 import { useState, useEffect } from "react";
-import { Buttonn } from "$/app/components/ui/button";
+import { Button } from "$/app/components/ui/button";
 import { Trash, MoreHorizontal } from "lucide-react";
 import {
   Card,
@@ -27,9 +27,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "$/app/components/ui/dropdown-menu";
-import { TaskCategory, type Task } from "@prisma/client";
-import CustomModal from "./ui/modal";
+import CustomModal from "$/app/components/ui/modal";
 import { updateTaskStatus } from "$/server/actions/actions";
+import { Task } from "@prisma/client";
 
 type TaskListProps = {
   tasks: Task[];
@@ -51,34 +51,19 @@ export default function TaskListComponent({
   onEditTask,
   category,
 }: TaskListProps) {
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   // States
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  // Task form fields
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
-  const [importanceScore, setImportanceScore] = useState<number>(0);
-  const [deadline, setDeadline] = useState<string>("");
-  const [taskCategory, setTaskCategory] = useState<TaskCategory>(TaskCategory.General);
 
-
-  const handleUpdateTaskStatus = async (
-    taskId: number,
-    status: Task["status"]
-  ) => {
+const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) => {
     setTasks((prevTasks) =>
-      prevTasks.map((task: Task) =>
-        task.id === taskId ? { ...task, status } : task
-      )
+      prevTasks.map(
+        (task) => (task.id === taskId ? { ...task, status } : task),
+        void updateTaskStatus(taskId, status),
+      ),
     );
-    try {
-      await updateTaskStatus(taskId, status);
-    } catch (error) {
-      console.error("Error updating task status", error);
-    }
   };
 
   const handleEditTask = (taskId: number) => {
@@ -89,7 +74,7 @@ export default function TaskListComponent({
     }
   };
 
-  let filteredTasks = tasks.filter((task) => task.category === category); 
+  const filteredTasks = tasks.filter((task) => task.category === category);
 
   useEffect(() => {
     async function loadTasks() {
@@ -105,21 +90,18 @@ export default function TaskListComponent({
     loadTasks();
   }, []);
 
-
   const openModal = () => {
     setIsModalOpen(true);
   };
 
-
   const closeModal = () => {
     setIsModalOpen(false);
   };
- 
 
   return (
     <Card className={classList}>
       <CardContent>
-        { loading || filteredTasks.length === 0 ? (
+        {filteredTasks.length === 0 ? (
           <>
             <CardHeader>
               <CardTitle>{category}</CardTitle>
@@ -130,7 +112,7 @@ export default function TaskListComponent({
           </>
         ) : (
           <>
-            <ScrollArea className="h-72 w-auto rounded-md border">
+            <ScrollArea className="h-72 w-full border">
               {filteredTasks.map((task) => (
                 <>
                   <CardHeader>
@@ -158,10 +140,10 @@ export default function TaskListComponent({
                       <div className="flex space-x-1">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Buttonn variant="ghost" size="icon">
+                            <Button variant="ghost" size="icon">
                               <MoreHorizontal className="h-3 w-4" />
                               <span className="sr-only">Open menu</span>
-                            </Buttonn>
+                            </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -194,12 +176,12 @@ export default function TaskListComponent({
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                        <Buttonn variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon">
                           <Trash
                             className="h-4 w-4"
-                            onClick={() => console.log("Open Modal")}
+                            onClick={() => openModal()}
                           />
-                          {/* <CustomModal
+                          <CustomModal
                             isOpen={isModalOpen}
                             onRequestClose={closeModal}
                             title=""
@@ -209,24 +191,35 @@ export default function TaskListComponent({
                                 Are you sure you want to delete this task?
                               </span>
                               <br />
-                              <Buttonn
+                              <Button
                                 onClick={() => {
-                                  console.log("Close modal")
+                                  closeModal();
                                 }}
                                 className="px mr-5 rounded-full border-2 border-black bg-red-700 py-2 font-bold text-white hover:bg-red-600"
                               >
-                                Yes
-                              </Buttonn>
-                              <Buttonn
-                                className="px rounded-full border-2 border-black bg-green-700 py-2 font-bold text-white hover:bg-green-600"
-                                onClick={() => console.log('No delete task')}
-                              >
                                 No
-                              </Buttonn>
+                              </Button>
+                              <Button
+                                className="px rounded-full border-2 border-black bg-green-700 py-2 font-bold text-white hover:bg-green-600"
+                                onClick={async () => {
+                                  try {
+                                    await deleteTask(task.id);
+
+                                    setTasks((prevTasks) =>
+                                      prevTasks.filter((t) => t.id !== task.id)
+                                    );
+                                    console.log("Task deleted successfully");
+                                  } catch (error) {
+                                    console.error("Error deleting task", error);
+                                  }
+                                }}
+                              >
+                                Yes
+                              </Button>
                             </div>
-                          </CustomModal> */}
+                          </CustomModal>
                           <span className="sr-only">Delete task</span>
-                        </Buttonn>
+                        </Button>
                       </div>
                     </li>
                   </ul>
@@ -239,4 +232,3 @@ export default function TaskListComponent({
     </Card>
   );
 }
-
