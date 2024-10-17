@@ -18,7 +18,7 @@ import CustomModal from "./ui/modal";
 import { Task } from "@prisma/client";
 
 export function SimpleNav() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -89,12 +89,14 @@ export function SimpleNav() {
                       </Btn>
                     </div>
                     <br />
-                    <div className="my-6">
-                      <SheetTitle className="text-center">Services</SheetTitle>
-                      <Btn classList="mt-4 w-full" onClick={() => openModal()}>
-                        SCHEDULE TASK
-                      </Btn>
-                    </div>
+                    { status=="authenticated" &&
+                      <div className="my-6">
+                        <SheetTitle className="text-center">Services</SheetTitle>
+                        <Btn classList="mt-4 w-full" onClick={() => openModal()}>
+                          SCHEDULE TASK
+                        </Btn>
+                      </div>
+                    } 
                   </div>
                 </SheetContent>
               </Sheet>
@@ -106,6 +108,9 @@ export function SimpleNav() {
                 </Btn>
               )}
             </div>
+            
+            
+            
             <CustomModal
               isOpen={isModalOpen}
               onRequestClose={closeModal}
