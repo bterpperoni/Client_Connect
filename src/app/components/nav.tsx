@@ -4,13 +4,12 @@ import { Button } from "$/app/components/ui/button";
 import { Separator } from "$/app/components/ui/separator";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import Btn from "./ui/btn";
 import { AlignJustify } from "lucide-react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -42,11 +41,6 @@ export function SimpleNav() {
     <nav className="w-full bg-background">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-start h-16 space-x-4">
-          {/* <Button onClick={handleAssignLocation} variant="outline">
-            {location.href === "http://localhost:3000/dashboard"
-              ? "Home"
-              : "Dashboard"}
-          </Button> */}
           <div className="flex h-full items-center justify-between w-full">
             <div className="">
               <Sheet>
@@ -55,31 +49,40 @@ export function SimpleNav() {
                 </SheetTrigger>
                 <SheetContent side="left">
                   <SheetHeader>
-                    <SheetTitle className="text-center ">NAVIGATION PANEL</SheetTitle>
+                    <SheetTitle className="text-center ">
+                      Navigation panel
+                    </SheetTitle>
                   </SheetHeader>
                   <div className="flex justify-between h-full flex-col">
                     <div className="flex flex-col  justify-start mt-6">
-                      <Btn href="/">
-                        Home
-                      </Btn>
+                      <Btn href="/" onClick={() => router.push("/")} >Home</Btn>
                       <br />
-                      <Btn href="/dashboard" >
-                        Dashboard
+                      <Btn href="/dashboard" onClick={() => router.push("/dashboard")}>Dashboard</Btn>
+                      <br />
+                      <Btn
+                        href={
+                          session ? "/api/auth/signout" : "/api/auth/signin"
+                        }
+                      >
+                        {session ? "Sign out" : "Sign in"}
                       </Btn>
                     </div>
                     <br />
                     <div className="my-6">
-                      <SheetTitle className="text-center">TASK MANAGEMENT</SheetTitle>
-                      <Btn classList="mt-4 w-full">Task</Btn>
+                      <SheetTitle className="text-center">
+                        Services
+                      </SheetTitle>
+                      <Btn classList="mt-4 w-full">SCHEDULE TASK</Btn>
                     </div>
                   </div>
                 </SheetContent>
               </Sheet>
             </div>
-            <Btn onClick={() => handleLogin()}>
-              {" "}
-              {session ? "Sign out" : "Sign in"}
-            </Btn>
+            <div className="">
+              {window.location.href === "http://localhost:3000/dashboard" && (
+                <Btn classList=" relative float-right w-[200%]">SCHEDULE TASK</Btn>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ function Button({ href, onClick, children, classList, ...props }: ButtonProps) {
   if (href) {
     return (
       
-      <Link
+      <a
         href={href}
         className={`${classList} group relative inline-flex items-center overflow-hidden rounded-full border-2 border-purple-950 bg-white px-12 py-3 text-md font-medium text-purple-950 hover:bg-gray-50 hover:text-white`}
       >
@@ -40,7 +40,7 @@ function Button({ href, onClick, children, classList, ...props }: ButtonProps) {
           </svg>
         </span>
         <span className="relative">{children}</span>
-      </Link>
+      </a>
     );
   }
   // sinon un simple bouton (<button>)
