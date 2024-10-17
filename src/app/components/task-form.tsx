@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "$/app/lib/utils/utils";
+import { cn } from "$/lib/utils/utils";
 import { Button } from "$/app/components/ui/button";
 import { Calendar } from "$/app/components/ui/calendar";
 import {

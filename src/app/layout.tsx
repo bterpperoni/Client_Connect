@@ -1,5 +1,5 @@
 "use client"
-import "./lib/styles/globals.css";
+import "../lib/styles/globals.css";
 import { SimpleNav } from "./components/nav";
 import { SessionProvider } from "next-auth/react";
 export default function RootLayout({

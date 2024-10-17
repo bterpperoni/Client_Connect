@@ -14,7 +14,7 @@ enum TaskCategory {
   Offensive = "Offensive",
 }
 
-import ChartDonut from "$/app/components/chart-donut";
+import ChartDonut from "$/app/components/ui/chart-donut";
 import Loader from "$/app/components/ui/loader";
 
 export default function Dashboard() {
@@ -22,10 +22,8 @@ export default function Dashboard() {
 
   const [taskID, setTaskID] = useState<number>();
   const [isLoading, setIsLoading] = useState(true);
-
+  const [tasks, setTasks] = useState<Task[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-const [tasks, setTasks] = useState<Task[]>();
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -34,9 +32,6 @@ const [tasks, setTasks] = useState<Task[]>();
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  
-
-
 
   async function handleSubmit(data: TaskFormData) {
     const newUpdate = {
@@ -48,11 +43,8 @@ const [tasks, setTasks] = useState<Task[]>();
       category: data.category,
       taskID: taskID ?? 0, // Ensure taskID is included
     };
-
     try {
-    
-          closeModal();
-      
+      closeModal();
     } catch (error) {
       console.error("Error creating task:", error);
     }
@@ -60,34 +52,21 @@ const [tasks, setTasks] = useState<Task[]>();
 
   // or any other category you want to filter by
   const filteredTasksDefensive = (tasks ?? []).filter(
-    (task) => task.category === TaskCategory.Defensive,
+    (task) => task.category === TaskCategory.Defensive
   );
   const filteredTasksGeneral = (tasks ?? []).filter(
-    (task) => task.category === TaskCategory.General,
+    (task) => task.category === TaskCategory.General
   );
   const filteredTasksOffensive = (tasks ?? []).filter(
-    (task) => task.category === TaskCategory.Offensive,
+    (task) => task.category === TaskCategory.Offensive
   );
 
-  const [taskHook, setTaskHook] = useState<Task>();
   useEffect(() => {
     // Simulate loading data
     setTimeout(() => {
       setIsLoading(false);
     }, 2500);
-  }, []),
-
-
-  useEffect(() => {
-    if (taskID) {
-      const task = (tasks ?? []).filter((task) => task.id === taskID);
-      if (task) {
-        console.log("task current: ", task);
-        setTaskHook(task ? task[0] : undefined);
-      }
-      openModal();
-    }
-  }, [taskID, tasks]);
+  }, []);
 
   const percentageDefensive =
     (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
@@ -110,18 +89,6 @@ const [tasks, setTasks] = useState<Task[]>();
       <div className="container flex min-w-[85%] flex-col items-center justify-center gap-4 px-4 py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8"></div>
         <div className="flex flex-col items-center gap-2">
-          <CustomModal
-            isOpen={isModalOpen}
-            onRequestClose={closeModal}
-            title=""
-          >
-            <div className="mt-20">
-              <TaskForm
-                onSubmit={(data) => handleSubmit(data)}
-                task={taskHook ?? undefined}
-              />
-            </div>
-          </CustomModal>
           {/* --------------------------Dashboard content ----------------------------------------------------- */}
           <div className="grid grid-cols-3 gap-4 rounded-xl bg-indigo-600">
             <div className="flex h-[85vh] flex-col items-center bg-white">
@@ -138,7 +105,7 @@ const [tasks, setTasks] = useState<Task[]>();
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Defensive"}
-                classList=" min-w-[30vw] my-5"
+                classList=" min-w-[30%] my-5"
               />
             </div>
             <div className="flex h-[85vh] min-w-[400px] flex-col items-center rounded-xl bg-white">
@@ -155,7 +122,7 @@ const [tasks, setTasks] = useState<Task[]>();
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"General"}
-                classList="min-w-[30vw] my-5"
+                classList="min-w-[30%] my-5"
               />
             </div>
             <div className="flex h-[85vh] flex-col items-center bg-white">
@@ -172,7 +139,7 @@ const [tasks, setTasks] = useState<Task[]>();
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Offensive"}
-                classList="min-w-[30vw] my-5"
+                classList="min-w-[30%] my-5"
               />
             </div>
           </div>

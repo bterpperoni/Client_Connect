@@ -1,10 +1,9 @@
 "use client";
 
-import { Button } from "$/app/components/ui/button";
 import { Separator } from "$/app/components/ui/separator";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { MouseEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Btn from "./ui/btn";
 import { AlignJustify } from "lucide-react";
 import {
@@ -14,12 +13,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "$/app/components/ui/sheet";
+import TaskForm, { TaskFormData } from "./task-form";
+import CustomModal from "./ui/modal";
+import { Task } from "@prisma/client";
 
 export function SimpleNav() {
   const { data: session } = useSession();
   const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [taskID, setTaskID] = useState<number>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [tasks, setTasks] = useState<Task[]>();
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -29,13 +35,22 @@ export function SimpleNav() {
     setIsModalOpen(false);
   };
 
-  function handleLogin(): void {
-    if (session) {
-      router.push("/api/auth/signout");
-    } else {
-      signIn();
-    }
+  function handleSubmit(data: TaskFormData): void {
+    throw new Error("Function not implemented.");
   }
+
+  const [taskHook, setTaskHook] = useState<Task>();
+
+  useEffect(() => {
+    if (taskHook) {
+      const taskList = tasks?.filter((task) => task.id === taskID);
+      if (taskList) {
+        console.log("task current: ", taskList);
+        setTaskHook(taskList ? taskList[0] : undefined);
+      }
+      openModal();
+    }
+  }, [taskID, tasks]);
 
   return (
     <nav className="w-full bg-background">
@@ -55,9 +70,16 @@ export function SimpleNav() {
                   </SheetHeader>
                   <div className="flex justify-between h-full flex-col">
                     <div className="flex flex-col  justify-start mt-6">
-                      <Btn href="/" onClick={() => router.push("/")} >Home</Btn>
+                      <Btn href="/" onClick={() => router.push("/")}>
+                        Home
+                      </Btn>
                       <br />
-                      <Btn href="/dashboard" onClick={() => router.push("/dashboard")}>Dashboard</Btn>
+                      <Btn
+                        href="/dashboard"
+                        onClick={() => router.push("/dashboard")}
+                      >
+                        Dashboard
+                      </Btn>
                       <br />
                       <Btn
                         href={
@@ -69,20 +91,34 @@ export function SimpleNav() {
                     </div>
                     <br />
                     <div className="my-6">
-                      <SheetTitle className="text-center">
-                        Services
-                      </SheetTitle>
-                      <Btn classList="mt-4 w-full">SCHEDULE TASK</Btn>
+                      <SheetTitle className="text-center">Services</SheetTitle>
+                      <Btn classList="mt-4 w-full" onClick={() => openModal()}>
+                        SCHEDULE TASK
+                      </Btn>
                     </div>
                   </div>
                 </SheetContent>
               </Sheet>
             </div>
-            <div className="">
+            <div onClick={() => openModal()} className="cursor-pointer" >
               {window.location.href === "http://localhost:3000/dashboard" && (
-                <Btn classList=" relative float-right w-[200%]">SCHEDULE TASK</Btn>
+                <Btn classList=" relative float-right w-[200%]">
+                  SCHEDULE TASK
+                </Btn>
               )}
             </div>
+            <CustomModal
+              isOpen={isModalOpen}
+              onRequestClose={closeModal}
+              title=""
+            >
+              <div className="mt-20">
+                <TaskForm
+                  onSubmit={(data) => handleSubmit(data)}
+                  task={taskHook ?? undefined}
+                />
+              </div>
+            </CustomModal>
           </div>
         </div>
       </div>
