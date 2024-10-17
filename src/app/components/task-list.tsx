@@ -1,7 +1,9 @@
 "use client";
 
 import { ScrollArea } from "$/app/components/ui/scroll-area";
+
 import { deleteTask, getAllTasks } from "$/server/actions/actions";
+
 
 import { useState, useEffect } from "react";
 import { Button } from "$/app/components/ui/button";
@@ -51,11 +53,28 @@ export default function TaskListComponent({
   onEditTask,
   category,
 }: TaskListProps) {
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   // States
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+
+  useEffect(() => {
+    async function loadTasks() {
+      try {
+        const fetchedTasks = await getAllTasks();
+        setTasks(fetchedTasks);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadTasks();
+  }, []);
 
 const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) => {
     setTasks((prevTasks) =>
@@ -74,21 +93,9 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
     }
   };
 
+
   const filteredTasks = tasks.filter((task) => task.category === category);
 
-  useEffect(() => {
-    async function loadTasks() {
-      try {
-        const fetchedTasks = await getAllTasks();
-        setTasks(fetchedTasks);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadTasks();
-  }, []);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -97,6 +104,9 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+
+ 
 
   return (
     <Card className={classList}>

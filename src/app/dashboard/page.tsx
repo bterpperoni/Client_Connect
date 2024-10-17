@@ -1,8 +1,8 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { type TaskFormData } from "$/app/components/task-form";
-import TaskListComponent from "$/app/components/task-list";
+
 import { type Task, TaskStatus } from "@prisma/client";
 
 enum TaskCategory {
@@ -14,13 +14,14 @@ enum TaskCategory {
 import ChartDonut from "$/app/components/ui/chart-donut";
 import Loader from "$/app/components/ui/loader";
 import { getAllTasks } from "$/server/actions/actions";
+import TaskListComponent from "$/app/components/task-list";
 
 export default function Dashboard() {
+  const { data: session } = useSession();
 
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [taskID, setTaskID] = useState<number>()
+  const [taskID, setTaskID] = useState<number>();
   const [isLoading, setIsLoading] = useState(true);
-
+  const [tasks, setTasks] = useState<Task[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -35,7 +36,6 @@ export default function Dashboard() {
     const fetchTasks = async () => {
       const tasksT = await getAllTasks();
       setTasks(tasksT);
-      setIsLoading(false)
     };
     fetchTasks();
   }, []);
@@ -51,12 +51,14 @@ export default function Dashboard() {
     (task) => task.category === TaskCategory.Offensive
   );
 
+
   useEffect(() => {
     // Simulate loading data
     setTimeout(() => {
       setIsLoading(false);
     }, 2500);
   }, []);
+
 
   const percentageDefensive =
     (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
