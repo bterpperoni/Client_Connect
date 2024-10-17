@@ -47,9 +47,11 @@ const statusColors: { [key in Task["status"]]: string } = {
 export default function TaskListComponent({
   tasks: initialTasks,
   classList,
-// onEditTask,
+  onEditTask,
   category,
 }: TaskListProps) {
+
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
 
   const handleUpdateTaskStatus = async (
@@ -68,15 +70,15 @@ export default function TaskListComponent({
     }
   };
 
-  // const handleEditTask = (taskId: number) => {
-  //   if (typeof onEditTask === "function") {
-  //     onEditTask(taskId);
-  //   } else {
-  //     console.warn("onEditTask is not defined or a function");
-  //   }
-  // };
+  const handleEditTask = (taskId: number) => {
+    if (typeof onEditTask === "function") {
+      onEditTask(taskId);
+    } else {
+      console.warn("onEditTask is not defined or a function");
+    }
+  };
 
-  const tasks: Task[] = initialTasks;
+
   const filteredTasks = tasks.filter((task) => task.category === category);
 
   return (
@@ -130,7 +132,7 @@ export default function TaskListComponent({
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                              onSelect={() => handleUpdateTaskStatus(task.id, task.status)}
+                              onSelect={() => handleEditTask(task.id)}
                             >
                               Edit
                             </DropdownMenuItem>
@@ -202,6 +204,4 @@ export default function TaskListComponent({
     </Card>
   );
 }
-function setTasks(arg0: (prevTasks: any) => any, p0?: unknown) {
-  throw new Error("Function not implemented.");
-}
+
