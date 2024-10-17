@@ -16,7 +16,7 @@ export default function RootLayout({
               <SimpleNav />
             </nav>
           </header>
-          <main>{children}</main>
+          <main className="flex justify-center">{children}</main>
         </body>
       </html>
     </SessionProvider>
