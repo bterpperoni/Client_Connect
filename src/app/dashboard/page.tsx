@@ -36,6 +36,7 @@ export default function Dashboard() {
     const fetchTasks = async () => {
       const tasksT = await getAllTasks();
       setTasks(tasksT);
+      setIsLoading(false);
     };
     fetchTasks();
   }, []);
@@ -80,18 +81,21 @@ export default function Dashboard() {
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
-                <ChartDonut
-                  percentage={Math.floor(percentageDefensive)}
-                  category={TaskCategory.Defensive}
-                  tasks={filteredTasksDefensive}
+                <>
+                  <ChartDonut
+                    percentage={Math.floor(percentageDefensive)}
+                    category={TaskCategory.Defensive}
+                    tasks={filteredTasksDefensive}
+                  />
+                  <TaskListComponent
+                  tasks={tasks ?? []}
+                  onEditTask={(taskID) => setTaskID(taskID)}
+                  category={"Defensive"}
+                  classList=" min-w-[30%] my-5"
                 />
+              </>
               )}
-              <TaskListComponent
-                tasks={tasks ?? []}
-                onEditTask={(taskID) => setTaskID(taskID)}
-                category={"Defensive"}
-                classList=" min-w-[30%] my-5"
-              />
+              
             </div>
             <div className="flex h-[85vh] min-w-[400px] flex-col items-center rounded-xl bg-white">
               {isLoading ? (
@@ -117,18 +121,21 @@ export default function Dashboard() {
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
-                <ChartDonut
-                  percentage={Math.floor(percentageOffensive)}
-                  category={TaskCategory.Offensive}
-                  tasks={filteredTasksOffensive}
+                <>
+                  <ChartDonut
+                    percentage={Math.floor(percentageOffensive)}
+                    category={TaskCategory.Offensive}
+                    tasks={filteredTasksOffensive}
+                  />
+                  <TaskListComponent
+                  tasks={tasks ?? []}
+                  onEditTask={(taskID) => setTaskID(taskID)}
+                  category={"Offensive"}
+                  classList="min-w-[30%] my-5"
                 />
+              </>
               )}
-              <TaskListComponent
-                tasks={tasks ?? []}
-                onEditTask={(taskID) => setTaskID(taskID)}
-                category={"Offensive"}
-                classList="min-w-[30%] my-5"
-              />
+              
             </div>
           </div>
         </div>
