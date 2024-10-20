@@ -12,9 +12,7 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <header>
-            <nav>
               <SimpleNav />
-            </nav>
           </header>
           <main className="">{children}</main>
         </body>

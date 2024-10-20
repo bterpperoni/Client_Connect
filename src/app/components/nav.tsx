@@ -73,88 +73,94 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
   }, [taskID, tasks]);
 
   return (
-    <nav className="w-full bg-background h-[60.2px]">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-start h-max py-1 space-x-4">
-          <div className="flex h-full items-center justify-between w-full">
-            <Sheet>
-              <SheetTrigger className="items-center justify-center">
-                <AlignJustify className="w-8 h-auto text-center" />
-              </SheetTrigger>
-              <SheetContent side="left">
-                <SheetHeader>
-                  <SheetTitle className="text-center ">
-                    Navigation panel
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="flex justify-between h-full flex-col">
-                  <div className="flex flex-col  justify-start mt-6">
-                    <Btn href="/" onClick={() => router.push("/")}>
-                      Home
-                    </Btn>
-                    <br />
-                    <Btn
-                      href="/dashboard"
-                      onClick={() => router.push("/dashboard")}
-                    >
-                      Dashboard
-                    </Btn>
-                    <br />
-                    <Btn
-                      href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                    >
-                      {session ? "Sign out" : "Sign in"}
-                    </Btn>
-                  </div>
-                  <br />
-                  {status === "authenticated" && (
-                    <div className="my-6">
-                      <SheetTitle className="text-center">Services</SheetTitle>
+    <>
+      <nav className="w-full flex items-center  bg-background h-[60.2px]">
+        <div className="container mx-4 px-4">
+          <div className="flex items-center justify-start h-max py-1 space-x-4">
+            <div className="flex h-full items-center justify-between w-full">
+              <Sheet>
+                <SheetTrigger className="items-center justify-center">
+                  <AlignJustify className="w-8 h-auto text-center" />
+                </SheetTrigger>
+                <SheetContent side="left">
+                  <SheetHeader>
+                    <SheetTitle className="text-center ">
+                      Navigation panel
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="flex justify-between h-full flex-col">
+                    <div className="flex flex-col  justify-start mt-6">
+                      <Btn href="/" onClick={() => router.push("/")}>
+                        Home
+                      </Btn>
+                      <br />
                       <Btn
-                        classList="mt-2"
-                        percentageWidth={100}
-                        textSize="md"
-                        onClick={() => openModal()}
+                        href="/dashboard"
+                        onClick={() => router.push("/dashboard")}
                       >
-                        SCHEDULE TASK
+                        Dashboard
+                      </Btn>
+                      <br />
+                      <Btn
+                        href={
+                          session ? "/api/auth/signout" : "/api/auth/signin"
+                        }
+                      >
+                        {session ? "Sign out" : "Sign in"}
                       </Btn>
                     </div>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
+                    <br />
+                    {status === "authenticated" && (
+                      <div className="my-6">
+                        <SheetTitle className="text-center">
+                          Services
+                        </SheetTitle>
+                        <Btn
+                          classList="mt-2"
+                          percentageWidth={100}
+                          textSize="md"
+                          onClick={() => openModal()}
+                        >
+                          SCHEDULE TASK
+                        </Btn>
+                      </div>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
 
-            <div className="cursor-pointer">
-              {status === "authenticated" ? (
-                <Btn
-                  classList=" px-4 float-right"
-                  percentageWidth={200}
-                  textSize="md"
-                  onClick={() => openModal()}
-                >
-                  SCHEDULE TASK
-                </Btn>
-              ) : (
-                <></>
-              )}
-            </div>
-
-            <CustomModal
-              isOpen={isModalOpen}
-              onRequestClose={closeModal}
-              title=""
-            >
-              <div className="">
-                <TaskForm
-                  onSubmit={(data) => handleSubmit(data)}
-                  task={taskHook ?? undefined}
-                />
+              <div className="cursor-pointer">
+                {status === "authenticated" ? (
+                  <Btn
+                    classList=" px-4 float-right"
+                    percentageWidth={200}
+                    textSize="md"
+                    onClick={() => openModal()}
+                  >
+                    SCHEDULE TASK
+                  </Btn>
+                ) : (
+                  <></>
+                )}
               </div>
-            </CustomModal>
+
+              <CustomModal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                title=""
+              >
+                <div className="">
+                  <TaskForm
+                    onSubmit={(data) => handleSubmit(data)}
+                    task={taskHook ?? undefined}
+                  />
+                </div>
+              </CustomModal>
+            </div>
           </div>
         </div>
-      </div>
+      </nav>
       <Separator />
-    </nav>
+    </>
   );
 }
