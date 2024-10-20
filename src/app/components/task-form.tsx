@@ -195,7 +195,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit">{task ? "Update Task" : "Create Task"}</Button>
+        <Button className="w-full" type="submit">{task ? "Update Task" : "Create Task"}</Button>
       </form>
     </Form>
   );

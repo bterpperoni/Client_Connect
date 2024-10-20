@@ -73,7 +73,7 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
   }, [taskID, tasks]);
 
   return (
-    <nav className="w-full bg-background">
+    <nav className="w-full bg-background h-[60.2px]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-start h-max py-1 space-x-4">
           <div className="flex h-full items-center justify-between w-full">
@@ -110,7 +110,12 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
                   {status === "authenticated" && (
                     <div className="my-6">
                       <SheetTitle className="text-center">Services</SheetTitle>
-                      <Btn classList="mt-2 w-full" onClick={() => openModal()}>
+                      <Btn
+                        classList="mt-2"
+                        percentageWidth={100}
+                        textSize="md"
+                        onClick={() => openModal()}
+                      >
                         SCHEDULE TASK
                       </Btn>
                     </div>
@@ -119,9 +124,14 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
               </SheetContent>
             </Sheet>
 
-            <div onClick={() => openModal()} className="cursor-pointer">
+            <div className="cursor-pointer">
               {status === "authenticated" ? (
-                <Btn classList=" relative float-right w-[200%]">
+                <Btn
+                  classList=" px-4 float-right"
+                  percentageWidth={200}
+                  textSize="md"
+                  onClick={() => openModal()}
+                >
                   SCHEDULE TASK
                 </Btn>
               ) : (
@@ -134,7 +144,7 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
               onRequestClose={closeModal}
               title=""
             >
-              <div className="mt-20">
+              <div className="">
                 <TaskForm
                   onSubmit={(data) => handleSubmit(data)}
                   task={taskHook ?? undefined}
