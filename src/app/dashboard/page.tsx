@@ -51,13 +51,6 @@ export default function Dashboard() {
     (task) => task.category === TaskCategory.Offensive
   );
 
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2500);
-  }, []);
-
   const percentageDefensive =
     (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
       .length /
@@ -75,14 +68,14 @@ export default function Dashboard() {
     100;
 
   return (
-    <div className=" flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
+    <div className=" flex min-h-screen flex-col justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
       <div className=" items-center justify-center gap-4 px-4 py-8">
         <div className="">
 
           {/* --------------------------Dashboard content ----------------------------------------------------- */}
           
           <div className="grid grid-cols-3 gap-4">
-            <div className="group flex h-[85vh] flex-col items-center bg-white">
+            <div className="group flex flex-col items-center bg-white rounded-xl">
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
@@ -96,7 +89,7 @@ export default function Dashboard() {
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Defensive"}
-                classList="  my-5"
+                classList="w-[95%] rounded-xl my-5"
               />
             </div>
             <div className="group flex h-[85vh] min-w-[400px] flex-col items-center rounded-xl bg-white">
@@ -113,13 +106,13 @@ export default function Dashboard() {
                   tasks={tasks ?? []}
                   onEditTask={(taskID) => setTaskID(taskID)}
                   category={"General"}
-                  classList=" my-5"
+                  classList="w-[95%] rounded-xl my-5"
                   />
                 </>
               )}
               
             </div>
-            <div className="flex h-[85vh] flex-col items-center bg-white">
+            <div className="flex flex-col items-center bg-white rounded-xl">
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
@@ -127,13 +120,14 @@ export default function Dashboard() {
                   percentage={Math.floor(percentageOffensive)}
                   category={TaskCategory.Offensive}
                   tasks={filteredTasksOffensive}
+
                 />
               )}
               <TaskListComponent
                 tasks={tasks ?? []}
                 onEditTask={(taskID) => setTaskID(taskID)}
                 category={"Offensive"}
-                classList=" my-5"
+                classList="w-[95%] rounded-xl my-5"
               />
             </div>
           </div>

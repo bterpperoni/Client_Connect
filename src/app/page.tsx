@@ -11,7 +11,7 @@ export default function Home() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8"></div>
       <div className="flex flex-col items-center justify-center gap-2">
         <div className="box-border flex flex-col items-center justify-center gap-4 border-2 border-white bg-white p-4 text-purple-800">
-          <div className="mb-[25px] border-y-2 font-sans text-[3rem] uppercase leading-loose tracking-wider text-purple-800">
+          <div className="mb-[25px] w-max border-y-2 font-sans text-[3rem] uppercase leading-loose tracking-wider text-purple-800">
             SYSTEM SECURITY UI
           </div>
           <div className="mb-4">

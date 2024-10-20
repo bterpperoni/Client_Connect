@@ -53,16 +53,19 @@ export default function TaskListComponent({
 }: TaskListProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   // States
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) => {
+  const handleUpdateTaskStatus = async (
+    taskId: number,
+    status: Task["status"]
+  ) => {
     setTasks((prevTasks) =>
       prevTasks.map(
         (task) => (task.id === taskId ? { ...task, status } : task),
-        void updateTaskStatus(taskId, status),
-      ),
+        void updateTaskStatus(taskId, status)
+      )
     );
   };
 
@@ -90,20 +93,12 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
     loadTasks();
   }, []);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
   return (
-    <Card className={classList}>
+    <Card className={`${classList} p-0`} key={category}>
       <CardContent>
         {filteredTasks.length === 0 ? (
           <>
-            <CardHeader>
+            <CardHeader key={category}>
               <CardTitle>{category}</CardTitle>
             </CardHeader>
             <p className="text-center text-gray-500 dark:text-gray-400">
@@ -112,11 +107,15 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
           </>
         ) : (
           <>
-            <ScrollArea className="h-72 w-full border">
+            <ScrollArea className="h-72 w-full">
               {filteredTasks.map((task) => (
                 <>
-                  <CardHeader>
-                    <CardTitle>{task.title}</CardTitle>
+                  <CardHeader key={task.id}>
+                    <CardTitle className="text-sm leading-none font-medium">
+                      {(task.content?.length ?? 0) > 125
+                        ? task.content?.substring(0, 125) + ".."
+                        : task.content}
+                    </CardTitle>
                   </CardHeader>
                   <ul className="space-y-2">
                     <li
@@ -131,9 +130,10 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
                         >
                           {task.status.replace("_", " ")}
                         </span>
+
                         <div className="flex-grow">
-                          <p className="text-sm font-medium leading-none">
-                            {task.content?.substring(0, 20) + ".."}
+                          <p className="leading-none font-bold text-sm">
+                            {task.title}
                           </p>
                         </div>
                       </div>
@@ -179,45 +179,8 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
                         <Button variant="ghost" size="icon">
                           <Trash
                             className="h-4 w-4"
-                            onClick={() => openModal()}
+                            onClick={() => console.log("open popover")}
                           />
-                          <CustomModal
-                            isOpen={isModalOpen}
-                            onRequestClose={closeModal}
-                            title=""
-                          >
-                            <div className="mt-20 items-center justify-center">
-                              <span className="bold text-xl">
-                                Are you sure you want to delete this task?
-                              </span>
-                              <br />
-                              <Button
-                                onClick={() => {
-                                  closeModal();
-                                }}
-                                className="px mr-5 rounded-full border-2 border-black bg-red-700 py-2 font-bold text-white hover:bg-red-600"
-                              >
-                                No
-                              </Button>
-                              <Button
-                                className="px rounded-full border-2 border-black bg-green-700 py-2 font-bold text-white hover:bg-green-600"
-                                onClick={async () => {
-                                  try {
-                                    await deleteTask(task.id);
-
-                                    setTasks((prevTasks) =>
-                                      prevTasks.filter((t) => t.id !== task.id)
-                                    );
-                                    console.log("Task deleted successfully");
-                                  } catch (error) {
-                                    console.error("Error deleting task", error);
-                                  }
-                                }}
-                              >
-                                Yes
-                              </Button>
-                            </div>
-                          </CustomModal>
                           <span className="sr-only">Delete task</span>
                         </Button>
                       </div>

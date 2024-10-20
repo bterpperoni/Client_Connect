@@ -17,15 +17,22 @@ import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions/actions";
+import { getAllTasks } from "$/server/actions/actions";
 
-export default function SimpleNav() {
+export default function SimpleNav(taskID?: number) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [taskID, setTaskID] = useState<number>();
-  const [isLoading, setIsLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>();
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const tasksT = await getAllTasks();
+      setTasks(tasksT);
+    };
+    fetchTasks();
+  }, []);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -47,7 +54,6 @@ export default function SimpleNav() {
     try {
       await createTask(task);
       closeModal();
-      alert("OK");
     } catch (error) {
       console.error("Error creating task", error);
     }

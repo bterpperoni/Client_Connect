@@ -38,7 +38,7 @@ export default function ChartDonut({
   }, [tasks]);
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col mt-4">
       <CardHeader className="items-center pb-0">
         <CardTitle className="text-2xl">{category}</CardTitle>
       </CardHeader>
