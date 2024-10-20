@@ -18,7 +18,7 @@ type ComponentProps = {
   tasks: Task[];
 };
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#B20000"];
 
 export default function ChartDonut({
   percentage,

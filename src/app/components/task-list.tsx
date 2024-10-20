@@ -107,7 +107,7 @@ export default function TaskListComponent({
           </>
         ) : (
           <>
-            <ScrollArea className="h-72 w-full">
+            <ScrollArea className="h-80 w-full">
               {filteredTasks.map((task) => (
                 <>
                   <CardHeader key={task.id}>

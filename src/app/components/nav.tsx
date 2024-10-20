@@ -19,7 +19,7 @@ import { Task, TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions/actions";
 import { getAllTasks } from "$/server/actions/actions";
 
-export default function SimpleNav(taskID?: number) {
+export default function SimpleNav({ taskID }: { taskID?: number }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,64 +75,58 @@ export default function SimpleNav(taskID?: number) {
   return (
     <nav className="w-full bg-background">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-start h-16 space-x-4">
+        <div className="flex items-center justify-start h-max py-1 space-x-4">
           <div className="flex h-full items-center justify-between w-full">
-            <div className="">
-              <Sheet>
-                <SheetTrigger>
-                  <AlignJustify />
-                </SheetTrigger>
-                <SheetContent side="left">
-                  <SheetHeader>
-                    <SheetTitle className="text-center ">
-                      Navigation panel
-                    </SheetTitle>
-                  </SheetHeader>
-                  <div className="flex justify-between h-full flex-col">
-                    <div className="flex flex-col  justify-start mt-6">
-                      <Btn href="/" onClick={() => router.push("/")}>
-                        Home
-                      </Btn>
-                      <br />
-                      <Btn
-                        href="/dashboard"
-                        onClick={() => router.push("/dashboard")}
-                      >
-                        Dashboard
-                      </Btn>
-                      <br />
-                      <Btn
-                        href={
-                          session ? "/api/auth/signout" : "/api/auth/signin"
-                        }
-                      >
-                        {session ? "Sign out" : "Sign in"}
+            <Sheet>
+              <SheetTrigger className="items-center justify-center">
+                <AlignJustify className="w-8 h-auto text-center" />
+              </SheetTrigger>
+              <SheetContent side="left">
+                <SheetHeader>
+                  <SheetTitle className="text-center ">
+                    Navigation panel
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="flex justify-between h-full flex-col">
+                  <div className="flex flex-col  justify-start mt-6">
+                    <Btn href="/" onClick={() => router.push("/")}>
+                      Home
+                    </Btn>
+                    <br />
+                    <Btn
+                      href="/dashboard"
+                      onClick={() => router.push("/dashboard")}
+                    >
+                      Dashboard
+                    </Btn>
+                    <br />
+                    <Btn
+                      href={session ? "/api/auth/signout" : "/api/auth/signin"}
+                    >
+                      {session ? "Sign out" : "Sign in"}
+                    </Btn>
+                  </div>
+                  <br />
+                  {status === "authenticated" && (
+                    <div className="my-6">
+                      <SheetTitle className="text-center">Services</SheetTitle>
+                      <Btn classList="mt-2 w-full" onClick={() => openModal()}>
+                        SCHEDULE TASK
                       </Btn>
                     </div>
-                    <br />
-                    {status === "authenticated" && (
-                      <div className="my-6">
-                        <SheetTitle className="text-center">
-                          Services
-                        </SheetTitle>
-                        <Btn
-                          classList="mt-4 w-full"
-                          onClick={() => openModal()}
-                        >
-                          SCHEDULE TASK
-                        </Btn>
-                      </div>
-                    )}
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
             <div onClick={() => openModal()} className="cursor-pointer">
-              {status === "authenticated" ? 
+              {status === "authenticated" ? (
                 <Btn classList=" relative float-right w-[200%]">
                   SCHEDULE TASK
-                </Btn>: <></>
-              }
+                </Btn>
+              ) : (
+                <></>
+              )}
             </div>
 
             <CustomModal

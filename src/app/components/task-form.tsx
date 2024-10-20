@@ -142,7 +142,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
                   min={1}
                   max={5}
                   {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 5))}
+                  onChange={(e) => field.onChange(parseInt(e.target.value, 6))}
                 />
               </FormControl>
               <FormDescription>

@@ -68,14 +68,14 @@ export default function Dashboard() {
     100;
 
   return (
-    <div className=" flex min-h-screen flex-col justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
-      <div className=" items-center justify-center gap-4 px-4 py-8">
+    <div className=" flex min-h-full py-3 flex-col justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
+      <div className=" items-center justify-center gap-4 px-4 py-0">
         <div className="">
 
           {/* --------------------------Dashboard content ----------------------------------------------------- */}
           
           <div className="grid grid-cols-3 gap-4">
-            <div className="group flex flex-col items-center bg-white rounded-xl">
+            <div className="group h-[88vh] flex flex-col items-center bg-white rounded-xl">
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
@@ -92,7 +92,7 @@ export default function Dashboard() {
                 classList="w-[95%] rounded-xl my-5"
               />
             </div>
-            <div className="group flex h-[85vh] min-w-[400px] flex-col items-center rounded-xl bg-white">
+            <div className="group flex h-[88vh] flex-col items-center rounded-xl bg-white">
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
@@ -112,7 +112,7 @@ export default function Dashboard() {
               )}
               
             </div>
-            <div className="flex flex-col items-center bg-white rounded-xl">
+            <div className="flex h-[88vh] flex-col items-center bg-white rounded-xl">
               {isLoading ? (
                 <Loader size={100} className="my-10 text-black"></Loader>
               ) : (
