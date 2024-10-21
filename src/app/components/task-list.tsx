@@ -36,14 +36,7 @@ import {
 } from "$/app/components/ui/dropdown-menu";
 import { updateTaskStatus } from "$/server/actions/actions";
 import { Task } from "@prisma/client";
-import { cn } from "$/lib/utils/utils";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverClose,
-} from "@radix-ui/react-popover";
-import { Cross2Icon } from "@radix-ui/react-icons";
+
 import { DialogClose } from "@radix-ui/react-dialog";
 import Loader from "./ui/loader";
 
@@ -71,35 +64,33 @@ export default function TaskListComponent({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function fetchTasks() {
-    setLoading(true);
-    try {
-      const fetchedTasks = await getAllTasks();
-      setTasks(fetchedTasks);
-    } catch (err) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    async function fetchTasks() {
+      try {
+        const fetchedTasks = await getAllTasks();
+        setTasks(fetchedTasks);
+      } catch (err) {
+        setError(error);
+      } finally {
+        console.log("TaskList: ", tasks);
+        setLoading(false);
+      }
+    }
+
+    void fetchTasks();
+  }, [ loading, updateTaskStatus ]);
 
   const handleUpdateTaskStatus = async (
     taskId: number,
     status: Task["status"]
   ) => {
-    setTasks((prevTasks) =>
-      prevTasks
-        ? prevTasks.map(
-            (task) => (task.id === taskId ? { ...task, status } : task),
-            void updateTaskStatus(taskId, status)
-          )
-        : null
-    );
-    await fetchTasks();
+    const updatedTask = await updateTaskStatus(taskId, status);
+
+    if (updatedTask) {
+      console.log(updatedTask);
+      setTasks(null);
+      setLoading(true);
+    }
   };
 
   const handleEditTask = (taskId: number) => {
@@ -117,7 +108,7 @@ export default function TaskListComponent({
         await deleteTask(taskToDelete.id);
         console.log(taskToDelete);
         setTasks(null);
-        await fetchTasks();
+        setLoading(true);
       }
     }
   };
@@ -192,8 +183,10 @@ export default function TaskListComponent({
                               <DropdownMenuItem>
                                 <Select
                                   value={task.status}
-                                  onValueChange={(value: Task["status"]) =>
-                                    handleUpdateTaskStatus(task.id, value)
+                                  onValueChange={async (
+                                    value: Task["status"]
+                                  ) =>
+                                    await handleUpdateTaskStatus(task.id, value)
                                   }
                                 >
                                   <SelectTrigger className="w-full">

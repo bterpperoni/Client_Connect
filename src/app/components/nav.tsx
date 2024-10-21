@@ -25,7 +25,6 @@ export default function SimpleNav() {
   const [tasks, setTasks] = useState<Task[]>();
   /* ----- Page loading state ----- */
   const { data: session, status } = useSession();
-  
 
   /* ----- Modal state ----- */
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +37,22 @@ export default function SimpleNav() {
   };
   // ---------------------------------------------------
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      await getAllTasks()
+        .then((tasks) => {
+          
+        })
+        .catch((error) => {
+          console.error("Error fetching tasks", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+    fetchTasks();
+  }, [loading]);
+
   /* --------- Function to create a task ------------------ */
   async function handleSubmit(data: TaskFormData): Promise<void> {
     const task = {
@@ -48,14 +63,17 @@ export default function SimpleNav() {
       category: data.category,
       status: TaskStatus.TODO,
     };
-setLoading(true)
+    closeModal();
+    const newtask = await createTask(task);
     try {
-      const newtask = await createTask(task);
-      setTasks((prevTasks) => (prevTasks ? [...prevTasks, newtask] : [newtask]));
-
+      setTasks((prevTasks) =>
+            prevTasks ? [...prevTasks, newtask] : tasks
+          );
+      console.log("Task created successfully", newtask)
+      setLoading(true);
     } catch (error) {
       console.error("Error creating task", error);
-    } 
+    }
   }
 
   return (

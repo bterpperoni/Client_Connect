@@ -27,7 +27,8 @@ export default function Dashboard() {
   const [taskID, setTaskID] = useState<Task | undefined>();
 
   /* ----- Page loading state ----- */
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState();
 
   /* ----- Modal state ----- */
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,25 +40,6 @@ export default function Dashboard() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-  /* ----- Function to get all tasks ----- */
-  const fetchTasks = async () => {
-    await getAllTasks()
-      .then((tasks) => {
-        setTasks(tasks);
-      })
-      .catch((error) => {
-        console.error("Error fetching tasks", error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  // UseEffect to fetch tasks when the component is mounted
-  useEffect(() => {
-    fetchTasks();
-  }, []);
 
   /* ----- Function to set the task to update ----- */
   async function editTask(taskID: number): Promise<void> {
@@ -86,98 +68,69 @@ export default function Dashboard() {
     try {
       if (taskID !== undefined) {
         if (taskID?.id !== undefined) {
-          await updateTaskData(taskID.id, taskTemp);
-          setTasks(
-            tasks.map((task) => {
-              if (task.id === taskID.id) {
-                return {
-                  ...task,
-                  title: data.title,
-                  content: data.description,
-                  importanceScore: data.importanceScore,
-                  deadline: data.deadline,
-                  category: data.category,
-                };
-              }
-              return task;
-            })
-          );
+          const updatedTaskData = await updateTaskData(taskID.id, taskTemp);
+          closeModal();
+          if (updatedTaskData !== undefined) {
+            setTasks((prevTasks) =>
+              prevTasks.map((task) =>
+                task.id === taskID?.id ? updatedTaskData : task
+              )
+            );
+            console.log("Task updated successfully", updatedTaskData);
+          }
         }
+        setLoading(true);
       }
-      closeModal();
-      // refetch the tasks after the update
-      fetchTasks();
     } catch (error) {
       console.error("Error creating task", error);
     }
   }
 
-  /* ----- Other task's category you want to filter by ----- */
-  const filteredTasksDefensive = (tasks ?? []).filter(
+  /* ----- Calculate  the total percentage of completed tasks offensive ----- */
+  const filteredTasksDefensive = tasks.filter(
     (task) => task.category === TaskCategory.Defensive
   );
-  const filteredTasksGeneral = (tasks ?? []).filter(
+  const filteredTasksGeneral = tasks.filter(
     (task) => task.category === TaskCategory.General
   );
-  const filteredTasksOffensive = (tasks ?? []).filter(
+  const filteredTasksOffensive = tasks.filter(
     (task) => task.category === TaskCategory.Offensive
   );
-  // --------------------------------------------------
 
-  /* ----- Calculate  the total percentage of completed tasks defensive ----- */
-  // const percentageDefensive =
-  //   ((tasks ?? []).reduce((acc, task) => {
-  //     if (task.category === TaskCategory.Defensive) {
-  //       if (task.status === TaskStatus.DONE) {
-  //         return acc + 1;
-  //       }
-  //     }
-  //     return acc;
-  //   }, 0) /
-  //     filteredTasksDefensive.length) *
-  //   100;
-  /* ----- Calculate  the total percentage of completed tasks general ----- */
-  // const percentageGeneral =
-  //   ((tasks ?? []).reduce((acc, task) => {
-  //     if (task.category === TaskCategory.General) {
-  //       if (task.status === TaskStatus.DONE) {
-  //         return acc + 1;
-  //       }
-  //     }
-  //     return acc;
-  //   }, 0) /
-  //     filteredTasksGeneral.length) *
-  //   100;
+  // UseEffect to fetch tasks when the component is mounted
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        const fetchedTasks = await getAllTasks();
+        setTasks(fetchedTasks);
+      } catch (err) {
+        setError(error);
+      } finally {
+        console.log("TaskList: ", tasks);
+        // No need to filter tasks here
+        setLoading(false);
+      }
+    }
+    fetchTasks();
+  }, [loading, updateTaskData, taskID]);
 
-  /* ----- Calculate  the total percentage of completed tasks offensive ----- */
-  // const percentageOffensive =
-  //   ((tasks ?? []).reduce((acc, task) => {
-  //     if (task.category === TaskCategory.Offensive) {
-  //       if (task.status === TaskStatus.DONE) {
-  //         return acc + 1;
-  //       }
-  //     }
-  //     return acc;
-  //   }, 0) /
-  //     filteredTasksOffensive.length) *
-  //   100;
+  const percDefensive =
+    (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
+      .length /
+      filteredTasksDefensive.length) *
+    100;
 
-    const percentageDefensive =
-      (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
-        .length /
-        filteredTasksGeneral.length) *
-      100;
-    const percentageGeneral =
-      (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
-        .length /
-        filteredTasksGeneral.length) *
-      100;
-   /* ----- Calculate  the total percentage of completed tasks offensive ----- */
-    const percentageOffensive =
-      (filteredTasksOffensive.filter((task) => task.status === TaskStatus.DONE)
-        .length /
-        filteredTasksOffensive.length) *
-      100;
+  const percGeneral =
+    (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
+      .length /
+      filteredTasksGeneral.length) *
+    100;
+
+  const percOffensive =
+    (filteredTasksOffensive.filter((task) => task.status === TaskStatus.DONE)
+      .length /
+      filteredTasksOffensive.length) *
+    100;
 
   return (
     <div className=" flex min-h-full py-3 flex-col justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
@@ -195,32 +148,34 @@ export default function Dashboard() {
         <div className="grid  md:grid-cols-3  gap-4">
           {/* 1. Category DEFENSIVE */}
           <div className="col-span-1 group h-[88vh] flex flex-col items-center bg-white rounded-xl">
-            {isLoading ? (
-              <Loader size={100} className="my-10 text-black"></Loader>
-            ) : (
-              <ChartDonut
-                percentage={Math.floor(percentageDefensive ?? 0)}
-                category={TaskCategory.Defensive}
-                tasks={filteredTasksDefensive}
-              />
-            )}
-            <TaskListComponent
-              key={taskID?.id}
-              tasksProps={tasks ?? []}
-              onEditTask={async (taskID) => await editTask(taskID)}
-              category={"Defensive"}
-              classList="w-[95%] rounded-xl my-5"
-            />
-          </div>
-
-          {/* 2 Category GENERAL -----------------------------------------------------------------*/}
-          <div className="col-span-1 group flex h-[88vh] flex-col items-center rounded-xl bg-white">
-            {isLoading ? (
+            {loading ? (
               <Loader size={100} className="my-10 text-black"></Loader>
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor(percentageGeneral ?? 0)}
+                  percentage={Math.floor(percDefensive ?? 0)}
+                  category={TaskCategory.Defensive}
+                  tasks={filteredTasksDefensive}
+                />
+                <TaskListComponent
+                  key={taskID?.id}
+                  tasksProps={tasks ?? []}
+                  onEditTask={async (taskID) => await editTask(taskID)}
+                  category={"Defensive"}
+                  classList="w-[95%] rounded-xl my-5"
+                />
+              </>
+            )}
+          </div>
+
+          {/* 2 Category GENERAL -----------------------------------------------------------------*/}
+          <div className="col-span-1 group flex h-[88vh] flex-col items-center rounded-xl bg-white">
+            {loading ? (
+              <Loader size={100} className="my-10 text-black"></Loader>
+            ) : (
+              <>
+                <ChartDonut
+                  percentage={Math.floor(percGeneral ?? 0)}
                   category={TaskCategory.General}
                   tasks={filteredTasksGeneral}
                 />
@@ -236,21 +191,23 @@ export default function Dashboard() {
 
           {/* 3 Category OFFENSIVE */}
           <div className="col-span-1 flex h-[88vh] flex-col items-center bg-white rounded-xl">
-            {isLoading ? (
+            {loading ? (
               <Loader size={100} className="my-10 text-black"></Loader>
             ) : (
-              <ChartDonut
-                percentage={Math.floor(percentageOffensive ?? 0)}
-                category={TaskCategory.Offensive}
-                tasks={filteredTasksOffensive}
-              />
+              <>
+                <ChartDonut
+                  percentage={Math.floor(percOffensive ?? 0)}
+                  category={TaskCategory.Offensive}
+                  tasks={filteredTasksOffensive}
+                />
+                <TaskListComponent
+                  tasksProps={tasks ?? []}
+                  onEditTask={(taskID) => editTask(taskID)}
+                  category={"Offensive"}
+                  classList="w-[95%] rounded-xl my-5"
+                />
+              </>
             )}
-            <TaskListComponent
-              tasksProps={tasks ?? []}
-              onEditTask={(taskID) => editTask(taskID)}
-              category={"Offensive"}
-              classList="w-[95%] rounded-xl my-5"
-            />
           </div>
         </div>
       </div>
