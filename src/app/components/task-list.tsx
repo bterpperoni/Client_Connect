@@ -98,8 +98,8 @@ export default function TaskListComponent({
             void updateTaskStatus(taskId, status)
           )
         : null
-    )
-      await fetchTasks();
+    );
+    await fetchTasks();
   };
 
   const handleEditTask = (taskId: number) => {
@@ -210,57 +210,20 @@ export default function TaskListComponent({
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
-                          {/* <Popover>
-                            {/* Button that trigger  the popover 
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-[40px] pl-3 text-left font-normal text-gray-500 dark:text-gray-400"
-                                )}
-                              >
-                                <Trash
-                                  className="h-4 w-4"
-                                />
-                              </Button>
-                            </PopoverTrigger>
-                            
-                            <PopoverContent
-                              className=" bg-black text-white relative w-max h-max p-2"
-                              align="start"
-                            >
-                        
-                              <p className="p-2 font-bold text-md">
-                                Are you sure?
-                              </p>
-                              <Button
-                                variant="destructive"
-                                onClick={() => deleteTask(task.id)}
-                              >
-                                Yes
-                              </Button>
-                              <PopoverClose
-                                className="absolute w-auto h-auto p-2 rounded-lg border-2 border-spacing-2 border-gray-500 PopoverClose ml-4 scale-100"
-                                aria-label="Close"
-                              >
-                                <Cross2Icon />
-                              </PopoverClose>
-                            </PopoverContent>
-                          </Popover> */}
                           <Dialog>
                             <DialogTrigger>
                               <Trash className="h-4 w-4" />
                             </DialogTrigger>
                             <DialogContent className="items-center flex flex-col justify-center">
                               <DialogHeader className="mt-3 ">
-                                <DialogTitle className="text-lg text-center mb-4 font-semibold leading-none tracking-tight">
-                                  <span className="text-black-800 space-x-1 space-y-2 text-lg p-3">
+                                <DialogTitle className="text-lg text-center mb-4 leading-none tracking-tight">
+                                  <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-y-2 border-red-800">
                                     Are you sure you want to delete the task ?
-                                  </span>
-                                  <br />
-                                  <div className="text-lg p-0 leading-snug">
-                                    This action CANNOT be undone.
                                   </div>
+                                  <br />
+                                  <span className="text-black-800 space-x-1 font-semibold text-lg p-1">
+                                    You'll be unable to undone this action.
+                                  </span>
                                 </DialogTitle>
                                 <DialogDescription>
                                   <p className="text-sm color-gray-600 text-center">
