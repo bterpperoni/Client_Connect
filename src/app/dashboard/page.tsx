@@ -56,8 +56,6 @@ export default function Dashboard() {
 
   // UseEffect to fetch tasks when the component is mounted
   useEffect(() => {
-
-
     fetchTasks();
   }, []);
 
@@ -84,11 +82,26 @@ export default function Dashboard() {
       deadline: data.deadline,
       category: data.category,
     };
-    // Create a new task if the task and his ID is not undefined
+    // Update a new task if the task and his ID is not undefined
     try {
       if (taskID !== undefined) {
         if (taskID?.id !== undefined) {
           await updateTaskData(taskID.id, taskTemp);
+          setTasks(
+            tasks.map((task) => {
+              if (task.id === taskID.id) {
+                return {
+                  ...task,
+                  title: data.title,
+                  content: data.description,
+                  importanceScore: data.importanceScore,
+                  deadline: data.deadline,
+                  category: data.category,
+                };
+              }
+              return task;
+            })
+          );
         }
       }
       closeModal();
@@ -124,7 +137,7 @@ export default function Dashboard() {
       filteredTasksDefensive.length) *
     100;
   /* ----- Calculate  the total percentage of completed tasks general ----- */
- const percentageGeneral = 
+  const percentageGeneral =
     ((tasks ?? []).reduce((acc, task) => {
       if (task.category === TaskCategory.General) {
         if (task.status === TaskStatus.DONE) {
@@ -148,8 +161,7 @@ export default function Dashboard() {
     }, 0) /
       filteredTasksOffensive.length) *
     100;
- 
- 
+
   //   const percentageGeneral =
   //     (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
   //       .length /
