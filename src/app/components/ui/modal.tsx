@@ -16,11 +16,7 @@ const customStyles = {
     backgroundColor: "#fff",
     borderRadius: "10px",
     padding: "10px",
-    boxShadow: "0 4px 6px rgba(0.5, 0 , 0, 0.2)",
-    zIndex: "1000",
-  },
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.5)",
     zIndex: "1000",
   },
 };
@@ -44,7 +40,7 @@ export default function CustomModal({
           <div>{children}</div>
           <div className="w-full flex flex-row justify-center">
             <button
-              className="relative text-center mt-2 cursor-pointer rounded-md bg-red-800 px-4 py-2 md:text-md text-sm font-bold text-white hover:bg-white hover:text-red-800 hover:border-red-800 border-2"
+              className="relative text-center w-[25%] mt-2 cursor-pointer rounded-md bg-red-800 px-4 py-2 md:text-md text-sm font-bold text-white hover:bg-white hover:text-red-800 hover:border-red-800 border-2"
               onClick={onRequestClose}
             >
               Close

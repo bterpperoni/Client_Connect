@@ -19,21 +19,16 @@ import { Task, TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions/actions";
 import { getAllTasks } from "$/server/actions/actions";
 
-export default function SimpleNav({ taskID }: { taskID?: number }) {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+export default function SimpleNav() {
+  /* ----- Task state ----- */
+  const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>();
+  /* ----- Page loading state ----- */
+  const { data: session, status } = useSession();
+  
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const tasksT = await getAllTasks();
-      setTasks(tasksT);
-    };
-    fetchTasks();
-  }, []);
-
+  /* ----- Modal state ----- */
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -41,7 +36,9 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+  // ---------------------------------------------------
 
+  /* --------- Function to create a task ------------------ */
   async function handleSubmit(data: TaskFormData): Promise<void> {
     const task = {
       title: data.title,
@@ -51,32 +48,21 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
       category: data.category,
       status: TaskStatus.TODO,
     };
+setLoading(true)
     try {
-      await createTask(task);
-      closeModal();
+      const newtask = await createTask(task);
+      setTasks((prevTasks) => (prevTasks ? [...prevTasks, newtask] : [newtask]));
+
     } catch (error) {
       console.error("Error creating task", error);
-    }
+    } 
   }
-
-  const [taskHook, setTaskHook] = useState<Task>();
-
-  useEffect(() => {
-    if (taskHook) {
-      const taskList = tasks?.filter((task) => task.id === taskID);
-      if (taskList) {
-        console.log("task current: ", taskList);
-        setTaskHook(taskList ? taskList[0] : undefined);
-      }
-      openModal();
-    }
-  }, [taskID, tasks]);
 
   return (
     <>
-      <nav className="w-full flex items-center  bg-background h-[60.2px]">
+      <nav className="w-full inline-flex scroll items-center  bg-background h-[60px]">
         <div className="container mx-4 px-4">
-          <div className="flex items-center justify-start h-max py-1 space-x-4">
+          <div className="flex items-center justify-start h-max  space-x-4">
             <div className="flex h-full items-center justify-between w-full">
               <Sheet>
                 <SheetTrigger className="items-center justify-center">
@@ -90,13 +76,13 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
                   </SheetHeader>
                   <div className="flex justify-between h-full flex-col">
                     <div className="flex flex-col  justify-start mt-6">
-                      <Btn href="/" onClick={() => router.push("/")}>
+                      <Btn href="/" onClick={() => location.assign("/")}>
                         Home
                       </Btn>
                       <br />
                       <Btn
                         href="/dashboard"
-                        onClick={() => router.push("/dashboard")}
+                        onClick={() => location.assign("/dashboard")}
                       >
                         Dashboard
                       </Btn>
@@ -149,12 +135,10 @@ export default function SimpleNav({ taskID }: { taskID?: number }) {
                 onRequestClose={closeModal}
                 title=""
               >
-                <div className="">
-                  <TaskForm
-                    onSubmit={(data) => handleSubmit(data)}
-                    task={taskHook ?? undefined}
-                  />
-                </div>
+                <TaskForm
+                  onSubmit={(data) => handleSubmit(data)}
+                  task={undefined}
+                />
               </CustomModal>
             </div>
           </div>

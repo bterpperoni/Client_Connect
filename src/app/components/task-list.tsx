@@ -27,16 +27,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "$/app/components/ui/dropdown-menu";
-import CustomModal from "$/app/components/ui/modal";
 import { updateTaskStatus } from "$/server/actions/actions";
 import { Task } from "@prisma/client";
 
 type TaskListProps = {
-  tasks: Task[];
+  tasksProps: Task[];
   category: Task["category"];
   classList?: string;
   onEditTask?: (taskId: number) => void;
-  onUpdateTaskStatus?: (taskId: number, status: Task["status"]) => void;
 };
 
 const statusColors: { [key in Task["status"]]: string } = {
@@ -46,27 +44,47 @@ const statusColors: { [key in Task["status"]]: string } = {
 };
 
 export default function TaskListComponent({
-  tasks: initialTasks,
+  tasksProps,
   classList,
   onEditTask,
   category,
 }: TaskListProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   // States
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[] | null>(tasksProps);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  async function fetchTasks() {
+    setLoading(true);
+    try {
+      const fetchedTasks = await getAllTasks();
+      setTasks(fetchedTasks);
+    } catch (err) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   const handleUpdateTaskStatus = async (
     taskId: number,
     status: Task["status"]
   ) => {
     setTasks((prevTasks) =>
-      prevTasks.map(
-        (task) => (task.id === taskId ? { ...task, status } : task),
-        void updateTaskStatus(taskId, status)
-      )
+      prevTasks ? prevTasks.map((task) => (task.id === taskId ? { ...task, status } : task)) : null
     );
+    try {
+      await updateTaskStatus(taskId, status);
+      setTasks(null);
+      fetchTasks();
+    } catch (error) {
+      console.error("Error updating task status", error);
+    } finally {
+    }
   };
 
   const handleEditTask = (taskId: number) => {
@@ -77,26 +95,12 @@ export default function TaskListComponent({
     }
   };
 
-  const filteredTasks = tasks.filter((task) => task.category === category);
-
-  useEffect(() => {
-    async function loadTasks() {
-      try {
-        const fetchedTasks = await getAllTasks();
-        setTasks(fetchedTasks);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadTasks();
-  }, []);
+  const filteredTasks = tasks?.filter((task) => task.category === category);
 
   return (
     <Card className={`${classList} p-0`} key={category}>
       <CardContent>
-        {filteredTasks.length === 0 ? (
+        {filteredTasks && filteredTasks.length === 0 ? (
           <>
             <CardHeader key={category}>
               <CardTitle>{category}</CardTitle>
@@ -108,19 +112,22 @@ export default function TaskListComponent({
         ) : (
           <>
             <ScrollArea className="h-80 w-full">
-              {filteredTasks.map((task) => (
+              {filteredTasks && filteredTasks.map((task) => (
                 <>
                   <CardHeader key={task.id}>
-                    <CardTitle className="text-sm leading-none font-medium">
-                      {(task.content?.length ?? 0) > 125
-                        ? task.content?.substring(0, 125) + ".."
-                        : task.content}
+                    <CardTitle className="text-sm flex-col flex-grow  leading-none font-medium">
+                      <div className="font-bold">{task.title}</div>
+                      <div>
+                        {(task.content?.length ?? 0) > 100
+                          ? task.content?.substring(0, 100) + ".."
+                          : task.content}
+                      </div>
                     </CardTitle>
                   </CardHeader>
                   <ul className="space-y-2">
                     <li
                       key={task.id}
-                      className="flex items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950"
+                      className="flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950"
                     >
                       <div className="flex flex-grow items-center space-x-2">
                         <span
@@ -131,11 +138,11 @@ export default function TaskListComponent({
                           {task.status.replace("_", " ")}
                         </span>
 
-                        <div className="flex-grow">
+                        {/* <div className="flex-grow">
                           <p className="leading-none font-bold text-sm">
                             {task.title}
                           </p>
-                        </div>
+                        </div> */}
                       </div>
                       <div className="flex space-x-1">
                         <DropdownMenu>
