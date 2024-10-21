@@ -125,54 +125,59 @@ export default function Dashboard() {
   // --------------------------------------------------
 
   /* ----- Calculate  the total percentage of completed tasks defensive ----- */
-  const percentageDefensive =
-    ((tasks ?? []).reduce((acc, task) => {
-      if (task.category === TaskCategory.Defensive) {
-        if (task.status === TaskStatus.DONE) {
-          return acc + 1;
-        }
-      }
-      return acc;
-    }, 0) /
-      filteredTasksDefensive.length) *
-    100;
+  // const percentageDefensive =
+  //   ((tasks ?? []).reduce((acc, task) => {
+  //     if (task.category === TaskCategory.Defensive) {
+  //       if (task.status === TaskStatus.DONE) {
+  //         return acc + 1;
+  //       }
+  //     }
+  //     return acc;
+  //   }, 0) /
+  //     filteredTasksDefensive.length) *
+  //   100;
   /* ----- Calculate  the total percentage of completed tasks general ----- */
-  const percentageGeneral =
-    ((tasks ?? []).reduce((acc, task) => {
-      if (task.category === TaskCategory.General) {
-        if (task.status === TaskStatus.DONE) {
-          return acc + 1;
-        }
-      }
-      return acc;
-    }, 0) /
-      filteredTasksGeneral.length) *
-    100;
+  // const percentageGeneral =
+  //   ((tasks ?? []).reduce((acc, task) => {
+  //     if (task.category === TaskCategory.General) {
+  //       if (task.status === TaskStatus.DONE) {
+  //         return acc + 1;
+  //       }
+  //     }
+  //     return acc;
+  //   }, 0) /
+  //     filteredTasksGeneral.length) *
+  //   100;
 
   /* ----- Calculate  the total percentage of completed tasks offensive ----- */
-  const percentageOffensive =
-    ((tasks ?? []).reduce((acc, task) => {
-      if (task.category === TaskCategory.Offensive) {
-        if (task.status === TaskStatus.DONE) {
-          return acc + 1;
-        }
-      }
-      return acc;
-    }, 0) /
-      filteredTasksOffensive.length) *
-    100;
+  // const percentageOffensive =
+  //   ((tasks ?? []).reduce((acc, task) => {
+  //     if (task.category === TaskCategory.Offensive) {
+  //       if (task.status === TaskStatus.DONE) {
+  //         return acc + 1;
+  //       }
+  //     }
+  //     return acc;
+  //   }, 0) /
+  //     filteredTasksOffensive.length) *
+  //   100;
 
-  //   const percentageGeneral =
-  //     (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
-  //       .length /
-  //       filteredTasksGeneral.length) *
-  //     100;
-  //  /* ----- Calculate  the total percentage of completed tasks offensive ----- */
-  //   const percentageOffensive =
-  //     (filteredTasksOffensive.filter((task) => task.status === TaskStatus.DONE)
-  //       .length /
-  //       filteredTasksOffensive.length) *
-  //     100;
+    const percentageDefensive =
+      (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
+        .length /
+        filteredTasksGeneral.length) *
+      100;
+    const percentageGeneral =
+      (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
+        .length /
+        filteredTasksGeneral.length) *
+      100;
+   /* ----- Calculate  the total percentage of completed tasks offensive ----- */
+    const percentageOffensive =
+      (filteredTasksOffensive.filter((task) => task.status === TaskStatus.DONE)
+        .length /
+        filteredTasksOffensive.length) *
+      100;
 
   return (
     <div className=" flex min-h-full py-3 flex-col justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">

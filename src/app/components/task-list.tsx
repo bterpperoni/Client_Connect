@@ -45,6 +45,7 @@ import {
 } from "@radix-ui/react-popover";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { DialogClose } from "@radix-ui/react-dialog";
+import Loader from "./ui/loader";
 
 type TaskListProps = {
   tasksProps: Task[];
@@ -92,19 +93,13 @@ export default function TaskListComponent({
   ) => {
     setTasks((prevTasks) =>
       prevTasks
-        ? prevTasks.map((task) =>
-            task.id === taskId ? { ...task, status } : task
+        ? prevTasks.map(
+            (task) => (task.id === taskId ? { ...task, status } : task),
+            void updateTaskStatus(taskId, status)
           )
         : null
-    );
-    try {
-      await updateTaskStatus(taskId, status);
-      setTasks(null);
-      fetchTasks();
-    } catch (error) {
-      console.error("Error updating task status", error);
-    } finally {
-    }
+    )
+      await fetchTasks();
   };
 
   const handleEditTask = (taskId: number) => {
@@ -115,8 +110,23 @@ export default function TaskListComponent({
     }
   };
 
+  const handleDeleteTask = async (taskID: number) => {
+    if (tasks) {
+      const taskToDelete = tasks.find((task) => task.id === taskID);
+      if (taskToDelete) {
+        await deleteTask(taskToDelete.id);
+        console.log(taskToDelete);
+        setTasks(null);
+        await fetchTasks();
+      }
+    }
+  };
+  /* --------------------------------------------------------------------------- */
   const filteredTasks = tasks?.filter((task) => task.category === category);
 
+  {
+    loading && <Loader />;
+  }
   return (
     <Card className={`${classList} p-0`} key={category}>
       <CardContent>
@@ -125,9 +135,9 @@ export default function TaskListComponent({
             <CardHeader key={category}>
               <CardTitle>{category}</CardTitle>
             </CardHeader>
-            <p className="text-center text-gray-500 dark:text-gray-400">
+            <div className="text-center text-gray-500 dark:text-gray-400">
               No tasks available for this category.
-            </p>
+            </div>
           </>
         ) : (
           <>
@@ -158,12 +168,6 @@ export default function TaskListComponent({
                           >
                             {task.status.replace("_", " ")}
                           </span>
-
-                          {/* <div className="flex-grow">
-                          <p className="leading-none font-bold text-sm">
-                            {task.title}
-                          </p>
-                        </div> */}
                         </div>
                         <div className="flex space-x-1">
                           <DropdownMenu>
@@ -265,13 +269,14 @@ export default function TaskListComponent({
                                   </p>
                                 </DialogDescription>
                               </DialogHeader>
-                              <Button
-                                variant="destructive"
-                                onClick={() => deleteTask(task.id)}
+                              <DialogClose
+                                onClick={async () =>
+                                  await handleDeleteTask(task.id)
+                                }
                                 className="bg-red-500 hover:bg-red-700 w-[50%] text-center text-white font-bold py-2 px-4 rounded-full"
                               >
                                 Yes
-                              </Button>
+                              </DialogClose>
                               {/* <DialogClose
                                 className="absolute w-auto h-auto p-2 rounded-lg border-2  border-gray-500 PopoverClose ml-4 scale-100"
                                 aria-label="Close"
