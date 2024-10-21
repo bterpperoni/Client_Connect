@@ -1,8 +1,11 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+
 import TaskForm, { type TaskFormData } from "$/app/components/task-form";
 import TaskListComponent from "$/app/components/task-list";
+
 import { type Task, TaskStatus } from "@prisma/client";
 import { useQuery } from "react-query";
 
@@ -14,6 +17,7 @@ enum TaskCategory {
 
 import ChartDonut from "$/app/components/ui/chart-donut";
 import Loader from "$/app/components/ui/loader";
+
 import {
   getAllTasks,
   getTaskById,
@@ -41,6 +45,22 @@ export default function Dashboard() {
     setIsModalOpen(false);
   };
 
+  // UseEffect to fetch tasks when the component is mounted
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        const fetchedTasks = await getAllTasks();
+        setTasks(fetchedTasks);
+      } catch (err) {
+        setError(error);
+      } finally {
+        console.log("TaskList: ", tasks);
+        // No need to filter tasks here
+        setLoading(false);
+      }
+    }
+    fetchTasks();
+  }, [loading, updateTaskData]); // Try with the setTask function into dep
   /* ----- Function to set the task to update ----- */
   async function editTask(taskID: number): Promise<void> {
     if (taskID) {
@@ -62,15 +82,15 @@ export default function Dashboard() {
       content: data.description,
       importanceScore: data.importanceScore,
       deadline: data.deadline,
-      category: data.category,
-    };
+      category: data.category
+  }
     // Update a new task if the task and his ID is not undefined
     try {
       if (taskID !== undefined) {
         if (taskID?.id !== undefined) {
           const updatedTaskData = await updateTaskData(taskID.id, taskTemp);
-          closeModal();
           if (updatedTaskData !== undefined) {
+            closeModal();
             setTasks((prevTasks) =>
               prevTasks.map((task) =>
                 task.id === taskID?.id ? updatedTaskData : task
@@ -97,40 +117,29 @@ export default function Dashboard() {
     (task) => task.category === TaskCategory.Offensive
   );
 
-  // UseEffect to fetch tasks when the component is mounted
-  useEffect(() => {
-    async function fetchTasks() {
-      try {
-        const fetchedTasks = await getAllTasks();
-        setTasks(fetchedTasks);
-      } catch (err) {
-        setError(error);
-      } finally {
-        console.log("TaskList: ", tasks);
-        // No need to filter tasks here
-        setLoading(false);
-      }
-    }
-    fetchTasks();
-  }, [loading, updateTaskData, taskID]);
 
-  const percDefensive =
+
+
+
+  const percentageDefensive =
     (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
       .length /
       filteredTasksDefensive.length) *
     100;
 
-  const percGeneral =
+  const percentageGeneral =
     (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
       .length /
       filteredTasksGeneral.length) *
     100;
 
-  const percOffensive =
+  const percentageOffensive =
     (filteredTasksOffensive.filter((task) => task.status === TaskStatus.DONE)
       .length /
       filteredTasksOffensive.length) *
     100;
+
+
 
   return (
     <div className=" flex min-h-full py-3 flex-col justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
@@ -153,7 +162,7 @@ export default function Dashboard() {
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor(percDefensive ?? 0)}
+                  percentage={Math.floor(percentageDefensive ?? 0)}
                   category={TaskCategory.Defensive}
                   tasks={filteredTasksDefensive}
                 />
@@ -175,13 +184,13 @@ export default function Dashboard() {
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor(percGeneral ?? 0)}
+                  percentage={Math.floor(percentageGeneral ?? 0)}
                   category={TaskCategory.General}
                   tasks={filteredTasksGeneral}
                 />
                 <TaskListComponent
                   tasksProps={tasks ?? []}
-                  onEditTask={(taskID) => editTask(taskID)}
+                  onEditTask={async (taskID) => await editTask(taskID)}
                   category={"General"}
                   classList="w-[95%] rounded-xl my-5"
                 />
@@ -196,13 +205,13 @@ export default function Dashboard() {
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor(percOffensive ?? 0)}
+                  percentage={Math.floor(percentageOffensive ?? 0)}
                   category={TaskCategory.Offensive}
                   tasks={filteredTasksOffensive}
                 />
                 <TaskListComponent
                   tasksProps={tasks ?? []}
-                  onEditTask={(taskID) => editTask(taskID)}
+                  onEditTask={async (taskID) => await editTask(taskID)}
                   category={"Offensive"}
                   classList="w-[95%] rounded-xl my-5"
                 />

@@ -1,7 +1,9 @@
 "use client";
 
 import { ScrollArea } from "$/app/components/ui/scroll-area";
+
 import { deleteTask, getAllTasks } from "$/server/actions/actions";
+
 import {
   Dialog,
   DialogContent,
@@ -10,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "$/app/components/ui/dialog";
+
 import { useState, useEffect } from "react";
 import { Button } from "$/app/components/ui/button";
 import { Trash, MoreHorizontal, Calendar, CalendarIcon } from "lucide-react";
@@ -59,10 +62,16 @@ export default function TaskListComponent({
   onEditTask,
   category,
 }: TaskListProps) {
+
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // States
   const [tasks, setTasks] = useState<Task[] | null>(tasksProps);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     async function fetchTasks() {
@@ -77,7 +86,7 @@ export default function TaskListComponent({
       }
     }
 
-    void fetchTasks();
+     fetchTasks();
   }, [ loading, updateTaskStatus ]);
 
   const handleUpdateTaskStatus = async (
@@ -89,7 +98,37 @@ export default function TaskListComponent({
     if (updatedTask) {
       console.log(updatedTask);
       setTasks(null);
-      setLoading(true);
+      //setLoading(true);
+    }
+
+//   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+
+//   useEffect(() => {
+//     async function loadTasks() {
+//       try {
+//         const fetchedTasks = await getAllTasks();
+//         setTasks(fetchedTasks);
+//       } catch (err: any) {
+//         setError(err.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     }
+//     loadTasks();
+//   }, []);
+
+const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) => {
+    setTasks((prevTasks) =>
+      prevTasks.map(
+        (task) => (task.id === taskId ? { ...task, status } : task),
+      ),
+    );
+  const taskToUpdateStatus = tasks.find((task) => task.id === taskId);
+  if(taskToUpdateStatus){
+    await updateTaskStatus(taskToUpdateStatus.id, taskToUpdateStatus.status);
+    console.log(taskToUpdateStatus);
+    setTasks(null);
+    setLoading(true);
     }
   };
 
@@ -101,6 +140,7 @@ export default function TaskListComponent({
     }
   };
 
+
   const handleDeleteTask = async (taskID: number) => {
     if (tasks) {
       const taskToDelete = tasks.find((task) => task.id === taskID);
@@ -111,13 +151,28 @@ export default function TaskListComponent({
         setLoading(true);
       }
     }
+
+
+  const filteredTasks = tasks.filter((task) => task.category === category);
+
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
   /* --------------------------------------------------------------------------- */
   const filteredTasks = tasks?.filter((task) => task.category === category);
 
+
   {
     loading && <Loader />;
   }
+
+ 
+
   return (
     <Card className={`${classList} p-0`} key={category}>
       <CardContent>
