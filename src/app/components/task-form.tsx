@@ -46,11 +46,9 @@ export type TaskFormData = {
 };
 
 export default function TaskForm({ task, onSubmit }: TaskFormProps) {
-
   const form = useForm<TaskFormData>({
     defaultValues: {
-      category:
-        (task?.category) ?? "General",
+      category: task?.category ?? "General",
       title: task?.title ?? "",
       description: task?.content ?? "",
       importanceScore: task?.importanceScore ?? 1,
@@ -64,16 +62,17 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
   };
 
   return (
-    
-    
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-8 mx-4 mt-4"
+      >
         <FormField
           control={form.control}
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel className="font-bold">Category</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -98,7 +97,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel className="font-bold">Title</FormLabel>
               <FormControl>
                 <Input placeholder="Enter task title" {...field} />
               </FormControl>
@@ -114,7 +113,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel className="font-bold">Description</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Enter task description"
@@ -135,14 +134,14 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
           name="importanceScore"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Importance Score</FormLabel>
+              <FormLabel className="font-bold">Importance Score</FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   min={1}
                   max={5}
                   {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 5))}
+                  onChange={(e) => field.onChange(parseInt(e.target.value, 6))}
                 />
               </FormControl>
               <FormDescription>
@@ -157,7 +156,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
           name="deadline"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Deadline</FormLabel>
+              <FormLabel className="font-bold">Deadline</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -165,7 +164,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
                       variant={"outline"}
                       className={cn(
                         "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-gray-500 dark:text-gray-400",
+                        !field.value && "text-gray-500 dark:text-gray-400"
                       )}
                     >
                       {field.value ? (
@@ -195,7 +194,11 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit">{task ? "Update Task" : "Create Task"}</Button>
+        <div className="flex items-center justify-center w-full">
+          <Button className="w-[50%]" type="submit">
+            {task ? "Update Task" : "Create Task"}
+          </Button>
+        </div>
       </form>
     </Form>
   );

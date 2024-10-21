@@ -18,7 +18,7 @@ type ComponentProps = {
   tasks: Task[];
 };
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#B20000"];
 
 export default function ChartDonut({
   percentage,
@@ -38,7 +38,7 @@ export default function ChartDonut({
   }, [tasks]);
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col mt-4">
       <CardHeader className="items-center pb-0">
         <CardTitle className="text-2xl">{category}</CardTitle>
       </CardHeader>

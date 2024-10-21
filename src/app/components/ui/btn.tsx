@@ -1,27 +1,34 @@
-"use client"
+"use client";
 import Link from "next/link";
 import { type AnchorHTMLAttributes, type ButtonHTMLAttributes } from "react";
 
-
 export type ButtonProps = {
   href?: string;
+  percentageWidth?: number;
   children: React.ReactNode;
+  textSize?: string;
   onClick?: () => void;
   classList?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement> &
   AnchorHTMLAttributes<HTMLAnchorElement>;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Button({ href, onClick, children, classList, ...props }: ButtonProps) {
+function Button({
+  href,
+  percentageWidth,
+  onClick,
+  children,
+  textSize,
+  classList,
+  ...props
+}: ButtonProps) {
   // Si on fournit un href, on rend un lien (<Link>)
   if (href) {
     return (
-      
       <a
         href={href}
         className={`${classList} group relative inline-flex items-center overflow-hidden rounded-full border-2 border-purple-950 bg-white px-12 py-3 text-md font-medium text-purple-950 hover:bg-gray-50 hover:text-white`}
       >
-        
         <span className="duration-400 ease absolute left-0 top-1/2 block h-0 w-full bg-purple-950 opacity-100 transition-all group-hover:top-0 group-hover:h-full"></span>
         <span className="ease absolute right-0 flex h-10 w-10 translate-x-full transform items-center justify-start duration-300 group-hover:translate-x-0">
           <svg
@@ -48,7 +55,7 @@ function Button({ href, onClick, children, classList, ...props }: ButtonProps) {
     return (
       <>
         <button
-          className={`group relative m-1 cursor-pointer overflow-hidden rounded-xl border-2 border-purple-950 px-3.5 py-2 text-md font-medium text-purple-950 ${classList}`}
+          className={`group relative m-1 cursor-pointer overflow-hidden rounded-xl border-2 border-purple-950 px-3.5 py-2 w-[${percentageWidth}%] text-${textSize} text-purple-950 container ${classList}`}
           onClick={onClick}
           {...props}
         >

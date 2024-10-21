@@ -17,16 +17,17 @@ import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions/actions";
+import { getAllTasks } from "$/server/actions/actions";
 
 export default function SimpleNav() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [taskID, setTaskID] = useState<number>();
-  const [isLoading, setIsLoading] = useState(true);
+  /* ----- Task state ----- */
+  const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>();
+  /* ----- Page loading state ----- */
+  const { data: session, status } = useSession();
 
+  /* ----- Modal state ----- */
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -34,7 +35,25 @@ export default function SimpleNav() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+  // ---------------------------------------------------
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      await getAllTasks()
+        .then((tasks) => {
+          
+        })
+        .catch((error) => {
+          console.error("Error fetching tasks", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+    fetchTasks();
+  }, [loading]);
+
+  /* --------- Function to create a task ------------------ */
   async function handleSubmit(data: TaskFormData): Promise<void> {
     const task = {
       title: data.title,
@@ -44,37 +63,28 @@ export default function SimpleNav() {
       category: data.category,
       status: TaskStatus.TODO,
     };
+    closeModal();
+    const newtask = await createTask(task);
     try {
-      await createTask(task);
-      closeModal();
-      alert("OK");
+      setTasks((prevTasks) =>
+            prevTasks ? [...prevTasks, newtask] : tasks
+          );
+      console.log("Task created successfully", newtask)
+      setLoading(true);
     } catch (error) {
       console.error("Error creating task", error);
     }
   }
 
-  const [taskHook, setTaskHook] = useState<Task>();
-
-  useEffect(() => {
-    if (taskHook) {
-      const taskList = tasks?.filter((task) => task.id === taskID);
-      if (taskList) {
-        console.log("task current: ", taskList);
-        setTaskHook(taskList ? taskList[0] : undefined);
-      }
-      openModal();
-    }
-  }, [taskID, tasks]);
-
   return (
-    <nav className="w-full bg-background">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-start h-16 space-x-4">
-          <div className="flex h-full items-center justify-between w-full">
-            <div className="">
+    <>
+      <nav className="w-full inline-flex scroll items-center  bg-background h-[60px]">
+        <div className="container mx-4 px-4">
+          <div className="flex items-center justify-start h-max  space-x-4">
+            <div className="flex h-full items-center justify-between w-full">
               <Sheet>
-                <SheetTrigger>
-                  <AlignJustify />
+                <SheetTrigger className="items-center justify-center">
+                  <AlignJustify className="w-8 h-auto text-center" />
                 </SheetTrigger>
                 <SheetContent side="left">
                   <SheetHeader>
@@ -84,13 +94,13 @@ export default function SimpleNav() {
                   </SheetHeader>
                   <div className="flex justify-between h-full flex-col">
                     <div className="flex flex-col  justify-start mt-6">
-                      <Btn href="/" onClick={() => router.push("/")}>
+                      <Btn href="/" onClick={() => location.assign("/")}>
                         Home
                       </Btn>
                       <br />
                       <Btn
                         href="/dashboard"
-                        onClick={() => router.push("/dashboard")}
+                        onClick={() => location.assign("/dashboard")}
                       >
                         Dashboard
                       </Btn>
@@ -110,7 +120,9 @@ export default function SimpleNav() {
                           Services
                         </SheetTitle>
                         <Btn
-                          classList="mt-4 w-full"
+                          classList="mt-2"
+                          percentageWidth={100}
+                          textSize="md"
                           onClick={() => openModal()}
                         >
                           SCHEDULE TASK
@@ -120,31 +132,37 @@ export default function SimpleNav() {
                   </div>
                 </SheetContent>
               </Sheet>
-            </div>
-            <div onClick={() => openModal()} className="cursor-pointer">
-              {status === "authenticated" ? 
-                <Btn classList=" relative float-right w-[200%]">
-                  SCHEDULE TASK
-                </Btn>: <></>
-              }
-            </div>
 
-            <CustomModal
-              isOpen={isModalOpen}
-              onRequestClose={closeModal}
-              title=""
-            >
-              <div className="mt-20">
+              <div className="cursor-pointer">
+                {status === "authenticated" ? (
+                  <Btn
+                    classList=" px-4 float-right"
+                    percentageWidth={200}
+                    textSize="md"
+                    onClick={() => openModal()}
+                  >
+                    SCHEDULE TASK
+                  </Btn>
+                ) : (
+                  <></>
+                )}
+              </div>
+
+              <CustomModal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                title=""
+              >
                 <TaskForm
                   onSubmit={(data) => handleSubmit(data)}
-                  task={taskHook ?? undefined}
+                  task={undefined}
                 />
-              </div>
-            </CustomModal>
+              </CustomModal>
+            </div>
           </div>
         </div>
-      </div>
+      </nav>
       <Separator />
-    </nav>
+    </>
   );
 }
