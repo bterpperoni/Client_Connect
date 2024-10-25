@@ -142,11 +142,11 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
           </>
         ) : (
           <>
-            <ScrollArea className="h-80 w-full overflow-hidden">
+            <ScrollArea className="h-[21.5rem] w-full overflow-hidden">
               {filteredTasks &&
                 filteredTasks.map((task) => (
                   <>
-                    <CardHeader key={task.id}>
+                    <CardHeader key={task.id} className="p-5">
                       <CardTitle className="text-sm flex-col flex-grow  leading-none font-medium">
                         <div className="font-bold">{task.title}</div>
                         <div>

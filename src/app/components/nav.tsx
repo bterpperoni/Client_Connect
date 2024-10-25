@@ -4,7 +4,7 @@ import { Separator } from "$/app/components/ui/separator";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Btn from "./ui/btn";
-import { AlignJustify } from "lucide-react";
+import { AlignJustify, RefreshCcw } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -18,7 +18,6 @@ import { TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions/actions";
 
 export default function SimpleNav() {
-
   /* ----- Page loading state ----- */
   const { data: session, status } = useSession();
 
@@ -49,7 +48,7 @@ export default function SimpleNav() {
 
       if (newtask) {
         console.log("Task created successfully", newtask);
-        location.reload()
+        location.reload();
       }
     } catch (error) {
       console.error("Error creating task", error);
@@ -115,14 +114,20 @@ export default function SimpleNav() {
 
               <div className="cursor-pointer">
                 {status === "authenticated" ? (
-                  <Btn
-                    classList=" px-4 float-right"
-                    percentageWidth={200}
-                    textSize="md"
-                    onClick={() => openModal()}
-                  >
-                    SCHEDULE TASK
-                  </Btn>
+                  <div className="flex flex-row justify-center items-center">
+                    <RefreshCcw
+                      className="mr-2 border-2 border-black p-2 rounded-xl w-12 h-auto hover:bg-black hover:text-white"
+                      onClick={() => location.reload()}
+                    />
+                    <Btn
+                      classList=" px-4 float-right"
+                      percentageWidth={200}
+                      textSize="md"
+                      onClick={() => openModal()}
+                    >
+                      SCHEDULE TASK
+                    </Btn>
+                  </div>
                 ) : (
                   <></>
                 )}
