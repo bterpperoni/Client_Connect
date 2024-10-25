@@ -42,6 +42,7 @@ import { Task } from "@prisma/client";
 
 import { DialogClose } from "@radix-ui/react-dialog";
 import Loader from "./ui/loader";
+import { useSession } from "next-auth/react";
 
 type TaskListProps = {
   tasksProps: Task[];
@@ -62,9 +63,6 @@ export default function TaskListComponent({
   onEditTask,
   category,
 }: TaskListProps) {
-
-
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // States
@@ -72,6 +70,7 @@ export default function TaskListComponent({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { data: session } = useSession();
 
   useEffect(() => {
     async function fetchTasks() {
@@ -86,15 +85,19 @@ export default function TaskListComponent({
       }
     }
 
-     fetchTasks();
-  }, [ loading, updateTaskStatus ]);
+    fetchTasks();
+  }, [loading, updateTaskStatus]);
 
-
-const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) => {
+  const handleUpdateTaskStatus = async (
+    taskId: number,
+    status: Task["status"]
+  ) => {
     setTasks((prevTasks) =>
-      prevTasks ? prevTasks.map(
-        (task) => (task.id === taskId ? { ...task, status } : task),
-      ) : null,
+      prevTasks
+        ? prevTasks.map((task) =>
+            task.id === taskId ? { ...task, status } : task
+          )
+        : null
     );
     const updatedTaskStatus = await updateTaskStatus(taskId, status);
     console.log(updatedTaskStatus);
@@ -110,7 +113,6 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
     }
   };
 
-
   const handleDeleteTask = async (taskID: number) => {
     if (tasks) {
       const taskToDelete = tasks.find((task) => task.id === taskID);
@@ -121,9 +123,7 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
         setLoading(true);
       }
     }
-  }
-
-
+  };
 
   /* --------------------------------------------------------------------------- */
   const filteredTasks = tasks?.filter((task) => task.category === category);
@@ -142,7 +142,7 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
           </>
         ) : (
           <>
-            <ScrollArea className="h-[21.5rem] w-full overflow-hidden">
+            <ScrollArea className="h-[21rem] w-full overflow-hidden">
               {filteredTasks &&
                 filteredTasks.map((task) => (
                   <>
@@ -156,105 +156,125 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
                         </div>
                       </CardTitle>
                     </CardHeader>
-                    <ul className="space-y-2">
-                      <li
-                        key={task.id}
-                        className="flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950"
-                      >
-                        <div className="flex flex-grow items-center space-x-2">
-                          <span
-                            className={`rounded-full px-1 py-1 text-xs font-semibold ${
-                              statusColors[task.status]
-                            }`}
-                          >
-                            {task.status.replace("_", " ")}
-                          </span>
-                        </div>
-                        <div className="flex space-x-1">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-3 w-4" />
-                                <span className="sr-only">Open menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onSelect={() => handleEditTask(task.id)}
-                              >
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuLabel>
-                                Update Status
-                              </DropdownMenuLabel>
-                              <DropdownMenuItem>
-                                <Select
-                                  value={task.status}
-                                  onValueChange={async (
-                                    value: Task["status"]
-                                  ) =>
-                                    await handleUpdateTaskStatus(task.id, value)
-                                  }
-                                >
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Status" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="TODO">Todo</SelectItem>
-                                    <SelectItem value="IN_PROGRESS">
-                                      In Progress
-                                    </SelectItem>
-                                    <SelectItem value="DONE">Done</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                          <Dialog>
-                            <DialogTrigger>
-                              <Trash className="h-4 w-4" />
-                            </DialogTrigger>
-                            <DialogContent className="items-center flex flex-col justify-center">
-                              <DialogHeader className="mt-3 ">
-                                <DialogTitle className="text-lg text-center mb-4 leading-none tracking-tight">
-                                  <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-y-2 border-red-800">
-                                    Are you sure you want to delete the task ?
-                                  </div>
-                                  <br />
-                                  <span className="text-black-800 space-x-1 font-semibold text-lg p-1">
-                                    You'll be unable to undone this action.
-                                  </span>
-                                </DialogTitle>
-                                <DialogDescription>
-                                  <p className="text-sm color-gray-600 text-center">
-                                    I understood & I am sure to delete the task
-                                    is my own responsibility.
-                                  </p>
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogClose
-                                onClick={async () =>
-                                  await handleDeleteTask(task.id)
-                                }
-                                className="bg-red-500 hover:bg-red-700 w-[50%] text-center text-white font-bold py-2 px-4 rounded-full"
-                              >
-                                Yes
-                              </DialogClose>
-                              {/* <DialogClose
+                    <CardContent>
+                      <ul className="space-y-2">
+                        <li
+                          key={task.id}
+                          className="flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950"
+                        >
+                          <div className="flex flex-grow items-center space-x-2">
+                            <span
+                              className={`rounded-full px-1 py-1 text-xs font-semibold ${
+                                statusColors[task.status]
+                              }`}
+                            >
+                              {task.status.replace("_", " ")}
+                            </span>
+                          </div>
+                          <div className="flex justify-center items-center">
+                            <CalendarIcon className="h-4 w-4" />
+                            <span className="text-xs text-gray-500 text-center">
+                              {task.deadline
+                                ? task.deadline.toDateString()
+                                : "No deadline"}
+                            </span>
+                          </div>
+                          {session && (
+                            <div className="flex space-x-1">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <MoreHorizontal className="h-3 w-4" />
+                                    <span className="sr-only">Open menu</span>
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onSelect={() => handleEditTask(task.id)}
+                                  >
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuLabel>
+                                    Update Status
+                                  </DropdownMenuLabel>
+                                  <DropdownMenuItem>
+                                    <Select
+                                      value={task.status}
+                                      onValueChange={async (
+                                        value: Task["status"]
+                                      ) =>
+                                        await handleUpdateTaskStatus(
+                                          task.id,
+                                          value
+                                        )
+                                      }
+                                    >
+                                      <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Status" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="TODO">
+                                          Todo
+                                        </SelectItem>
+                                        <SelectItem value="IN_PROGRESS">
+                                          In Progress
+                                        </SelectItem>
+                                        <SelectItem value="DONE">
+                                          Done
+                                        </SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                              <Dialog>
+                                <DialogTrigger>
+                                  <Trash className="h-4 w-4" />
+                                </DialogTrigger>
+                                <DialogContent className="items-center flex flex-col justify-center">
+                                  <DialogHeader className="mt-2 ">
+                                    <DialogTitle className="text-lg text-center mb-4 leading-none tracking-tight">
+                                      <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-y-2 border-red-800">
+                                        Are you sure you want to delete the task
+                                        ?
+                                      </div>
+                                      <br />
+                                      <span className="text-black-800 space-x-1 font-semibold text-lg p-1">
+                                        You'll be unable to undone this action.
+                                      </span>
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      <p className="text-sm color-gray-600 text-center">
+                                        I understood & I am sure to delete the
+                                        task is my own responsibility.
+                                      </p>
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <DialogClose
+                                    onClick={async () =>
+                                      await handleDeleteTask(task.id)
+                                    }
+                                    className="bg-red-500 hover:bg-red-700 w-[50%] text-center text-white font-bold py-2 px-4 rounded-full"
+                                  >
+                                    Yes
+                                  </DialogClose>
+                                  {/* <DialogClose
                                 className="absolute w-auto h-auto p-2 rounded-lg border-2  border-gray-500 PopoverClose ml-4 scale-100"
                                 aria-label="Close"
                               >
                                 <Cross2Icon />
                               </DialogClose> */}
-                            </DialogContent>
-                          </Dialog>
-                          <span className="sr-only">Delete task</span>
-                        </div>
-                      </li>
-                    </ul>
+                                </DialogContent>
+                              </Dialog>
+                              <span className="sr-only">Delete task</span>
+                            </div>
+                          )}
+                        </li>
+                      </ul>
+                    </CardContent>
                   </>
                 ))}
             </ScrollArea>

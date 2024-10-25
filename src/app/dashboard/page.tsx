@@ -179,7 +179,7 @@ setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / f
           {/* 1. Category DEFENSIVE */}
           <div className="col-span-1 group h-[88vh] flex flex-col items-center bg-white rounded-xl">
             {loading ? (
-              <Loader size={100} className="my-15 text-black" />
+              <Loader size={100} className="my-16 text-black" />
             ) : (
               <>
                 <ChartDonut
@@ -192,7 +192,7 @@ setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / f
                   tasksProps={tasks ?? []}
                   onEditTask={async (taskID) => await editTask(taskID)}
                   category={"Defensive"}
-                  classList="w-[95%] rounded-xl mt-5"
+                  classList="w-[95%] rounded-xl mt-2"
                 />
               </>
             )}
@@ -201,7 +201,7 @@ setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / f
           {/* 2 Category GENERAL -----------------------------------------------------------------*/}
           <div className="col-span-1 group flex h-[88vh] flex-col items-center rounded-xl bg-white">
             {loading ? (
-              <Loader size={100} className="my-15 text-black"></Loader>
+              <Loader size={100} className="my-16 text-black"></Loader>
             ) : (
               <>
                 <ChartDonut
@@ -223,7 +223,7 @@ setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / f
           {/* 3 Category OFFENSIVE */}
           <div className="col-span-1 flex h-[88vh] flex-col items-center bg-white rounded-xl">
             {loading ? (
-              <Loader size={100} className="my-15 text-black"></Loader>
+              <Loader size={100} className="my-16 text-black"></Loader>
             ) : (
               <>
                 <ChartDonut
