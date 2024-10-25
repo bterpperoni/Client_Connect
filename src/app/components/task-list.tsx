@@ -89,47 +89,17 @@ export default function TaskListComponent({
      fetchTasks();
   }, [ loading, updateTaskStatus ]);
 
-  const handleUpdateTaskStatus = async (
-    taskId: number,
-    status: Task["status"]
-  ) => {
-    const updatedTask = await updateTaskStatus(taskId, status);
-
-    if (updatedTask) {
-      console.log(updatedTask);
-      setTasks(null);
-      //setLoading(true);
-    }
-
-//   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-
-//   useEffect(() => {
-//     async function loadTasks() {
-//       try {
-//         const fetchedTasks = await getAllTasks();
-//         setTasks(fetchedTasks);
-//       } catch (err: any) {
-//         setError(err.message);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-//     loadTasks();
-//   }, []);
 
 const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) => {
     setTasks((prevTasks) =>
-      prevTasks.map(
+      prevTasks ? prevTasks.map(
         (task) => (task.id === taskId ? { ...task, status } : task),
-      ),
+      ) : null,
     );
-  const taskToUpdateStatus = tasks.find((task) => task.id === taskId);
-  if(taskToUpdateStatus){
-    await updateTaskStatus(taskToUpdateStatus.id, taskToUpdateStatus.status);
-    console.log(taskToUpdateStatus);
+    const updatedTaskStatus = await updateTaskStatus(taskId, status);
+    console.log(updatedTaskStatus);
     setTasks(null);
     setLoading(true);
-    }
   };
 
   const handleEditTask = (taskId: number) => {
@@ -151,27 +121,12 @@ const handleUpdateTaskStatus = async (taskId: number, status: Task["status"]) =>
         setLoading(true);
       }
     }
-
-
-  const filteredTasks = tasks.filter((task) => task.category === category);
-
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-  /* --------------------------------------------------------------------------- */
-  const filteredTasks = tasks?.filter((task) => task.category === category);
-
-
-  {
-    loading && <Loader />;
   }
 
- 
+
+
+  /* --------------------------------------------------------------------------- */
+  const filteredTasks = tasks?.filter((task) => task.category === category);
 
   return (
     <Card className={`${classList} p-0`} key={category}>

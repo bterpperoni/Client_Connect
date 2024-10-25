@@ -2,8 +2,7 @@
 
 import { Separator } from "$/app/components/ui/separator";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Btn from "./ui/btn";
 import { AlignJustify } from "lucide-react";
 import {
@@ -15,14 +14,11 @@ import {
 } from "$/app/components/ui/sheet";
 import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
-import { Task, TaskStatus } from "@prisma/client";
+import { TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions/actions";
-import { getAllTasks } from "$/server/actions/actions";
 
 export default function SimpleNav() {
-  /* ----- Task state ----- */
-  const [loading, setLoading] = useState(true);
-  const [tasks, setTasks] = useState<Task[]>();
+
   /* ----- Page loading state ----- */
   const { data: session, status } = useSession();
 
@@ -37,22 +33,6 @@ export default function SimpleNav() {
   };
   // ---------------------------------------------------
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      await getAllTasks()
-        .then((tasks) => {
-          
-        })
-        .catch((error) => {
-          console.error("Error fetching tasks", error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
-    fetchTasks();
-  }, [loading]);
-
   /* --------- Function to create a task ------------------ */
   async function handleSubmit(data: TaskFormData): Promise<void> {
     const task = {
@@ -64,13 +44,13 @@ export default function SimpleNav() {
       status: TaskStatus.TODO,
     };
     closeModal();
-    const newtask = await createTask(task);
     try {
-      setTasks((prevTasks) =>
-            prevTasks ? [...prevTasks, newtask] : tasks
-          );
-      console.log("Task created successfully", newtask)
-      setLoading(true);
+      const newtask = await createTask(task);
+
+      if (newtask) {
+        console.log("Task created successfully", newtask);
+        location.reload()
+      }
     } catch (error) {
       console.error("Error creating task", error);
     }

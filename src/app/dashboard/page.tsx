@@ -26,6 +26,15 @@ import {
 import CustomModal from "$/app/components/ui/modal";
 
 export default function Dashboard() {
+
+const [ filterDef, setFilterDef ] = useState<Task[]>([]);
+const [ filterGen, setFilterGen ] = useState<Task[]>([]);
+const [ filterOff, setFilterOff ] = useState<Task[]>([]);
+
+const [ pDef , setPDef ] = useState<number>();
+const [ pGen, setPGen ] = useState<number>();
+const [ pOff, setPOff ] = useState<number>();
+
   /* ----- Task state ----- */
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskID, setTaskID] = useState<Task | undefined>();
@@ -62,6 +71,8 @@ export default function Dashboard() {
     fetchTasks();
   }, [loading, updateTaskData]); // Try with the setTask function into dep
   /* ----- Function to set the task to update ----- */
+
+
   async function editTask(taskID: number): Promise<void> {
     if (taskID) {
       console.log("TaskID: " + taskID);
@@ -107,37 +118,47 @@ export default function Dashboard() {
   }
 
   /* ----- Calculate  the total percentage of completed tasks offensive ----- */
-  const filteredTasksDefensive = tasks.filter(
-    (task) => task.category === TaskCategory.Defensive
-  );
-  const filteredTasksGeneral = tasks.filter(
-    (task) => task.category === TaskCategory.General
-  );
-  const filteredTasksOffensive = tasks.filter(
-    (task) => task.category === TaskCategory.Offensive
-  );
+useEffect( () => {
+
+setFilterDef( tasks.filter((task) => task.category === TaskCategory.Defensive));
+setFilterGen( tasks.filter((task) => task.category === TaskCategory.General));
+setFilterOff( tasks.filter((task) => task.category === TaskCategory.Offensive));
+
+setPDef( (filterDef.filter((task) => task.status === TaskStatus.DONE).length / filterDef.length) * 100);
+setPGen( (filterGen.filter((task) => task.status === TaskStatus.DONE).length / filterGen.length) * 100);
+setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / filterOff.length) * 100);
+
+}, [tasks]);
+
+  //   const filteredTasksDefensive = tasks.filter(
+  //   (task) => task.category === TaskCategory.Defensive
+  // );
+  // const filteredTasksGeneral = tasks.filter(
+  //   (task) => task.category === TaskCategory.General
+  // );
+  // const filteredTasksOffensive = tasks.filter(
+  //   (task) => task.category === TaskCategory.Offensive
+  // );
+  // const percentageDefensive =
+  //   (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
+  //     .length /
+  //     filteredTasksDefensive.length) *
+  //   100;
+
+  // const percentageGeneral =
+  //   (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
+  //     .length /
+  //     filteredTasksGeneral.length) *
+  //   100;
+
+  // const percentageOffensive =
+  //   (filteredTasksOffensive.filter((task) => task.status === TaskStatus.DONE)
+  //     .length /
+  //     filteredTasksOffensive.length) *
+  //   100;
 
 
 
-
-
-  const percentageDefensive =
-    (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
-      .length /
-      filteredTasksDefensive.length) *
-    100;
-
-  const percentageGeneral =
-    (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
-      .length /
-      filteredTasksGeneral.length) *
-    100;
-
-  const percentageOffensive =
-    (filteredTasksOffensive.filter((task) => task.status === TaskStatus.DONE)
-      .length /
-      filteredTasksOffensive.length) *
-    100;
 
 
 
@@ -158,20 +179,20 @@ export default function Dashboard() {
           {/* 1. Category DEFENSIVE */}
           <div className="col-span-1 group h-[88vh] flex flex-col items-center bg-white rounded-xl">
             {loading ? (
-              <Loader size={100} className="my-10 text-black"></Loader>
+              <Loader size={100} className="my-15 text-black" />
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor(percentageDefensive ?? 0)}
+                  percentage={Math.floor( pDef ?? 0)}
                   category={TaskCategory.Defensive}
-                  tasks={filteredTasksDefensive}
+                  tasks={ filterDef }
                 />
                 <TaskListComponent
                   key={taskID?.id}
                   tasksProps={tasks ?? []}
                   onEditTask={async (taskID) => await editTask(taskID)}
                   category={"Defensive"}
-                  classList="w-[95%] rounded-xl my-5"
+                  classList="w-[95%] rounded-xl mt-5"
                 />
               </>
             )}
@@ -180,19 +201,20 @@ export default function Dashboard() {
           {/* 2 Category GENERAL -----------------------------------------------------------------*/}
           <div className="col-span-1 group flex h-[88vh] flex-col items-center rounded-xl bg-white">
             {loading ? (
-              <Loader size={100} className="my-10 text-black"></Loader>
+              <Loader size={100} className="my-15 text-black"></Loader>
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor(percentageGeneral ?? 0)}
+                  percentage={Math.floor(  pGen ?? 0)}
+
                   category={TaskCategory.General}
-                  tasks={filteredTasksGeneral}
+                  tasks={ filterGen }
                 />
                 <TaskListComponent
                   tasksProps={tasks ?? []}
                   onEditTask={async (taskID) => await editTask(taskID)}
                   category={"General"}
-                  classList="w-[95%] rounded-xl my-5"
+                  classList="w-[95%] rounded-xl mt-5"
                 />
               </>
             )}
@@ -201,19 +223,19 @@ export default function Dashboard() {
           {/* 3 Category OFFENSIVE */}
           <div className="col-span-1 flex h-[88vh] flex-col items-center bg-white rounded-xl">
             {loading ? (
-              <Loader size={100} className="my-10 text-black"></Loader>
+              <Loader size={100} className="my-15 text-black"></Loader>
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor(percentageOffensive ?? 0)}
+                  percentage={Math.floor( pOff ?? 0)}
                   category={TaskCategory.Offensive}
-                  tasks={filteredTasksOffensive}
+                  tasks={  filterOff }
                 />
                 <TaskListComponent
                   tasksProps={tasks ?? []}
                   onEditTask={async (taskID) => await editTask(taskID)}
                   category={"Offensive"}
-                  classList="w-[95%] rounded-xl my-5"
+                  classList="w-[95%] rounded-xl mt-5"
                 />
               </>
             )}
