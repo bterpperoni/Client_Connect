@@ -2,7 +2,12 @@
 
 import { Separator } from "$/app/components/ui/separator";
 import { useSession } from "next-auth/react";
-import { QueryClient, QueryClientProvider, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { useState } from "react";
 import Btn from "./ui/btn";
@@ -28,37 +33,39 @@ export default function SimpleNav() {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const { mutate } = useMutation({
-    mutationKey: ["tasks"],
-    mutationFn: async ({ formdata }: { formdata: TaskFormData }) => {
-      try {
-        const newTask = {
-          id: 0,
-          title: formdata.title,
-          content: formdata.description,
-          importanceScore: formdata.importanceScore,
-          deadline: formdata.deadline,
-          category: formdata.category,
-          status: TaskStatus.TODO,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        await createTask(newTask);
-        return newTask;
-      } catch (error) {
-        throw new Error("Task creation failed");
-      }
+  const { mutate } = useMutation(
+    {
+      mutationKey: ["tasks"],
+      mutationFn: async ({ formdata }: { formdata: TaskFormData }) => {
+        try {
+          const newTask = {
+            title: formdata.title,
+            content: formdata.description,
+            importanceScore: formdata.importanceScore,
+            deadline: formdata.deadline,
+            category: formdata.category,
+            status: TaskStatus.TODO,
+          };
+          await createTask(newTask);
+          return newTask;
+        } catch (error) {
+          throw new Error("Task creation failed");
+        }
+      },
+      onSuccess: () => {
+        closeModal();
+        console.log("Task created successfully");
+        toast.success(" Task created successfully");
+      },
+      onError: (error) => {
+        console.log(error);
+        toast.error(
+          "Une erreur est survenue lors de l'inscription à la newsletter"
+        );
+      },
     },
-    onSuccess: () => {
-      toast.success("Vous êtes maintenant inscrit à la newsletter");
-    },
-    onError: (error) => {
-      console.log(error);
-      toast.error(
-        "Une erreur est survenue lors de l'inscription à la newsletter"
-      );
-    },
-  }, queryClient);
+    queryClient
+  );
 
   return (
     <>
@@ -132,7 +139,17 @@ export default function SimpleNav() {
               title=""
             >
               <TaskForm
-                onSubmit={(data) => mutate({ formdata: data })}
+                onSubmit={async (data) => {
+                  const newd = mutate({ formdata: data });
+                  queryClient.setQueryData(
+                    ["tasks"],
+                    (oldTasks: Task[] | undefined) => {
+                      if (!oldTasks) return [];
+                      return [...oldTasks, newd];
+                    }
+                  );
+                  closeModal();
+                }}
                 task={undefined}
               />
             </CustomModal>
