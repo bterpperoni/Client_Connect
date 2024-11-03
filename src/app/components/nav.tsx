@@ -2,10 +2,12 @@
 
 import { Separator } from "$/app/components/ui/separator";
 import { useSession } from "next-auth/react";
-import { useQueryClient, useMutation } from "react-query";
+import { QueryClient, QueryClientProvider, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { useState } from "react";
 import Btn from "./ui/btn";
 import { AlignJustify, RefreshCcw } from "lucide-react";
+import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
@@ -21,55 +23,42 @@ import { createTask } from "$/server/actions/actions";
 export default function SimpleNav() {
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation(createTask, {
-    onSuccess: (newTask) => {
-      // Invalide et refetch la requête "tasks"
-      queryClient.invalidateQueries("tasks");
-      // Optionnel : vous pouvez également mettre à jour les données en cache
-      queryClient.setQueryData("tasks", (oldTasks: Task[] = []) => [
-        ...oldTasks,
-        { ...newTask, id: Date.now(), createdAt: new Date(), updatedAt: new Date(), deadline: newTask.deadline ?? null },
-      ]);
-    },
-    onMutate: (newTask) => {
-      // Annuler la requête "tasks" pour éviter de la refetcher
-      queryClient.cancelQueries("tasks");
-      // Récupérer les données actuelles pour pouvoir les restaurer plus tard
-      const previousTasks = queryClient.getQueryData<Task[]>("tasks");
-      // Ajouter la nouvelle tâche à la liste
-      queryClient.setQueryData("tasks", (oldTasks: Task[] = []) => [
-        ...oldTasks,
-        { ...newTask, id: Date.now(), createdAt: new Date(), updatedAt: new Date(), deadline: newTask.deadline ?? null },
-      ]);
-      // Retourner une fonction de rollback
-      return () => queryClient.setQueryData("tasks", previousTasks);
-    },
-  });
+  const queryClient = new QueryClient();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  async function handleSubmit(data: TaskFormData): Promise<void> {
-    const task = {
-      title: data.title,
-      content: data.description,
-      importanceScore: data.importanceScore,
-      deadline: data.deadline,
-      category: data.category,
-      status: TaskStatus.TODO,
-    };
-
-    try {
-      await mutation.mutateAsync(task);
-    } catch (error) {
-      console.error("Error creating task", error);
-    } finally {
-      closeModal();
-      location.reload();
-    }
-  }
+  const { mutate } = useMutation({
+    mutationKey: ["tasks"],
+    mutationFn: async ({ formdata }: { formdata: TaskFormData }) => {
+      try {
+        const newTask = {
+          id: 0,
+          title: formdata.title,
+          content: formdata.description,
+          importanceScore: formdata.importanceScore,
+          deadline: formdata.deadline,
+          category: formdata.category,
+          status: TaskStatus.TODO,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        await createTask(newTask);
+        return newTask;
+      } catch (error) {
+        throw new Error("Task creation failed");
+      }
+    },
+    onSuccess: () => {
+      toast.success("Vous êtes maintenant inscrit à la newsletter");
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error(
+        "Une erreur est survenue lors de l'inscription à la newsletter"
+      );
+    },
+  }, queryClient);
 
   return (
     <>
@@ -142,7 +131,10 @@ export default function SimpleNav() {
               onRequestClose={closeModal}
               title=""
             >
-              <TaskForm onSubmit={(data) => handleSubmit(data)} task={undefined} />
+              <TaskForm
+                onSubmit={(data) => mutate({ formdata: data })}
+                task={undefined}
+              />
             </CustomModal>
           </div>
         </div>

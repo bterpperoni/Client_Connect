@@ -4,8 +4,6 @@ import "$/lib/styles/globals.css";
 import SimpleNav from "$/app/components/nav";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { getAllTasks } from "$/server/actions/actions";
-import { Task } from "@prisma/client";
 
 export default function RootLayout({
   children,

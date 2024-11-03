@@ -25,14 +25,7 @@ export async function getTaskById(id: number): Promise<Task | null> {
 }
 
 // Fonction pour créer une nouvelle tâche
-export async function createTask(data: {
-  title: string;
-  content: string;
-  importanceScore: number;
-  deadline?: Date | null;
-  status: TaskStatus;
-  category: TaskCategory;
-}): Promise<Task> {
+export async function createTask(data: Task): Promise<Task> {
   try {
     const newTask = await db.task.create({
       data,

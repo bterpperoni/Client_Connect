@@ -316,7 +316,8 @@ import {
 } from "$/app/components/ui/dropdown-menu";
 import { Task } from "@prisma/client";
 import Loader from "./ui/loader";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
+import { QueryClient } from "@tanstack/react-query";
 
 type TaskListProps = {
   tasksProps: Task[];
@@ -339,11 +340,11 @@ export default function TaskListComponent({
   category,
   setTasks,
 }: TaskListProps) {
-  const queryClient = useQueryClient();
+  const queryClient = new QueryClient();
 
   const mutationDelete = useMutation(deleteTask, {
     onSuccess: () => {
-      queryClient.invalidateQueries("tasks");
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 
@@ -352,7 +353,7 @@ export default function TaskListComponent({
       updateTaskStatus(id, status),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("tasks");
+        queryClient.invalidateQueries( { queryKey: ["tasks"] });
       },
     }
   );
@@ -386,7 +387,7 @@ export default function TaskListComponent({
 
   if (!tasksProps) {
     return (
-      <div className="flex flex-col items-center justify-center w-max ">
+      <div className="flex flex-col items-center justify-centers w-full ">
         <Loader size={10} />
       </div>
     );

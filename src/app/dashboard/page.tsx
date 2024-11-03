@@ -287,7 +287,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-grow top-24 items-center justify-center w-max ">
+      <div className="flex items-center justify-center w-full h-[90vh] ">
         <Loader size={100} />
       </div>
     );
