@@ -43,14 +43,15 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String         @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?        @unique
     emailVerified DateTime?
     image         String?
-    role          UserRole  @default(USER)
     accounts      Account[]
     sessions      Session[]
+    createdAt     DateTime       @default(now())
+    role          UserRole       @default(USER)
 }
 
 model VerificationToken {
@@ -68,7 +69,7 @@ model Task {
     importanceScore Int          @default(0)
     deadline        DateTime?
     status          TaskStatus   @default(TODO)
-    category        TaskCategory 
+    category        TaskCategory
     createdAt       DateTime     @default(now())
     updatedAt       DateTime     @updatedAt
 }
@@ -78,6 +79,14 @@ enum UserRole {
     ADMIN
 }
 
+// model UserPrivilege {
+//     id      Int     @id @default(autoincrement())
+//     userId  String  @unique
+//     isUser  Boolean @default(true)
+//     isAdmin Boolean @default(false)
+//     user    User?   @relation(fields: [userId], references: [id])
+// }
+
 enum TaskStatus {
     TODO
     IN_PROGRESS
@@ -85,8 +94,7 @@ enum TaskStatus {
 }
 
 enum TaskCategory {
-    Defensive   
+    Defensive
     General
     Offensive
 }
-

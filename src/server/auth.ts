@@ -7,7 +7,6 @@ import {
 import { type Adapter } from "next-auth/adapters";
 
 import { db } from "$/server/db";
-import { UserRole } from "@prisma/client";
 import Google from "next-auth/providers/google";
 
 /**
@@ -21,7 +20,6 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      role: UserRole;
     } & DefaultSession["user"];
   }
 
@@ -51,6 +49,13 @@ export const authOptions: NextAuthOptions = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
     /**
      * ...add more providers here.

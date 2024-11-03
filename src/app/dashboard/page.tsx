@@ -26,17 +26,16 @@ import {
 import CustomModal from "$/app/components/ui/modal";
 
 export default function Dashboard() {
+  const [filterDef, setFilterDef] = useState<Task[]>([]);
+  const [filterGen, setFilterGen] = useState<Task[]>([]);
+  const [filterOff, setFilterOff] = useState<Task[]>([]);
 
-const [ filterDef, setFilterDef ] = useState<Task[]>([]);
-const [ filterGen, setFilterGen ] = useState<Task[]>([]);
-const [ filterOff, setFilterOff ] = useState<Task[]>([]);
-
-const [ pDef , setPDef ] = useState<number>();
-const [ pGen, setPGen ] = useState<number>();
-const [ pOff, setPOff ] = useState<number>();
+  const [pDef, setPDef] = useState<number>();
+  const [pGen, setPGen] = useState<number>();
+  const [pOff, setPOff] = useState<number>();
 
   /* ----- Task state ----- */
-  const [tasks, setTasks] = useState<Task[]>([]);
+
   const [taskID, setTaskID] = useState<Task | undefined>();
 
   /* ----- Page loading state ----- */
@@ -53,7 +52,7 @@ const [ pOff, setPOff ] = useState<number>();
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
+  const [tasks, setTasks] = useState<Task[]>([]);
   // UseEffect to fetch tasks when the component is mounted
   useEffect(() => {
     async function fetchTasks() {
@@ -68,10 +67,10 @@ const [ pOff, setPOff ] = useState<number>();
         setLoading(false);
       }
     }
-    fetchTasks();
-  }, [loading, updateTaskData]); // Try with the setTask function into dep
-  /* ----- Function to set the task to update ----- */
 
+    fetchTasks();
+  }, [updateTaskData]); // Try with the setTask function into dep
+  /* ----- Function to set the task to update ----- */
 
   async function editTask(taskID: number): Promise<void> {
     if (taskID) {
@@ -79,9 +78,9 @@ const [ pOff, setPOff ] = useState<number>();
       await getTaskById(taskID).then((task) => {
         if (task !== null) {
           setTaskID(task);
+          openModal();
         }
       });
-      openModal();
     }
   }
 
@@ -93,8 +92,8 @@ const [ pOff, setPOff ] = useState<number>();
       content: data.description,
       importanceScore: data.importanceScore,
       deadline: data.deadline,
-      category: data.category
-  }
+      category: data.category,
+    };
     // Update a new task if the task and his ID is not undefined
     try {
       if (taskID !== undefined) {
@@ -110,57 +109,11 @@ const [ pOff, setPOff ] = useState<number>();
             console.log("Task updated successfully", updatedTaskData);
           }
         }
-        setLoading(true);
       }
     } catch (error) {
       console.error("Error creating task", error);
     }
   }
-
-  /* ----- Calculate  the total percentage of completed tasks offensive ----- */
-useEffect( () => {
-
-setFilterDef( tasks.filter((task) => task.category === TaskCategory.Defensive));
-setFilterGen( tasks.filter((task) => task.category === TaskCategory.General));
-setFilterOff( tasks.filter((task) => task.category === TaskCategory.Offensive));
-
-setPDef( (filterDef.filter((task) => task.status === TaskStatus.DONE).length / filterDef.length) * 100);
-setPGen( (filterGen.filter((task) => task.status === TaskStatus.DONE).length / filterGen.length) * 100);
-setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / filterOff.length) * 100);
-
-}, [tasks]);
-
-  //   const filteredTasksDefensive = tasks.filter(
-  //   (task) => task.category === TaskCategory.Defensive
-  // );
-  // const filteredTasksGeneral = tasks.filter(
-  //   (task) => task.category === TaskCategory.General
-  // );
-  // const filteredTasksOffensive = tasks.filter(
-  //   (task) => task.category === TaskCategory.Offensive
-  // );
-  // const percentageDefensive =
-  //   (filteredTasksDefensive.filter((task) => task.status === TaskStatus.DONE)
-  //     .length /
-  //     filteredTasksDefensive.length) *
-  //   100;
-
-  // const percentageGeneral =
-  //   (filteredTasksGeneral.filter((task) => task.status === TaskStatus.DONE)
-  //     .length /
-  //     filteredTasksGeneral.length) *
-  //   100;
-
-  // const percentageOffensive =
-  //   (filteredTasksOffensive.filter((task) => task.status === TaskStatus.DONE)
-  //     .length /
-  //     filteredTasksOffensive.length) *
-  //   100;
-
-
-
-
-
 
   return (
     <div className=" flex min-h-full py-3 flex-col justify-center bg-gradient-to-b from-[#553ec8] to-[#550bb6] text-white">
@@ -183,9 +136,9 @@ setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / f
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor( pDef ?? 0)}
+                  percentage={Math.floor(pDef ?? 0)}
                   category={TaskCategory.Defensive}
-                  tasks={ filterDef }
+                  tasks={filterDef}
                 />
                 <TaskListComponent
                   key={taskID?.id}
@@ -205,10 +158,9 @@ setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / f
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor(  pGen ?? 0)}
-
+                  percentage={Math.floor(pGen ?? 0)}
                   category={TaskCategory.General}
-                  tasks={ filterGen }
+                  tasks={filterGen}
                 />
                 <TaskListComponent
                   tasksProps={tasks ?? []}
@@ -227,9 +179,9 @@ setPOff( (filterOff.filter((task) => task.status === TaskStatus.DONE).length / f
             ) : (
               <>
                 <ChartDonut
-                  percentage={Math.floor( pOff ?? 0)}
+                  percentage={Math.floor(pOff ?? 0)}
                   category={TaskCategory.Offensive}
-                  tasks={  filterOff }
+                  tasks={filterOff}
                 />
                 <TaskListComponent
                   tasksProps={tasks ?? []}

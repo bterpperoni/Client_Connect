@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "$/app/components/ui/dialog";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "$/app/components/ui/button";
 import { Trash, MoreHorizontal, Calendar, CalendarIcon } from "lucide-react";
 import {
@@ -67,26 +67,24 @@ export default function TaskListComponent({
 
   // States
   const [tasks, setTasks] = useState<Task[] | null>(tasksProps);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   const { data: session } = useSession();
 
-  useEffect(() => {
-    async function fetchTasks() {
-      try {
-        const fetchedTasks = await getAllTasks();
-        setTasks(fetchedTasks);
-      } catch (err) {
-        setError(error);
-      } finally {
-        console.log("TaskList: ", tasks);
-        setLoading(false);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchTasks() {
+  //     try {
+  //       const fetchedTasks = await getAllTasks();
+  //       setTasks(fetchedTasks);
+  //     } catch (err) {
+  //       setError(error);
+  //     } finally {
+  //       console.log("TaskList: ", tasks);
+  //       setLoading(false);
+  //     }
+  //   }
 
-    fetchTasks();
-  }, [loading, updateTaskStatus]);
+  //   fetchTasks();
+  // }, [loading, updateTaskStatus]);
 
   const handleUpdateTaskStatus = async (
     taskId: number,
@@ -100,9 +98,11 @@ export default function TaskListComponent({
         : null
     );
     const updatedTaskStatus = await updateTaskStatus(taskId, status);
-    console.log(updatedTaskStatus);
-    setTasks(null);
-    setLoading(true);
+    if (updatedTaskStatus) {
+      console.log("Task status updated successfully");
+    } else {
+      console.error("Error updating task status");
+    }
   };
 
   const handleEditTask = (taskId: number) => {
@@ -118,9 +118,9 @@ export default function TaskListComponent({
       const taskToDelete = tasks.find((task) => task.id === taskID);
       if (taskToDelete) {
         await deleteTask(taskToDelete.id);
-        console.log(taskToDelete);
-        setTasks(null);
-        setLoading(true);
+        setTasks((prevTasks) =>
+          prevTasks ? prevTasks.filter((task) => task.id !== taskID) : null
+        );
       }
     }
   };
@@ -133,7 +133,7 @@ export default function TaskListComponent({
       <CardContent>
         {filteredTasks && filteredTasks.length === 0 ? (
           <>
-            <CardHeader key={category}>
+            <CardHeader>
               <CardTitle>{category}</CardTitle>
             </CardHeader>
             <div className="text-center text-gray-500 dark:text-gray-400">
@@ -145,8 +145,8 @@ export default function TaskListComponent({
             <ScrollArea className="h-[21rem] w-full overflow-hidden">
               {filteredTasks &&
                 filteredTasks.map((task) => (
-                  <>
-                    <CardHeader key={task.id} className="p-5">
+                    <React.Fragment key={task.id}> {/* Ajoute la key ici */}
+                    <CardHeader className="p-5">
                       <CardTitle className="text-sm flex-col flex-grow  leading-none font-medium">
                         <div className="font-bold">{task.title}</div>
                         <div>
@@ -275,7 +275,7 @@ export default function TaskListComponent({
                         </li>
                       </ul>
                     </CardContent>
-                  </>
+                  </React.Fragment>
                 ))}
             </ScrollArea>
           </>

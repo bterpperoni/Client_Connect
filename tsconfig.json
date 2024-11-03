@@ -8,6 +8,7 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
 
     /* Strictness */
     "strict": true,
@@ -37,6 +38,6 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-, "next.config.js"  ],
+, "next.config.mjs"  ],
   "exclude": ["node_modules"]
 }
