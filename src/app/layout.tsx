@@ -16,7 +16,7 @@ export default function RootLayout({
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
         <html lang="en">
-          <body className="md:overflow-y-hidden">
+          <body className="md:overflow-y-hidden ">
             <header>
               <SimpleNav />
             </header>
