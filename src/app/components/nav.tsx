@@ -25,15 +25,20 @@ import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions/actions";
 
+export const queryClient = new QueryClient();
+
 export default function SimpleNav() {
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const queryClient = new QueryClient();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const { mutate } = useMutation(
+  const {
+    mutate: createTheTask,
+    isPending,
+    isSuccess,
+  } = useMutation(
     {
       mutationKey: ["tasks"],
       mutationFn: async ({ formdata }: { formdata: TaskFormData }) => {
@@ -82,18 +87,19 @@ export default function SimpleNav() {
                     Navigation panel
                   </SheetTitle>
                 </SheetHeader>
-                <div className="flex flex-col justify-start mt-6">
+                <div className="flex flex-col justify-start !mt-6">
                   <Btn href="/" onClick={() => location.assign("/")}>
                     Home
                   </Btn>
-                  <br />
+
                   <Btn
                     href="/dashboard"
+                    classList="my-2"
                     onClick={() => location.assign("/dashboard")}
                   >
                     Dashboard
                   </Btn>
-                  <br />
+
                   <Btn
                     href={session ? "/api/auth/signout" : "/api/auth/signin"}
                   >
@@ -140,7 +146,7 @@ export default function SimpleNav() {
             >
               <TaskForm
                 onSubmit={async (data) => {
-                  const newd = mutate({ formdata: data });
+                  const newd = createTheTask({ formdata: data });
                   queryClient.setQueryData(
                     ["tasks"],
                     (oldTasks: Task[] | undefined) => {
