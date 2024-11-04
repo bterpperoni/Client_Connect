@@ -39,13 +39,16 @@ import Loader from "./ui/loader";
 import { useMutation } from "react-query";
 import { toast } from "sonner";
 import { QueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
+// -----------------------------------------------------------
 type TaskListProps = {
   tasksProps: Task[];
   category: Task["category"];
   classList?: string;
   onEditTask?: (taskId: number) => void;
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  // -----------------------------------------------------------
 };
 
 const statusColors: { [key in Task["status"]]: string } = {
@@ -62,20 +65,26 @@ export default function TaskListComponent({
   setTasks,
 }: TaskListProps) {
   const queryClient = new QueryClient();
-
+  const { data: session } = useSession();
+  /*---------------------------------
+--------------DELETE  TASK---------
+----------------------------------*/
   const mutationDelete = useMutation(deleteTask, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 
+  /*----------------------------------------
+--------------UPDATE TASK STATUS ----------
+-----------------------------------------*/
   const mutationUpdateStatus = useMutation(
     ({ id, status }: { id: number; status: Task["status"] }) =>
       updateTaskStatus(id, status),
     {
       onSuccess: () => {
         toast.success("Task status updated successfully");
-        queryClient.invalidateQueries( { queryKey: ["tasks"] });
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
       },
     }
   );
@@ -167,85 +176,91 @@ export default function TaskListComponent({
                             : "No deadline"}
                         </span>
                       </div>
-                      <div className="flex space-x-1 mx-2">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-3 w-4" />
-                              <span className="sr-only">Open menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => onEditTask?.(task.id)}
-                            >
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuLabel>Update Status</DropdownMenuLabel>
-                            <DropdownMenuItem>
-                              <Select
-                                value={task.status}
-                                onValueChange={async (value: Task["status"]) =>
-                                  await handleUpdateTaskStatus(task.id, value)
+                      {session && (
+                        <div className="flex space-x-1 mx-2">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-3 w-4" />
+                                <span className="sr-only">Open menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => onEditTask?.(task.id)}
+                              >
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuLabel>
+                                Update Status
+                              </DropdownMenuLabel>
+                              <DropdownMenuItem>
+                                <Select
+                                  value={task.status}
+                                  onValueChange={async (
+                                    value: Task["status"]
+                                  ) =>
+                                    await handleUpdateTaskStatus(task.id, value)
+                                  }
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Status" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="TODO">Todo</SelectItem>
+                                    <SelectItem value="IN_PROGRESS">
+                                      In Progress
+                                    </SelectItem>
+                                    <SelectItem value="DONE">Done</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                          <Dialog
+                            aria-labelledby="dialog-title"
+                            aria-describedby="dialog-description"
+                          >
+                            <DialogTrigger>
+                              <Trash className="h-4 w-4" />
+                            </DialogTrigger>
+                            <DialogContent className="items-center flex flex-col justify-center">
+                              <DialogHeader className="mt-2 ">
+                                <DialogTitle
+                                  id="dialog-title"
+                                  className="text-lg text-center mb-4 leading-none tracking-tight"
+                                >
+                                  <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-y-2 border-red-800">
+                                    Are you sure you want to delete the task?
+                                  </div>
+                                  <br />
+                                  <span className="text-black-800 space-x-1 font-semibold text-lg p-1">
+                                    You'll be unable to undo this action.
+                                  </span>
+                                </DialogTitle>
+                                <DialogDescription id="dialog-description">
+                                  <div className="text-sm color-gray-600 text-center">
+                                    I understand & I am sure that deleting the
+                                    task is my own responsibility.
+                                  </div>
+                                </DialogDescription>
+                              </DialogHeader>
+                              <Button
+                                onClick={async () =>
+                                  await handleDeleteTask(task.id)
                                 }
+                                className="bg-red-500 hover:bg-red-700 w-[50%] text-center text-white font-bold py-2 px-4 rounded-full"
                               >
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="TODO">Todo</SelectItem>
-                                  <SelectItem value="IN_PROGRESS">
-                                    In Progress
-                                  </SelectItem>
-                                  <SelectItem value="DONE">Done</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                        <Dialog
-                          aria-labelledby="dialog-title"
-                          aria-describedby="dialog-description"
-                        >
-                          <DialogTrigger>
-                            <Trash className="h-4 w-4" />
-                          </DialogTrigger>
-                          <DialogContent className="items-center flex flex-col justify-center">
-                            <DialogHeader className="mt-2 ">
-                              <DialogTitle
-                                id="dialog-title"
-                                className="text-lg text-center mb-4 leading-none tracking-tight"
-                              >
-                                <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-y-2 border-red-800">
-                                  Are you sure you want to delete the task?
-                                </div>
-                                <br />
-                                <span className="text-black-800 space-x-1 font-semibold text-lg p-1">
-                                  You'll be unable to undo this action.
-                                </span>
-                              </DialogTitle>
-                              <DialogDescription id="dialog-description">
-                                <div className="text-sm color-gray-600 text-center">
-                                  I understand & I am sure that deleting the
-                                  task is my own responsibility.
-                                </div>
-                              </DialogDescription>
-                            </DialogHeader>
-                            <Button
-                              onClick={async () =>
-                                await handleDeleteTask(task.id)
-                              }
-                              className="bg-red-500 hover:bg-red-700 w-[50%] text-center text-white font-bold py-2 px-4 rounded-full"
-                            >
-                              Yes
-                            </Button>
-                          </DialogContent>
-                        </Dialog>
-                        <span className="sr-only">Delete task</span>
-                      </div>
+                                Yes
+                              </Button>
+                            </DialogContent>
+                          </Dialog>
+                          <span className="sr-only">Delete task</span>
+                        </div>
+                      )}
                     </li>
                   </ul>
                 </CardContent>

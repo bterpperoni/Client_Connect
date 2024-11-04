@@ -24,7 +24,7 @@ export default function Dashboard() {
   const [taskID, setTaskID] = useState<Task | undefined>();
   const [loading, setLoading] = useState(true);
 
-  /*---------------------------------
+/*---------------------------------
 --------------States for modal------
 ----------------------------------*/
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +37,7 @@ export default function Dashboard() {
     setIsModalOpen(false);
   };
 
-  /*----------------------------------------
+/*----------------------------------------
  Fetch tasks when the component is mounted
 ------------------------------------------*/
   useEffect(() => {
@@ -122,7 +122,7 @@ export default function Dashboard() {
   }, [tasks]);
   // ------------------------------------------------------------------------------
 
-  /*---------------------------------
+/*---------------------------------
 --------------RENDER Loading--------
 ----------------------------------*/
   if (loading) {
@@ -133,7 +133,7 @@ export default function Dashboard() {
     );
   }
 
-  /*---------------------------------
+/*---------------------------------
 --------------RENDER Main ----------
 ----------------------------------*/
   return (
