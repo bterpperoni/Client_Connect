@@ -2,7 +2,7 @@ name: Build Docker Image
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
     build:
       name: push docker image to docker hub
@@ -23,4 +23,4 @@ jobs:
             docker build . -f Dockerfile -t mcuron/client-connect:latest
         - name: push the docker image
           id: push-docker-image
-          run: docker push ${{secrets.DOCKERHUB_USERNAME}}/demo-image-test:latest
+          run: docker push m.curon/demo-image-test:latest
