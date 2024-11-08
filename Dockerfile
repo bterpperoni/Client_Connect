@@ -27,7 +27,7 @@ RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-c
     chmod +x /usr/local/bin/docker-compose
 
 # Vérifier l'installation de Docker et Docker Compose
-RUN docker --version
+RUN which docker
 RUN docker-compose --version
 
 # Étape 2: Build de l'application
@@ -61,7 +61,7 @@ FROM node:18-alpine
 
 # Copier Docker et Docker Compose de l'étape précédente
 COPY --from=docker-installer /usr/local/bin/docker-compose /usr/local/bin/docker-compose
-COPY --from=docker-installer /usr/local/bin/docker /usr/local/bin/docker
+COPY --from=docker-installer /usr/bin/docker /usr/bin/docker
 
 WORKDIR /app
 
