@@ -15,14 +15,15 @@ jobs:
           env:
             username: ${{secrets.DOCKERHUB_USERNAME}}
             password: ${{secrets.DOCKERHUB_PASSWORD}}
-            DATABASE_URL: ${{secrets.DATABASE_URL}}
-          run: |
-            docker login -u $username -p $password 
+          run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
         - name: build the docker image
           id: build-docker-image
-          run: |
-            ls -la 
-            docker build . -f Dockerfile -t mcuron/client-connect:latest
+          env:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          run: | 
+            docker build \
+            --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            -t mcuron/client-connect:latest .
         - name: push the docker image
           id: push-docker-image
           run: docker push m.curon/client-connect:latest
