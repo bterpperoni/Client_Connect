@@ -11,7 +11,6 @@ import {
 import { ChartContainer } from "$/app/components/ui/chart";
 import { type PolarViewBox } from "recharts/types/util/types";
 import { type Task } from "@prisma/client";
-import AnimatedPercentage from "$/app/components/ui/animatedPercentage";
 
 type ComponentProps = {
   children: React.ReactNode;

@@ -30,7 +30,7 @@ export default function CustomModal({
   Modal.setAppElement("#app");
 
   return (
-    <div id="app" className="flex justify-end">
+    <div id="app" className="flex justify-end z-0">
       <Modal
         isOpen={isOpen}
         onRequestClose={onRequestClose}

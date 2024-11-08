@@ -28,7 +28,7 @@ const AnimatedPercentage: React.FC<AnimatedPercentageProps> = ({
   }, [percentage, motionValue]);
 
   return (
-    <motion.div className={`text-2xl text-black ${classList} `}>
+    <motion.div className={`z-1 text-2xl text-black ${classList} `}>
       <motion.span>{roundedPercentage}</motion.span>%
     </motion.div>
   );

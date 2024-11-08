@@ -2,7 +2,7 @@
 
 // app/actions.ts
 import {db} from '$/server/db' ;
-import { Task, TaskStatus, TaskCategory } from '@prisma/client';
+import { Task, TaskStatus } from '@prisma/client';
 
 // Fonction pour récupérer toutes les tâches
 export async function getAllTasks(): Promise<Task[]> {

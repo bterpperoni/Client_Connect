@@ -161,7 +161,7 @@ export default function Dashboard() {
               of {tasks.filter((task) => task.category === category).length} */}
             </ChartDonut>{" "}
             <AnimatedPercentage
-              classList="md:absolute md:top-[28%] relative top-[-18%]"
+              classList="md:bottom-[28%] border-box relative top-[-18%] z-1"
               percentage={percentage(
                 tasks.filter((task) => task.category === category),
                 category
