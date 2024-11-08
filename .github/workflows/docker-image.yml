@@ -17,10 +17,10 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Pull and Run Docker Compose
-        run: |
-          docker compose pull
-          docker compose up -d
+      # - name: Pull and Run Docker Compose
+      #   run: |
+      #     docker compose pull
+      #     docker compose up -d
       - name: Build the docker image
         id: build-docker-image
         run: | 
