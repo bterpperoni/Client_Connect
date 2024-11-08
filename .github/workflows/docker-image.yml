@@ -15,6 +15,7 @@ jobs:
           env:
             username: ${{secrets.DOCKERHUB_USERNAME}}
             password: ${{secrets.DOCKERHUB_PASSWORD}}
+            DATABASE_URL: ${{secrets.DATABASE_URL}}
           run: |
             docker login -u $username -p $password 
         - name: build the docker image

@@ -41,14 +41,14 @@ import { toast } from "sonner";
 import { QueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
-// -----------------------------------------------------------
+//? -----------------------------------------------------------
 type TaskListProps = {
   tasksProps: Task[];
   category: Task["category"];
   classList?: string;
   onEditTask?: (taskId: number) => void;
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  // -----------------------------------------------------------
+  
 };
 
 const statusColors: { [key in Task["status"]]: string } = {
@@ -56,6 +56,7 @@ const statusColors: { [key in Task["status"]]: string } = {
   IN_PROGRESS: "!bg-blue-100 text-blue-800",
   DONE: "!bg-green-100 text-green-800",
 };
+//? -----------------------------------------------------------
 
 export default function TaskListComponent({
   tasksProps,
@@ -66,24 +67,39 @@ export default function TaskListComponent({
 }: TaskListProps) {
   const queryClient = new QueryClient();
   const { data: session } = useSession();
-  /*---------------------------------
---------------DELETE  TASK---------
-----------------------------------*/
+
+//!  /*----------------------------------------
+//!--------------DELETE TASK -----------------
+//!-----------------------------------------*/
   const mutationDelete = useMutation(deleteTask, {
     onSuccess: () => {
+      toast.success("Task deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 
-  /*----------------------------------------
---------------UPDATE TASK STATUS ----------
------------------------------------------*/
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      await mutationDelete.mutateAsync(taskId);
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+      console.log("Task deleted successfully");
+    } catch (error) {
+      console.error("Error deleting task", error);
+    }
+  };
+
+
+
+
+//!  /*----------------------------------------
+//!--------------UPDATE TASK STATUS ----------
+//!-----------------------------------------*/
   const mutationUpdateStatus = useMutation(
     ({ id, status }: { id: number; status: Task["status"] }) =>
       updateTaskStatus(id, status),
     {
       onSuccess: () => {
-        toast.success("Task status updated successfully");
+        toast.success("Task status updated successfully").toLocaleString();
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
       },
     }
@@ -106,15 +122,11 @@ export default function TaskListComponent({
     }
   };
 
-  const handleDeleteTask = async (taskId: number) => {
-    try {
-      await mutationDelete.mutateAsync(taskId);
-      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
-      console.log("Task deleted successfully");
-    } catch (error) {
-      console.error("Error deleting task", error);
-    }
-  };
+
+
+//? ----------------------------------------
+//?--------------RENDER --------
+//?-----------------------------------------
 
   if (!tasksProps) {
     return (
