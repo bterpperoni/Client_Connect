@@ -20,17 +20,21 @@ jobs:
       - name: Pull and Run Docker Compose
         run: |
           docker compose pull
-          docker compose up -d --remove-orphans 
-      - name: Build the docker image
-        id: build-docker-image
-        run: | 
-            docker build \
-            --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
+          docker compose up -d --build --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
             --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
             --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
             --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-            -t mcuron/client-connect:latest .
+            --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+      # - name: Build the docker image
+      #   id: build-docker-image
+      #   run: | 
+      #       docker build \
+      #       --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
+      #       --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+      #       --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
+      #       --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+      #       --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+      #       -t mcuron/client-connect:latest .
       - name: Push the docker image
         id: push-docker-image
         run: | 
