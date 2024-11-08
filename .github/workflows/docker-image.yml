@@ -20,7 +20,7 @@ jobs:
       - name: Pull and Run Docker Compose
         run: |
           docker compose pull
-          docker compose up -d --build
+          docker compose up -d --remove-orphans 
       - name: Build the docker image
         id: build-docker-image
         run: | 
