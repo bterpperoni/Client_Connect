@@ -6,14 +6,14 @@ on:
     branches: [ "master" ]
 jobs:
     build:
-      name: push docker image to docker hub
+      name: Push docker image to docker hub
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v2
         - name: login to docker hub
           id: docker-hub
           run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-        - name: build the docker image
+        - name: Build the docker image
           id: build-docker-image
           run: | 
             docker build \
@@ -23,6 +23,7 @@ jobs:
             --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
             --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
             -t mcuron/client-connect:latest .
-        - name: push the docker image
+        - name: Push the docker image
           id: push-docker-image
-          run: docker push m.curon/client-connect:latest
+          run: | 
+            docker push m.curon/client-connect:latest
