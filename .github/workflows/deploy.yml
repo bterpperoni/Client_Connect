@@ -18,5 +18,5 @@ jobs:
 
       - name: Pull and Run Docker Compose
         run: |
-          docker-compose pull
-          docker-compose up -d --build
+          docker compose pull
+          docker compose up -d --build
