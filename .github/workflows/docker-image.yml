@@ -23,6 +23,12 @@ jobs:
       #     docker compose up -d
       - name: Build the docker image
         id: build-docker-image
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: | 
             docker build \
             --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} \
