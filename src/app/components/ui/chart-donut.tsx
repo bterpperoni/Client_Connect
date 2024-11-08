@@ -11,10 +11,10 @@ import {
 import { ChartContainer } from "$/app/components/ui/chart";
 import { type PolarViewBox } from "recharts/types/util/types";
 import { type Task } from "@prisma/client";
-import { icons } from "lucide-react";
+import AnimatedPercentage from "$/app/components/ui/animatedPercentage";
 
 type ComponentProps = {
-  percentage: number;
+  children: React.ReactNode;
   category: string;
   tasks: Task[];
 };
@@ -22,7 +22,7 @@ type ComponentProps = {
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#B20000"];
 
 export default function ChartDonut({
-  percentage,
+  children,
   category,
   tasks,
 }: ComponentProps) {
@@ -32,11 +32,11 @@ export default function ChartDonut({
       value: task.importanceScore,
       fill: COLORS[task.importanceScore - 1],
     }));
-  }, [percentage, tasks]);
+  }, [tasks]);
 
   const totalScore = React.useMemo(() => {
     return tasks.reduce((acc, curr) => acc + curr.importanceScore, 0);
-  }, [percentage, tasks]);
+  }, [tasks]);
 
   return (
     <Card className="flex flex-col mt-4">
@@ -67,18 +67,14 @@ export default function ChartDonut({
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
               ))}
+
+              {/* Label animé avec vérifications pour le rendu */}
               <Label
                 content={({ viewBox }) => {
-                  // Vérifier si le viewBox est de type PolarViewBox (qui contient cx et cy)
-                  if (
-                    !viewBox ||
-                    typeof (viewBox as PolarViewBox).cx === "undefined" ||
-                    typeof (viewBox as PolarViewBox).cy === "undefined"
-                  ) {
+                  if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox)) {
                     return null;
                   }
 
-                  // On sait maintenant que viewBox est de type PolarViewBox
                   const { cx, cy } = viewBox as PolarViewBox;
                   return (
                     <text
@@ -93,7 +89,7 @@ export default function ChartDonut({
                         dy="-0.5em"
                         className="fill-foreground text-2xl font-bold"
                       >
-                        {percentage}%
+                        {children}
                       </tspan>
                       <tspan
                         x={cx}
@@ -101,7 +97,7 @@ export default function ChartDonut({
                         dy="1.5em"
                         className="fill-muted-foreground text-sm"
                       >
-                        Complete
+                        Completed
                       </tspan>
                     </text>
                   );
@@ -111,14 +107,14 @@ export default function ChartDonut({
             <Tooltip
               content={({ active, payload }) => {
                 if (active && payload?.length) {
-                  const data = payload?.[0] ? payload[0].payload : null;
+                  const data = payload[0]?.payload;
                   return (
                     <div className="rounded-lg bg-white p-2 shadow-md dark:bg-gray-950">
-                      <p className="font-bold">{data.name}</p>
-                      <p>Score: {data.value}</p>
+                      <p className="font-bold">{data?.name}</p>
+                      <p>Score: {data?.value}</p>
                       <p>
                         Percentage completed:{" "}
-                        {((data.value / totalScore) * 100).toFixed(2)}%
+                        {((data?.value / totalScore) * 100).toFixed(2)}%
                       </p>
                     </div>
                   );

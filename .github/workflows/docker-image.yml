@@ -24,4 +24,4 @@ jobs:
             docker build . -f Dockerfile -t mcuron/client-connect:latest
         - name: push the docker image
           id: push-docker-image
-          run: docker push m.curon/demo-image-test:latest
+          run: docker push m.curon/client-connect:latest

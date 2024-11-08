@@ -12,6 +12,7 @@ import {
   getTaskById,
   updateTaskData,
 } from "$/server/actions/actions";
+import AnimatedPercentage from "$/app/components/ui/animatedPercentage";
 
 enum TaskCategory {
   Defensive = "Defensive",
@@ -24,7 +25,7 @@ export default function Dashboard() {
   const [taskID, setTaskID] = useState<Task | undefined>();
   const [loading, setLoading] = useState(true);
 
-/*---------------------------------
+  /*---------------------------------
 --------------States for modal------
 ----------------------------------*/
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +38,7 @@ export default function Dashboard() {
     setIsModalOpen(false);
   };
 
-/*----------------------------------------
+  /*----------------------------------------
  Fetch tasks when the component is mounted
 ------------------------------------------*/
   useEffect(() => {
@@ -103,26 +104,26 @@ export default function Dashboard() {
   const [percentageGeneral, setPercentageGeneral] = useState(0);
   const [percentageOffensive, setPercentageOffensive] = useState(0);
 
-  useEffect(() => {
-    const percentage = (tasks: Task[], category: TaskCategory) => {
-      const totalTasks = tasks.filter(
-        (task) => task.category === category
-      ).length;
-      const completedTasks = tasks.filter(
-        (task) => task.category === category && task.status === "DONE"
-      ).length;
-      return Math.floor(
-        totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
-      );
-    };
+  const percentage = (tasks: Task[], category: TaskCategory) => {
+    const totalTasks = tasks.filter(
+      (task) => task.category === category
+    ).length;
+    const completedTasks = tasks.filter(
+      (task) => task.category === category && task.status === "DONE"
+    ).length;
+    return Math.floor(
+      totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
+    );
+  };
 
+  useEffect(() => {
     setPercentageDefensive(percentage(tasks, TaskCategory.Defensive));
     setPercentageGeneral(percentage(tasks, TaskCategory.General));
     setPercentageOffensive(percentage(tasks, TaskCategory.Offensive));
   }, [tasks]);
   // ------------------------------------------------------------------------------
 
-/*---------------------------------
+  /*---------------------------------
 --------------RENDER Loading--------
 ----------------------------------*/
   if (loading) {
@@ -133,7 +134,7 @@ export default function Dashboard() {
     );
   }
 
-/*---------------------------------
+  /*---------------------------------
 --------------RENDER Main ----------
 ----------------------------------*/
   return (
@@ -148,28 +149,24 @@ export default function Dashboard() {
             className="col-span-1 flex flex-col items-center bg-white rounded-xl h-[88vh]"
           >
             <ChartDonut
-              percentage={
-                category === TaskCategory.Defensive
-                  ? percentageDefensive
-                  : category === TaskCategory.General
-                  ? percentageGeneral
-                  : percentageOffensive
-              }
               category={category}
-              tasks={
-                category === TaskCategory.Defensive
-                  ? tasks.filter(
-                      (task) => task.category === TaskCategory.Defensive
-                    )
-                  : category === TaskCategory.General
-                  ? tasks.filter(
-                      (task) => task.category === TaskCategory.General
-                    )
-                  : tasks.filter(
-                      (task) => task.category === TaskCategory.Offensive
-                    )
-              }
-            />{" "}
+              tasks={tasks.filter((task) => task.category === category) ?? []}
+              children={undefined}
+            >
+              {/* {
+                tasks
+                  .filter((task) => task.category === category)
+                  .filter((task) => task.status === "DONE").length
+              }{" "}
+              of {tasks.filter((task) => task.category === category).length} */}
+            </ChartDonut>{" "}
+            <AnimatedPercentage
+              classList="md:absolute md:top-[28%] relative top-[-18%]"
+              percentage={percentage(
+                tasks.filter((task) => task.category === category),
+                category
+              )}
+            />
             {/* Remplace avec des données réelles */}
             <TaskListComponent
               tasksProps={tasks.filter((task) => task.category === category)}
