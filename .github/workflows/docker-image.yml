@@ -40,4 +40,4 @@ jobs:
       - name: Push the docker image
         id: push-docker-image
         run: | 
-            docker compose push mcuron/client-connect:latest
+            docker push mcuron/client-connect:latest
