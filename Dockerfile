@@ -39,7 +39,7 @@ RUN npm install -g pnpm
 COPY --from=builder /app ./
 
 # Copier et vérifier le script d’entrée
-COPY ./src/app/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN ls -l /usr/local/bin/entrypoint.sh  # Vérification des droits d’exécution
 
