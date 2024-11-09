@@ -23,7 +23,7 @@ ENV GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
 RUN pnpm install && pnpm run build
 
 # Étape de production
-FROM node:18-alpine
+FROM node:18-alpine AS production
 WORKDIR /app
 
 # Installer pnpm globalement dans l'image de production
