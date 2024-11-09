@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "$/app/components/ui/dialog";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "$/app/components/ui/button";
 import { Trash, MoreHorizontal, Calendar } from "lucide-react";
 import {
@@ -40,6 +40,7 @@ import { useMutation } from "react-query";
 import { toast } from "sonner";
 import { QueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+// import { useStore } from "$/stores/useStore";
 
 //? -----------------------------------------------------------
 type TaskListProps = {
@@ -48,7 +49,6 @@ type TaskListProps = {
   classList?: string;
   onEditTask?: (taskId: number) => void;
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  
 };
 
 const statusColors: { [key in Task["status"]]: string } = {
@@ -68,9 +68,9 @@ export default function TaskListComponent({
   const queryClient = new QueryClient();
   const { data: session } = useSession();
 
-//!  /*----------------------------------------
-//!--------------DELETE TASK -----------------
-//!-----------------------------------------*/
+  //!  /*----------------------------------------
+  //!--------------DELETE TASK -----------------
+  //!-----------------------------------------*/
   const mutationDelete = useMutation(deleteTask, {
     onSuccess: () => {
       toast.success("Task deleted successfully");
@@ -88,9 +88,7 @@ export default function TaskListComponent({
     }
   };
 
-
-
-//$--------------UPDATE TASK MUTATION -------/
+  //!--------------UPDATE TASK STATUS MUTATION -------/
   const mutationUpdateStatus = useMutation(
     ({ id, status }: { id: number; status: Task["status"] }) =>
       updateTaskStatus(id, status),
@@ -102,7 +100,7 @@ export default function TaskListComponent({
     }
   );
 
-//$ Update Task Status
+  //!------------- Update Task Status-------------------
   const handleUpdateTaskStatus = async (
     taskId: number,
     status: Task["status"]
@@ -120,12 +118,9 @@ export default function TaskListComponent({
     }
   };
 
-
-
-//? ----------------------------------------
-//?--------------RENDER --------
-//?-----------------------------------------
-
+  //? ----------------------------------------
+  //?--------------RENDER --------
+  //?-----------------------------------------
   if (!tasksProps) {
     return (
       <div className="flex flex-col items-center justify-centers w-full ">
@@ -165,9 +160,7 @@ export default function TaskListComponent({
                 <CardContent>
                   <ul className="space-y-2">
                     <li
-                      className={`flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950 ${
-                        statusColors[task.status]
-                      }`}
+                      className={`flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950 ${statusColors[task.status]}`}
                     >
                       <div className="flex flex-grow items-center space-x-2">
                         <span
@@ -247,14 +240,13 @@ export default function TaskListComponent({
                                     Are you sure you want to delete the task?
                                   </div>
                                   <br />
-                                  <span className="text-black-800 space-x-1 font-semibold text-lg p-1">
-                                    You'll be unable to undo this action.
+                                  <span className="text-black-800 font-light space-x-1 text-2xl p-1">
+                                    {task.category} : <span className="bold">{task.title}</span>. <span className="text-xl">{task.content}</span>
                                   </span>
                                 </DialogTitle>
                                 <DialogDescription id="dialog-description">
                                   <div className="text-sm color-gray-600 text-center">
-                                    I understand & I am sure that deleting the
-                                    task is my own responsibility.
+                                    Are you sure you want to delete the task with id {task.id}? This action cannot be undone.
                                   </div>
                                 </DialogDescription>
                               </DialogHeader>

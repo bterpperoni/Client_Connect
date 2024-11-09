@@ -8,14 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from "$/app/components/ui/card";
-import { ChartContainer } from "$/app/components/ui/chart";
+import { ChartContainer } from "$/app/components/context/chart";
 import { type PolarViewBox } from "recharts/types/util/types";
 import { type Task } from "@prisma/client";
+// import { useStore } from "$/lib/stores/useStore";
 
 type ComponentProps = {
   children: React.ReactNode;
   category: string;
   tasks: Task[];
+  classList: string;
 };
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#B20000"];
@@ -24,6 +26,7 @@ export default function ChartDonut({
   children,
   category,
   tasks,
+  classList,
 }: ComponentProps) {
   const chartData = React.useMemo(() => {
     return tasks.map((task) => ({
@@ -37,8 +40,9 @@ export default function ChartDonut({
     return tasks.reduce((acc, curr) => acc + curr.importanceScore, 0);
   }, [tasks]);
 
+
   return (
-    <Card className="flex flex-col mt-4">
+    <Card className={`flex flex-col mt-4 ${classList}`}>
       <CardHeader className="items-center pb-0">
         <CardTitle className="text-2xl">{category}</CardTitle>
       </CardHeader>
@@ -104,6 +108,8 @@ export default function ChartDonut({
               />
             </Pie>
             <Tooltip
+              accessibilityLayer={true}
+labelStyle={{ color: "black" }}
               content={({ active, payload }) => {
                 if (active && payload?.length) {
                   const data = payload[0]?.payload;
@@ -113,7 +119,7 @@ export default function ChartDonut({
                       <p>Score: {data?.value}</p>
                       <p>
                         Percentage completed:{" "}
-                        {((data?.value / totalScore) * 100).toFixed(2)}%
+                        {Math.floor((data?.value / totalScore) * 100)}%
                       </p>
                     </div>
                   );

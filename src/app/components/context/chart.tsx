@@ -285,7 +285,7 @@ const ChartLegendContent = React.forwardRef<
         ref={ref}
         className={cn(
           "flex items-center justify-center gap-4",
-          verticalAlign === "top" ? "pb-3" : "pt-3",
+          verticalAlign === "top" ? "pb-2" : "pt-2",
           className
         )}
       >
@@ -304,7 +304,7 @@ const ChartLegendContent = React.forwardRef<
                 <itemConfig.icon />
               ) : (
                 <div
-                  className="chart-legend-icon"
+                  className={`chart-legend-icon`}
                   style={{ "--bg-color": item.color } as React.CSSProperties}
                 />
               )}
