@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # Se déplacer dans le répertoire contenant le fichier docker-compose.yml
-cd /app  # Remplace /app par le répertoire où tu stockes ton fichier docker-compose.yml
+cd /app
+
+# Lancer l'application nextjs
+pnpm start
 
 # Tirer les dernières images avec docker-compose
 docker-compose pull
