@@ -72,7 +72,7 @@ RUN npm install -g pnpm
 COPY --from=builder /app ./
 
 # Copier le script d'entrée
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY  ./entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Exposer le port de l'application
@@ -80,3 +80,6 @@ EXPOSE 3000
 
 # Lancer l'application et docker-compose
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Exécuter la commande de démarrage
+CMD ["pnpm", "start"]
