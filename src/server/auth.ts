@@ -52,8 +52,8 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           prompt: "consent",
-          access_type: "offline",
           response_type: "code",
+          redirect_uri: "https://db05-85-201-2-81.ngrok-free.app/api/auth/signin/google/callback",
         },
       },
     }),

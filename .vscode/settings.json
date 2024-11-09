@@ -1,9 +1,10 @@
 {
   "editor.foldingMaximumRegions": 10000,
   "better-comments.multilineComments": true,
+  "better-comments.highlightPlainText": true,
   "better-comments.tags": [
     {
-      "tag": "!/",
+      "tag": "!",
       "color": "#FF2D00",
       "strikethrough": false,
       "underline": false,
@@ -21,17 +22,44 @@
       "italic": false
     },
     {
-      "tag": "//",
-      "color": "#474747",
-      "strikethrough": true,
+      "tag": "$",
+      "color": "#FF8C00",
+      "strikethrough": false,
+      "underline": true,
+      "backgroundColor": "transparent",
+      "bold": true,
+      "italic": false
+    },
+    {
+      "tag": "TODO",
+      "color": "#FF2D00",
+      "strikethrough": false,
       "underline": false,
-      "backgroundColor": "white",
+      "backgroundColor": "transparent",
       "bold": false,
       "italic": false
     },
     {
-      "tag": "todo",
-      "color": "#FF8C00",
+      "tag": "FIXME",
+      "color": "#FF2D00",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "NOTE",
+      "color": "#3498DB",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "IDEA",
+      "color": "#3498DB",
       "strikethrough": false,
       "underline": false,
       "backgroundColor": "transparent",
