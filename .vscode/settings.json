@@ -1,10 +1,9 @@
 {
   "editor.foldingMaximumRegions": 10000,
   "better-comments.multilineComments": true,
-  "better-comments.highlightPlainText": true,
   "better-comments.tags": [
     {
-      "tag": "!",
+      "tag": "!/",
       "color": "#FF2D00",
       "strikethrough": false,
       "underline": false,
@@ -26,7 +25,7 @@
       "color": "#474747",
       "strikethrough": true,
       "underline": false,
-      "backgroundColor": "transparent",
+      "backgroundColor": "white",
       "bold": false,
       "italic": false
     },
