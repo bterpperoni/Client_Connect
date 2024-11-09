@@ -1,9 +1,7 @@
 version: '3.8'
 services:
   app:
-    networks:
-      - app-network
-    image: mcuron/client-connect:latest
+    image: mcuron/client-connect
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
