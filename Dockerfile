@@ -79,7 +79,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 3000
 
 # Lancer l'application et docker-compose
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["entrypoint.sh"]
 
 # Exécuter la commande de démarrage
 CMD ["pnpm", "start"]
