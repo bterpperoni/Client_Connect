@@ -53,7 +53,6 @@ export const authOptions: NextAuthOptions = {
         params: {
           prompt: "consent",
           response_type: "code",
-          redirect_uri: "https://db05-85-201-2-81.ngrok-free.app/",
         },
       },
     }),
