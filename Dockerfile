@@ -1,39 +1,37 @@
-# Étape 2: Build de l'application
 FROM node:18-alpine AS builder
-
-RUN mkdir /app
-
 WORKDIR /app
 
-ARG NODE_ENV=production
+# Installer pnpm globalement
+RUN npm install -g pnpm
+
+# Copier les fichiers du projet
+COPY . .
+
+# Définir la variable d'environnement pour Prisma
 ARG DATABASE_URL
-ARG NEXtAUTH_URL
 ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
 ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
-
 ENV DATABASE_URL=${DATABASE_URL}
-ENV NEXTAUTH_URL=${NEXTAUTH_URL}
 ENV NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+ENV NEXTAUTH_URL=${NEXTAUTH_URL}
 ENV GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
 ENV GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-ENV NODE_ENV=${NODE_ENV}
 
-RUN npm install -g pnpm
-COPY . .
+# Installer les dépendances et builder le projet
 RUN pnpm install && pnpm run build
 
-# Étape 3: Production (l'image finale)
+# Étape de production
 FROM node:18-alpine
-
 WORKDIR /app
 
+# Installer pnpm globalement dans l'image de production
 RUN npm install -g pnpm
+
+# Copier les fichiers buildés depuis l'étape de build
 COPY --from=builder /app ./
 
-
-
+# Exposer le port de l'application et démarrer
 EXPOSE 3000
-
 CMD ["pnpm", "start"]
-
