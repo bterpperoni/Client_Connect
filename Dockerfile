@@ -13,6 +13,7 @@ ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
 ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
+
 ENV DATABASE_URL=${DATABASE_URL}
 ENV NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
 ENV NEXTAUTH_URL=${NEXTAUTH_URL}
@@ -34,4 +35,4 @@ COPY --from=builder /app ./
 
 # Exposer le port de l'application et démarrer
 EXPOSE 3000
-CMD ["pnpm", "start"]
+CMD [ "sh", "-c", "source .env && pnpm run build && pnpm start" ]
