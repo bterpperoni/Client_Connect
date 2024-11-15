@@ -21,17 +21,19 @@ ENV GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
 ENV GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
 
 # Installer les dépendances et builder le projet
-RUN pnpm install && pnpm run build
 
 # Étape de production
 FROM node:18-alpine AS production
 WORKDIR /app
 
 # Installer pnpm globalement dans l'image de production
+
+
+COPY * /app/
+
 RUN npm install -g pnpm
 
-# Copier les fichiers buildés depuis l'étape de build
-COPY --from=builder /app ./
+RUN pnpm install && pnpm run build
 
 # Exposer le port de l'application et démarrer
 EXPOSE 3000
