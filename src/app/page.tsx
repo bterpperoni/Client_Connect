@@ -32,7 +32,7 @@ export default function Home() {
               )}
             </div>
           </div>
-
+          
           <p
             className={`border-t-2 p-2 text-center text-xl tracking-wider text-purple-800`}
           >

@@ -13,9 +13,11 @@ export default function RootLayout({
   const queryClient = new QueryClient();
 
   return (
+
+
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
           <body className="md:overflow-y-hidden ">
             <header>
                 <Toaster closeButton richColors className="absolute inset-10" />

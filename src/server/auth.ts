@@ -1,20 +1,12 @@
+import { saltAndHashPassword } from "$/lib/utils/password";
+import NextAuth, { DefaultSession, getServerSession } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { db } from "./db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import {
-  getServerSession,
-  type DefaultSession,
-  type NextAuthOptions,
-} from "next-auth";
-import { type Adapter } from "next-auth/adapters";
+import { Adapter } from "next-auth/adapters";
+import type { GetServerSidePropsContext } from "next";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
-import { db } from "$/server/db";
-import Google from "next-auth/providers/google";
-
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- */
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
@@ -29,14 +21,15 @@ declare module "next-auth" {
   // }
 }
 
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
+    session: ({
+      session,
+      user,
+    }: {
+      session: DefaultSession;
+      user: { id: string };
+    }) => ({
       ...session,
       user: {
         ...session.user,
@@ -44,33 +37,76 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: PrismaAdapter(db) as Adapter,
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-      authorization: {
-        params: {
-          prompt: "consent",
-          response_type: "code",
-        },
+    Credentials({
+      // You can specify which fields should be submitted, by adding keys to the credentials object.
+      // e.g. domain, username, password, 2FA token, etc.
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      // The authorize function is called when a user submits their sign in credentials.
+      authorize: async (credentials) => {
+        let user = null;
+
+        // logic to salt and hash password
+        if (!credentials) {
+          throw new Error("Credentials are required.");
+        }
+        const pwHash = await saltAndHashPassword(credentials.password);
+
+        // logic to verify if the user exists
+        user = await getUserFromDb(credentials.email, pwHash);
+
+        if (!user) {
+          // No user found, so this is their first attempt to login
+          // Optionally, this is also the place you could do a user registration
+          throw new Error("No user found.");
+        }
+
+        // return user object with their profile data
+        return user;
       },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
+  adapter: PrismaAdapter({ prisma: db }) as Adapter,
 };
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
-export const getServerAuthSession = () => getServerSession(authOptions);
+export const { handler, signIn, signOut, useSession, getSession } =
+  NextAuth(authOptions);
+
+//?------------------------------- Function to get the server session.
+
+export const getServerAuthSession = async (
+  context: GetServerSidePropsContext
+) => {
+  return await getServerSession(context.req, context.res, authOptions);
+};
+
+//?------------------------------- Function to get user from the database.
+async function getUserFromDb(email: string, hashedPassword: string) {
+  try {
+    const user = await db.user.findUnique({
+      where: { email }, // Recherche l'utilisateur par email.
+    });
+
+    if (!user) {
+      return null; // L'utilisateur n'existe pas.
+    }
+
+    // Vérifie si le mot de passe correspond.
+    if (user.password !== hashedPassword) {
+      return null; // Mot de passe incorrect.
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      // Tout autre champ que vous voulez inclure dans l'objet utilisateur.
+    };
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'utilisateur :", error);
+    throw new Error("Erreur lors de la vérification des identifiants.");
+  }
+}

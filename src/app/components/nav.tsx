@@ -16,6 +16,7 @@ import { toast, Toaster } from 'sonner';
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -24,6 +25,7 @@ import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions/actions";
+import { saltAndHashPassword } from "$/lib/utils/password";
 // import { useStore } from "$/stores/useStore";
 // import { useStore } from "$/lib/stores/useStore";
 
@@ -33,7 +35,6 @@ export default function SimpleNav() {
 
 // const addTask = useStore((state) => state.addTask);
 // const fetchTasks = useStore((state) => state.fetchTasks);
-
 
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,14 +89,16 @@ export default function SimpleNav() {
         <div className="container mx-4 px-4">
           <div className="flex items-center justify-between w-full">
             <Sheet>
-              <SheetTrigger className="items-center justify-center">
-                <AlignJustify className="w-8 h-auto text-center" />
+              <SheetTrigger>
+                <SheetDescription className="items-center justify-center" title="Open Navigation">
+                  <AlignJustify className="w-8 h-auto text-center" />
+                </SheetDescription>
               </SheetTrigger>
               <SheetContent side="left">
                 <SheetHeader>
-                  <SheetTitle className="text-center ">
+                  <div className="text-center ">
                     Navigation panel
-                  </SheetTitle>
+                  </div>
                 </SheetHeader>
                 <div className="flex flex-col justify-start !mt-6">
                   <Btn href="/" onClick={() => location.assign("/")}>
@@ -118,7 +121,7 @@ export default function SimpleNav() {
                 </div>
                 {session && (
                   <div className="my-6">
-                    <SheetTitle className="text-center">Services</SheetTitle>
+                    <div className="text-center">Services</div>
                     <Btn
                       classList="mt-2"
                       percentageWidth={100}
