@@ -1,33 +1,29 @@
-import { saltAndHashPassword } from "$/lib/utils/password";
 import NextAuth, { DefaultSession, getServerSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { db } from "./db";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { Adapter } from "next-auth/adapters";
 import type { GetServerSidePropsContext } from "next";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import bcrypt from "bcrypt";
+import { isPasswordValid } from "$/lib/utils/password";
+import { Adapter } from "next-auth/adapters";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-    } & DefaultSession["user"];
-  }
+// declare module "next-auth" {
+//   interface Session extends DefaultSession {
+//     user: {
+//       id: string;
+//       // ...other properties
+//     } & DefaultSession["user"];
+//   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
+//   // interface User {
+//   //   // ...other properties
+//   //   // role: UserRole;
+//   // }
+// }
 
 export const authOptions = {
-  pages: {
-    signIn: "/api/auth/signin",
-    signOut: "/api/auth/signout",
-    error: "/error",
-  },
+  db: db,
+  secret: process.env.SECRET,
+  signIn: true,
   callbacks: {
     session: ({
       session,
@@ -53,11 +49,11 @@ export const authOptions = {
         }
         await db.$connect();
         const user = await db.user.findUnique({
-          where: { email: credentials.username },
+          where: { email: credentials.email },
         });
 
         if (user) {
-          const isPasswordMatch = await bcrypt.compare(
+          const isPasswordMatch = isPasswordValid(
             credentials.password,
             user.password ?? ""
           );
@@ -68,24 +64,19 @@ export const authOptions = {
 
           return {
             id: user.id,
-            name: user.name,
             email: user.email,
           };
         }
         return null;
       },
       credentials: {
-        username: { label: "Username", type: "text ", placeholder: "jsmith" },
-        password: {
-          label: "password",
-          type: "password",
-          placeholder: "mabite",
-        },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
     }),
     /* ... additional providers ... /*/
   ],
-  // adapter: PrismaAdapter({ prisma: db }) as Adapter,
+  adapter: PrismaAdapter(db) as Adapter,
 };
 
 export const { handler, signIn, signOut, useSession, getSession } =
@@ -118,7 +109,6 @@ async function getUserFromDb(email: string, hashedPassword: string) {
     return {
       id: user.id,
       email: user.email,
-      name: user.name,
       // Tout autre champ que vous voulez inclure dans l'objet utilisateur.
     };
   } catch (error) {

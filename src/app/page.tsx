@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import Btn from "./components/ui/btn";
-import { signIn } from "$/server/auth";
+import { signIn } from "next-auth/react";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -55,7 +55,7 @@ export default function Home() {
                 : "Unauthenticated"}
             </span>
           </p>
-          <Btn href={session ? "/api/auth/signout" : signIn()}>
+          <Btn href={session ? "/api/auth/signout" :  "/api/auth/signin"}>
             {session ? "Sign out" : "Sign in"}
           </Btn>
         </div>
