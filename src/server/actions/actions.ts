@@ -3,6 +3,8 @@
 import { db } from "$/server/db";
 import { Task, TaskStatus } from "@prisma/client";
 import { hash } from "bcryptjs";
+import { signIn } from "../auth";
+import AuthError from "next-auth";
 
 // Fonction pour récupérer toutes les tâches
 export async function getAllTasks(): Promise<Task[]> {
@@ -91,4 +93,24 @@ export async function createUser(): Promise<void> {
       password: password,
     },
   });
+}
+
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData
+) {
+  try {
+    await signIn("credentials", formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      // @ts-ignore
+      switch (error.type) {
+        case "CredentialsSignin":
+          throw new Error("Invalid credentials");
+        default:
+          throw new Error("Something went wrong");
+      }
+    }
+    throw new Error("Error authenticating user");
+  }
 }

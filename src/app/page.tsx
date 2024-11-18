@@ -21,7 +21,7 @@ export default function Home() {
             <div className="text-center">
               {session ? (
                 <span className="text-2xl text-green-800">
-                  {session.user.name}
+                  {session?.user?.name}
                 </span>
               ) : (
                 <>
@@ -55,7 +55,7 @@ export default function Home() {
                 : "Unauthenticated"}
             </span>
           </p>
-          <Btn href={session ? "/api/auth/signout" :  "/api/auth/signin"}>
+          <Btn href={session ? "/api/auth/signout" :  "/login"}>
             {session ? "Sign out" : "Sign in"}
           </Btn>
         </div>
