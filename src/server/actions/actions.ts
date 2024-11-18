@@ -1,5 +1,6 @@
 "use server"
 
+import { saltAndHashPassword } from '$/lib/utils/password';
 // app/actions.ts
 import {db} from '$/server/db' ;
 import { Task, TaskStatus } from '@prisma/client';
@@ -75,4 +76,42 @@ export async function deleteTask(id: number): Promise<Task> {
 }
 
 
+export async function createUser(): Promise<void> {
+await db.user.createMany({
+  data: [
+    {
+      id: 'cku1g02xg0001z3vy8n5rj1hf',
+      name: 'Maxime Curon',
+      email: 'maxime.curon@risk-horizon.be',
+      password: await saltAndHashPassword('Test123*'),
+      createdAt: new Date('2024-11-17T12:00:00Z'),
+    },
+  ],
+});
 
+await db.account.createMany({
+  data: [
+    {
+      id: 'cm3m3idw100000cmn005gdoos',
+      userId: 'cku1g02xg0001z3vy8n5rj1hf',
+      type: 'credentials',
+      provider: 'email',
+      providerAccountId: 'maxime.curon@risk-horizon.be',
+      access_token: 'token_12345',
+      refresh_token: 'refresh_12345',
+      expires_at: 1690024000,
+    },
+  ],
+});
+
+await db.session.createMany({
+  data: [
+    {
+      id: 'cm3m3jj7700010cmn420va6mq',
+      sessionToken: 'token_abcdef123',
+      userId: 'cku1g02xg0001z3vy8n5rj1hf',
+      expires: new Date('2024-11-18T12:00:00Z'),
+    },
+  ],
+});
+}

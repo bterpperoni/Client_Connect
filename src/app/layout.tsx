@@ -17,7 +17,7 @@ export default function RootLayout({
 
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en" >
           <body className="md:overflow-y-hidden ">
             <header>
                 <Toaster closeButton richColors className="absolute inset-10" />

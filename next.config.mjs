@@ -4,6 +4,7 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  serverExternalPackages: ['@prisma/client', 'bcrypt'],
 };
 
 export default nextConfig;

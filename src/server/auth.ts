@@ -6,6 +6,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { Adapter } from "next-auth/adapters";
 import type { GetServerSidePropsContext } from "next";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import bcrypt from "bcrypt";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -22,6 +23,11 @@ declare module "next-auth" {
 }
 
 export const authOptions = {
+  pages: {
+    signIn: "/api/auth/signin",
+    signOut: "/api/auth/signout",
+    error: "/error",
+  },
   callbacks: {
     session: ({
       session,
@@ -39,37 +45,47 @@ export const authOptions = {
   },
   providers: [
     Credentials({
-      // You can specify which fields should be submitted, by adding keys to the credentials object.
-      // e.g. domain, username, password, 2FA token, etc.
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      // The authorize function is called when a user submits their sign in credentials.
-      authorize: async (credentials) => {
-        let user = null;
-
-        // logic to salt and hash password
+      id: "credentials",
+      name: "Credentials",
+      async authorize(credentials) {
         if (!credentials) {
-          throw new Error("Credentials are required.");
+          return null;
         }
-        const pwHash = await saltAndHashPassword(credentials.password);
+        await db.$connect();
+        const user = await db.user.findUnique({
+          where: { email: credentials.username },
+        });
 
-        // logic to verify if the user exists
-        user = await getUserFromDb(credentials.email, pwHash);
+        if (user) {
+          const isPasswordMatch = await bcrypt.compare(
+            credentials.password,
+            user.password ?? ""
+          );
 
-        if (!user) {
-          // No user found, so this is their first attempt to login
-          // Optionally, this is also the place you could do a user registration
-          throw new Error("No user found.");
+          if (!isPasswordMatch) {
+            return null;
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          };
         }
-
-        // return user object with their profile data
-        return user;
+        return null;
+      },
+      credentials: {
+        username: { label: "Username", type: "text ", placeholder: "jsmith" },
+        password: {
+          label: "password",
+          type: "password",
+          placeholder: "mabite",
+        },
       },
     }),
+    /* ... additional providers ... /*/
   ],
-  adapter: PrismaAdapter({ prisma: db }) as Adapter,
+  // adapter: PrismaAdapter({ prisma: db }) as Adapter,
 };
 
 export const { handler, signIn, signOut, useSession, getSession } =
