@@ -179,7 +179,7 @@ export default function TaskListComponent({
                             : "No deadline"}
                         </span>
                       </div>
-                      {session && (
+                      {/* {session && ( */}
                         <div className="flex space-x-1 mx-2">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -262,7 +262,7 @@ export default function TaskListComponent({
                           </Dialog>
                           <span className="sr-only">Delete task</span>
                         </div>
-                      )}
+                      {/* )} */}
                     </li>
                   </ul>
                 </CardContent>

@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 
 /**
  * Hashes and salts a password using bcrypt.
@@ -6,12 +6,27 @@ import bcrypt from 'bcrypt';
  * @param saltRounds - The number of salt rounds for bcrypt (default is 10).
  * @returns A promise that resolves to the hashed password.
  */
-export async function saltAndHashPassword(password: string, saltRounds: number = 10): Promise<string> {
-  try {
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return hashedPassword;
-  } catch (error) {
-    throw new Error(`Error hashing password: ${error}`);
-  }
+// export async function saltAndHashPassword(password: string, saltRounds: number = 10): Promise<string> {
+//   try {
+//     const salt = await bcrypt.genSalt(saltRounds);
+//     const hashedPassword = await bcrypt.hash(password, salt);
+//     return hashedPassword;
+//   } catch (error) {
+//     throw new Error(`Error hashing password: ${error}`);
+//   }
+// }
+
+import { compare, hash } from 'bcryptjs';
+
+export async function hashPassword(password: string) {
+  const hashedPassword = await hash(password, 12);
+  return hashedPassword;
+}
+
+export async function isPasswordValid(
+  password: string,
+  hashedPassword: string
+) {
+  const isValid = await compare(password, hashedPassword);
+  return isValid;
 }

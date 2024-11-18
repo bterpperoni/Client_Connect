@@ -1,27 +1,29 @@
-import { saltAndHashPassword } from "$/lib/utils/password";
 import NextAuth, { DefaultSession, getServerSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { db } from "./db";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { Adapter } from "next-auth/adapters";
 import type { GetServerSidePropsContext } from "next";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { isPasswordValid } from "$/lib/utils/password";
+import { Adapter } from "next-auth/adapters";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-    } & DefaultSession["user"];
-  }
+// declare module "next-auth" {
+//   interface Session extends DefaultSession {
+//     user: {
+//       id: string;
+//       // ...other properties
+//     } & DefaultSession["user"];
+//   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
+//   // interface User {
+//   //   // ...other properties
+//   //   // role: UserRole;
+//   // }
+// }
 
 export const authOptions = {
+  db: db,
+  secret: process.env.SECRET,
+  signIn: true,
   callbacks: {
     session: ({
       session,
@@ -39,37 +41,42 @@ export const authOptions = {
   },
   providers: [
     Credentials({
-      // You can specify which fields should be submitted, by adding keys to the credentials object.
-      // e.g. domain, username, password, 2FA token, etc.
+      id: "credentials",
+      name: "Credentials",
+      async authorize(credentials) {
+        if (!credentials) {
+          return null;
+        }
+        await db.$connect();
+        const user = await db.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (user) {
+          const isPasswordMatch = isPasswordValid(
+            credentials.password,
+            user.password ?? ""
+          );
+
+          if (!isPasswordMatch) {
+            return null;
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+          };
+        }
+        return null;
+      },
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      // The authorize function is called when a user submits their sign in credentials.
-      authorize: async (credentials) => {
-        let user = null;
-
-        // logic to salt and hash password
-        if (!credentials) {
-          throw new Error("Credentials are required.");
-        }
-        const pwHash = await saltAndHashPassword(credentials.password);
-
-        // logic to verify if the user exists
-        user = await getUserFromDb(credentials.email, pwHash);
-
-        if (!user) {
-          // No user found, so this is their first attempt to login
-          // Optionally, this is also the place you could do a user registration
-          throw new Error("No user found.");
-        }
-
-        // return user object with their profile data
-        return user;
-      },
     }),
+    /* ... additional providers ... /*/
   ],
-  adapter: PrismaAdapter({ prisma: db }) as Adapter,
+  adapter: PrismaAdapter(db) as Adapter,
 };
 
 export const { handler, signIn, signOut, useSession, getSession } =
@@ -102,7 +109,6 @@ async function getUserFromDb(email: string, hashedPassword: string) {
     return {
       id: user.id,
       email: user.email,
-      name: user.name,
       // Tout autre champ que vous voulez inclure dans l'objet utilisateur.
     };
   } catch (error) {

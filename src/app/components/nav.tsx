@@ -9,10 +9,10 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Btn from "./ui/btn";
 import { AlignJustify, RefreshCcw } from "lucide-react";
-import { toast, Toaster } from 'sonner';
+import { toast, Toaster } from "sonner";
 import {
   Sheet,
   SheetContent,
@@ -24,25 +24,24 @@ import {
 import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
-import { createTask } from "$/server/actions/actions";
-import { saltAndHashPassword } from "$/lib/utils/password";
-// import { useStore } from "$/stores/useStore";
-// import { useStore } from "$/lib/stores/useStore";
+import { createTask, createUser } from "$/server/actions/actions";
 
 export const queryClient = new QueryClient();
 
 export default function SimpleNav() {
+  // useEffect(() => {
+  //   createUser();
+  // }, []);
 
-// const addTask = useStore((state) => state.addTask);
-// const fetchTasks = useStore((state) => state.fetchTasks);
-
+  // const addTask = useStore((state) => state.addTask);
+  // const fetchTasks = useStore((state) => state.fetchTasks);
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-// const { percentage: perc, setTasks, setPercentage  } = useStore();
+  // const { percentage: perc, setTasks, setPercentage  } = useStore();
 
   const {
     mutate: createTheTask,
@@ -90,15 +89,16 @@ export default function SimpleNav() {
           <div className="flex items-center justify-between w-full">
             <Sheet>
               <SheetTrigger>
-                <SheetDescription className="items-center justify-center" title="Open Navigation">
+                <SheetDescription
+                  className="items-center justify-center"
+                  title="Open Navigation"
+                >
                   <AlignJustify className="w-8 h-auto text-center" />
                 </SheetDescription>
               </SheetTrigger>
               <SheetContent side="left">
                 <SheetHeader>
-                  <div className="text-center ">
-                    Navigation panel
-                  </div>
+                  <div className="text-center ">Navigation panel</div>
                 </SheetHeader>
                 <div className="flex flex-col justify-start !mt-6">
                   <Btn href="/" onClick={() => location.assign("/")}>
@@ -119,7 +119,7 @@ export default function SimpleNav() {
                     {session ? "Sign out" : "Sign in"}
                   </Btn>
                 </div>
-                {session && (
+                {/* {session && ( */}
                   <div className="my-6">
                     <div className="text-center">Services</div>
                     <Btn
@@ -131,7 +131,7 @@ export default function SimpleNav() {
                       SCHEDULE TASK
                     </Btn>
                   </div>
-                )}
+                {/* )} */}
               </SheetContent>
             </Sheet>
 
