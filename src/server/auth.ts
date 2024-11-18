@@ -5,25 +5,25 @@ import type { GetServerSidePropsContext } from "next";
 import { isPasswordValid } from "$/lib/utils/password";
 import { Adapter } from "next-auth/adapters";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { hash } from "bcryptjs";
 
-// declare module "next-auth" {
-//   interface Session extends DefaultSession {
-//     user: {
-//       id: string;
-//       // ...other properties
-//     } & DefaultSession["user"];
-//   }
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+      // ...other properties
+    } & DefaultSession["user"];
+  }
 
-//   // interface User {
-//   //   // ...other properties
-//   //   // role: UserRole;
-//   // }
-// }
+  // interface User {
+  //   // ...other properties
+  //   // role: UserRole;
+  // }
+}
 
-export const authOptions = {
-  db: db,
-  secret: process.env.SECRET,
-  signIn: true,
+import type { AuthOptions, SessionStrategy } from "next-auth";
+
+export const authOptions: AuthOptions = {
   callbacks: {
     session: ({
       session,
@@ -39,48 +39,78 @@ export const authOptions = {
       },
     }),
   },
+  //     Credentials({
+  //       id: "credentials",
+  //       name: "Credentials",
+  //       async authorize(credentials) {
+
+  //         await db.$connect();
+  //         const user = await getUserFromDb(
+  //           credentials?.email ?? "",
+  //           credentials?.password ?? ""
+  //         );
+
+  //         if (!user) {
+  //           return null;
+  //         }
+  //         const isPasswordMatch = isPasswordValid(
+  //           credentials.password ?? "",
+  //           user.password ?? ""
+  //         );
+  //         if (!isPasswordMatch) {
+  //           return null;
+  //         }
+
+  //         return {
+  //           id: user.id,
+  //           email: user.email,
+  //         };
+  //       },
+  //       credentials: {
+  // email: { label: "Email", type: "email" },
+  //     },
+  // })
   providers: [
     Credentials({
       id: "credentials",
       name: "Credentials",
-      async authorize(credentials) {
-        if (!credentials) {
+      //@ts-ignore
+      async authorize(credentials: { email: string; password: string }) {
+        await db.$connect();
+
+        const psswd = await hash(credentials.password, 12);
+
+        const user = await getUserFromDb(credentials.email, psswd);
+
+        // Check if user exists
+        if (!user) {
           return null;
         }
-        await db.$connect();
-        const user = await db.user.findUnique({
-          where: { email: credentials.email },
-        });
 
-        if (user) {
-          const isPasswordMatch = isPasswordValid(
-            credentials.password,
-            user.password ?? ""
-          );
+        // Validate password
+        const isPasswordMatch = await isPasswordValid(
+          credentials.password,
+          user.password
+        );
 
-          if (!isPasswordMatch) {
-            return null;
-          }
-
-          return {
-            id: user.id,
-            email: user.email,
-          };
+        if (!isPasswordMatch) {
+          return null;
         }
-        return null;
-      },
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+
+        return {
+          name: user.id,
+          email: user.email,
+        };
       },
     }),
-    /* ... additional providers ... /*/
   ],
-  adapter: PrismaAdapter(db) as Adapter,
+  session: {
+    strategy: "jwt" as SessionStrategy,
+    maxAge: 30 * 24 * 60 * 60, // 30 Days
+  },
 };
 
-export const { handler, signIn, signOut, useSession, getSession } =
-  NextAuth(authOptions);
+export default NextAuth(authOptions);
 
 //?------------------------------- Function to get the server session.
 
@@ -109,6 +139,7 @@ async function getUserFromDb(email: string, hashedPassword: string) {
     return {
       id: user.id,
       email: user.email,
+      password: user.password,
       // Tout autre champ que vous voulez inclure dans l'objet utilisateur.
     };
   } catch (error) {
