@@ -4,8 +4,6 @@
 // It will also print the seed to the console.
 
 // Import the necessary libraries
-
-require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
 const { hash } = require('bcryptjs');
 const db = new PrismaClient();
