@@ -4,8 +4,8 @@
 // It will also print the seed to the console.
 
 // Import the necessary libraries
-const { PrismaClient } = require('@prisma/client');
-const { hash } = require('bcryptjs');
+const { PrismaClient } = require("@prisma/client");
+const { hash } = require("bcryptjs");
 const db = new PrismaClient();
 
 // const user = await db.user.findUnique({ where: { email: "test@example.com" } });
@@ -18,27 +18,27 @@ const db = new PrismaClient();
 
 // Seed the database with a user
 const main = async () => {
-  const password = await hash('Test123*', 10);
-  await db.user.createMany({
-    data: [
-      {
-        id: 'cku1g02xg0001z3vy8n5rj1hf',
-        email: 'maxime.curon@risk-horizon.be',
-        password,
-      },
-    ],
-  });
+    const password = await hash("Test123*", 12);
+    await db.user.createMany({
+        data: [
+            {
+                id: "cku1g02xg0001z3vy8n5rj1hf",
+                email: "maxime.curon@risk-horizon.be",
+                password,
+            },
+        ],
+    });
 };
 
 // ...
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await db.$disconnect();
-  });
+    .catch((e) => {
+        console.error(e);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await db.$disconnect();
+    });
 
 // ...
