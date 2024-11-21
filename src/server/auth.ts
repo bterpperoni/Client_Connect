@@ -121,59 +121,77 @@
 // };
 
 // //?------------------------------- Function to get user from the database.
-async function getUserFromDb(email: string): Promise<User | undefined> {
-  try {
-    const user = await db.user.findUnique({
-      where: { email }, // Recherche l'utilisateur par email.
-    });
+async function getUserFromDb(
+    email: string,
+    password: string
+): Promise<User | undefined> {
+    try {
+        const user = await db.user.findUnique({
+            where: { email }, // Recherche l'utilisateur par email.
+        });
+        console.log("user", user);
+        console.log("password", password);
+        if (user) {
+            console.log(await bcrypt.compare(password, user.password));
+        }
 
-    if (!user) {
-      return undefined; // L'utilisateur n'existe pas.
+        if (!user) {
+            return undefined; // L'utilisateur n'existe pas.
+        } else if (!(await bcrypt.compare(password, user.password))) {
+            return undefined; // Le mot de passe ne correspond pas.
+        }
+        return user;
+    } catch (error) {
+        console.error(
+            "Erreur lors de la récupération de l'utilisateur :",
+            error
+        );
+        throw new Error("Erreur lors de la vérification des identifiants.");
     }
-    return user;
-  } catch (error) {
-    console.error("Erreur lors de la récupération de l'utilisateur :", error);
-    throw new Error("Erreur lors de la vérification des identifiants.");
-  }
 }
 
 import NextAuth from "next-auth";
 import { authConfig } from "$/../auth.config";
 import Credentials from "next-auth/providers/credentials";
-import { z } from "zod";
+import { string, z } from "zod";
 import { db } from "./db";
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { hashPassword } from "$/lib/utils/password";
+import { signInSchema } from "./zod";
 
-export const { auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  providers: [
-    Credentials({
-      // @ts-ignore
-      async authorize(credentials): Promise<User | undefined> {
-        const parsedCredentials = z
-          .object({
-            email: z.string().email(),
-            password: z.string().min(4),
-          })
-          .safeParse(credentials);
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await getUserFromDb(email);
+export const { handlers, auth, signIn, signOut } = NextAuth({
+    adapter: PrismaAdapter(db),
+    providers: [
+        Credentials({
+            // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+            // e.g. domain, username, password, 2FA token, etc.
+            credentials: {
+                email: {},
+                password: {},
+            },
+            authorize: async (credentials) => {
+                let user = null;
+                console.log("credentials", credentials);
+                const { email, password } = await signInSchema.parseAsync(
+                    credentials
+                );
 
-          if (!user) {
-            return undefined;
-          }
-          const isPasswordMatch = user.password
-            ? await bcrypt.compare(password, user.password)
-            : false;
-          if (isPasswordMatch) {
-            return user;
-          }
-          console.log("Invalid Credentials");
-          return;
-        }
-      },
-    }),
-  ],
+                // logic to salt and hash password
+                const pwHash = await hashPassword(password);
+                // logic to verify if the user exists
+                user = await getUserFromDb(email, pwHash);
+
+                if (!user) {
+                    // No user found, so this is their first attempt to login
+                    // Optionally, this is also the place you could do a user registration
+                    throw new Error("Invalid credentials.");
+                }
+
+                // return user object with their profile data
+                return user;
+            },
+        }),
+    ],
 });
