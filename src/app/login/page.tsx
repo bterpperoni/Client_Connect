@@ -1,43 +1,79 @@
-import { signIn } from "$/server/auth";
-import { useState } from "react";
+"use client";
+
+import { authenticate } from "$/server/actions";
+import { signIn } from "next-auth/react";
+import { FormEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Form } from "../components/ui/form";
+import { AuthError } from "next-auth";
+import { hashPassword } from "$/lib/utils/password";
+
+export type LoginFormData = {
+  email: string;
+  password: string;
+};
 
 export default function LoginPage() {
-    return (
-        <section className="h-screen">
-            <div className="container h-full px-6 py-24">
-                <div className="flex h-full flex-wrap items-center justify-center lg:justify-between">
-                    <div className="mb-12 md:mb-0 md:w-8/12 lg:w-6/12">
-                        <img
-                            src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-                            className="w-full"
-                            alt="Phone image"
-                        />
-                    </div>
+  // const [formData, setFormData] = useState({ username: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-                    {/* <!-- Right column container with form --> */}
-                    <div className="md:w-8/12 lg:ms-6 lg:w-5/12">
-                        <form
-                            action={async (formData) => {
-                                "use server";
-                                await signIn("credentials", formData);
-                            }}
-                            id="form1"
-                        >
-                            <label>
-                                Email
-                                <input name="email" type="email" />
-                            </label>
-                            <label>
-                                Password
-                                <input name="password" type="password" />
-                            </label>
-                            <button type="submit" form="form1" value="Submit">
-                                Submit
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+  const form = useForm({
+    defaultValues: {
+      email: email,
+      password: password,
+    },
+  });
+
+  const handleSubmit = async (data: LoginFormData) => {
+    try {
+      await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+    } catch (error) {
+      if (error instanceof AuthError) {
+        // @ts-ignore
+        switch (error.type) {
+          case "CredentialsSignin":
+            throw new Error("Invalid credentials");
+          default:
+            throw new Error("Something went wrong");
+        }
+      }
+      throw new Error("Error authenticating user");
+    }
+  };
+
+  return (
+    <div>
+      <h1>Login</h1>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <input
+            type="text"
+            placeholder="Username"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              console.log(email);
+            }}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              console.log(hashPassword(password));
+            }}
+          />
+          <button type="submit">Login</button>
+        </form>
+      </Form>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
+  );
 }

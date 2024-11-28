@@ -24,7 +24,7 @@ import {
 import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
-import { createTask, createUser } from "$/server/actions/actions";
+import { createTask, createUser } from "$/server/actions";
 
 export const queryClient = new QueryClient();
 
@@ -69,6 +69,9 @@ export default function SimpleNav() {
         closeModal();
         console.log("Task created successfully");
         toast.success(" Task created successfully");
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
         // fetchTasks();
         // addTask(data);
       },
@@ -113,24 +116,22 @@ export default function SimpleNav() {
                     Dashboard
                   </Btn>
 
-                  <Btn
-                    href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                  >
+                  <Btn href={session ? "/api/auth/signout" : "/login"}>
                     {session ? "Sign out" : "Sign in"}
                   </Btn>
                 </div>
                 {/* {session && ( */}
-                  <div className="my-6">
-                    <div className="text-center">Services</div>
-                    <Btn
-                      classList="mt-2"
-                      percentageWidth={100}
-                      textSize="md"
-                      onClick={() => openModal()}
-                    >
-                      SCHEDULE TASK
-                    </Btn>
-                  </div>
+                <div className="my-6">
+                  <div className="text-center">Services</div>
+                  <Btn
+                    classList="mt-2"
+                    percentageWidth={100}
+                    textSize="md"
+                    onClick={() => openModal()}
+                  >
+                    SCHEDULE TASK
+                  </Btn>
+                </div>
                 {/* )} */}
               </SheetContent>
             </Sheet>

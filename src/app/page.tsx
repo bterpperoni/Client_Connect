@@ -2,7 +2,6 @@
 
 import { useSession } from "next-auth/react";
 import Btn from "./components/ui/btn";
-import { signIn } from "next-auth/react";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -33,17 +32,16 @@ export default function Home() {
               )}
             </div>
           </div>
-          
+
           <p
             className={`border-t-2 p-2 text-center text-xl tracking-wider text-purple-800`}
           >
             Status :{" "}
             <span
               className={`${
-
                 status == "loading"
-                  ? "uppercase text-purple-800" :
-                status == "unauthenticated"
+                  ? "uppercase text-purple-800"
+                  : status == "unauthenticated"
                   ? "uppercase text-red-800"
                   : "uppercase text-green-800"
               }`}
@@ -55,7 +53,7 @@ export default function Home() {
                 : "Unauthenticated"}
             </span>
           </p>
-          <Btn href={session ? "/api/auth/signout" :  "/login"}>
+          <Btn href={session ? "/api/auth/signout" : "/login"}>
             {session ? "Sign out" : "Sign in"}
           </Btn>
         </div>

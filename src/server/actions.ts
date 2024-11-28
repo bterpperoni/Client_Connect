@@ -2,9 +2,10 @@
 // app/actions.ts
 import { db } from "$/server/db";
 import { Task, TaskStatus } from "@prisma/client";
-import { hash } from "bcryptjs";
-import { signIn } from "../auth";
+import { hashPassword } from "$/lib/utils/password";
+import { signIn } from "next-auth/react";
 import AuthError from "next-auth";
+import type { LoginFormData } from "$/app/login/page";
 
 // Fonction pour récupérer toutes les tâches
 export async function getAllTasks(): Promise<Task[]> {
@@ -85,32 +86,22 @@ export async function deleteTask(id: number): Promise<Task> {
 }
 
 export async function createUser(): Promise<void> {
-  const password = await hash("password", 10);
-  await db.user.create({
+  const password = await hashPassword("bite");
+  const user = await db.user.create({
     data: {
-      id: "cku1g02xg0001z3vy8n5rj1hf",
       email: "maxime.curon@risk-horizon.be",
-      password: password,
+      password,
+      accounts: {
+        create: {
+          provider: "credentials",
+          providerAccountId: "1",
+          type: "email",
+        },
+      },
     },
   });
 }
 
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData
-) {
-  try {
-    await signIn("credentials", formData);
-  } catch (error) {
-    if (error instanceof AuthError) {
-      // @ts-ignore
-      switch (error.type) {
-        case "CredentialsSignin":
-          throw new Error("Invalid credentials");
-        default:
-          throw new Error("Something went wrong");
-      }
-    }
-    throw new Error("Error authenticating user");
-  }
+export async function authenticate(formData: LoginFormData) {
+  
 }
