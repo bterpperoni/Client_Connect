@@ -7,7 +7,7 @@ import { type Task, TaskCategory, TaskStatus } from "@prisma/client";
 import ChartDonut from "$/app/components/ui/chart-donut";
 import Loader from "$/app/components/ui/loader";
 import CustomModal from "$/app/components/ui/modal";
-import { getAllTasks, getTaskById, updateTaskData } from "$/server/actions/actions";
+import { getAllTasks, getTaskById, updateTaskData } from "$/server/actions";
 import AnimatedPercentage from "$/app/components/ui/animatedPercentage";
 import React from "react";
 import { toast } from "sonner";
@@ -46,7 +46,6 @@ export default function Dashboard() {
     fetchTasks();
   }, []);
 
-
   //todo-------FOCUS  ON THIS TASK---------.
   const editTask = async (taskID: number): Promise<void> => {
     if (taskID) {
@@ -58,8 +57,7 @@ export default function Dashboard() {
     }
   };
 
-
-//todo --------------UPDATE  TASK---------
+  //todo --------------UPDATE  TASK---------
   const handleSubmit = async (data: TaskFormData): Promise<void> => {
     const taskTemp = {
       title: data.title,
