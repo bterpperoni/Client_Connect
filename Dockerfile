@@ -1,28 +1,25 @@
-FROM node:20 AS base
- 
-FROM base AS deps
- 
-RUN corepack enable
+# Build Stage
+FROM node:18 AS build
+
 WORKDIR /app
+
 COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm fetch --frozen-lockfile
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile --prod
- 
-FROM base AS build
- 
-RUN corepack enable
-WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm fetch --frozen-lockfile
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile
+
 COPY . .
+
+# Vérifiez la validité des types avant de builder
+RUN pnpm tsc --noEmit
+
+# Build l'application
 RUN pnpm build
- 
-FROM base
- 
+
+# Production Stage
+FROM node:18 AS base
+
 WORKDIR /app
-COPY --from=deps /app/node_modules /app/node_modules
-COPY --from=build /app/dist /app/dist
-ENV NODE_ENV production
-CMD ["node", "./dist/index.js"]
- 
+COPY --from=build /app ./
+EXPOSE 3000
+
+CMD ["pnpm", "start"]

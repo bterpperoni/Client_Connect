@@ -2,9 +2,9 @@ name: Deploy with Docker Compose
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   build:
@@ -17,21 +17,18 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-
       - name: Build the docker image
         id: build-docker-image
-        run: | 
-            docker build \
-            --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
-            --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
-            --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-            -t mcuron/client-connect:latest .
+        run: |
+          docker build \
+          --build-arg AUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+          --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
+          -t mcuron/client-connect:latest .
       - name: Push the docker image
         id: push-docker-image
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-          
-        run: | 
-            docker push mcuron/client-connect:latest
+
+        run: |
+          docker push mcuron/client-connect:latest
