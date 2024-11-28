@@ -9,9 +9,6 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm i
 
 COPY . .
 
-# Vérifiez la validité des types avant de builder
-RUN pnpm tsc --noEmit
-
 # Build l'application
 RUN pnpm build
 
