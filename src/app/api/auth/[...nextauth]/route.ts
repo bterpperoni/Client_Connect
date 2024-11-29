@@ -1,43 +1,15 @@
-import { isPasswordValid } from "$/lib/utils/password";
-import { db } from "$/server/db";
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 
-const authOptions = {
-  providers: [
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        // Exemple basique : valider utilisateur
-        const { email, password } = credentials || {};
+import { handlers } from "$/auth";
+import { NextRequest } from "next/server";
 
-        const user = await db.user.findUnique({
-          where: { email: email as string },
-        });
+// export { handlers as GET, handlers as POST };
 
-        if (user) {
-          const valid = await isPasswordValid(
-            password as string,
-            user.password
-          );
-          if (valid) console.log("User: ", user); return user;
-        }
-        // Retourne null si les credentials sont invalides
-        console.log("Failed to login"); return null;
-      },
-    }),
-  ],
-  pages: {
-    signIn: "/login", // Personnalisez si nécessaire
-  },
+
+
+export const GET = async (req: NextRequest) => {
+  return handlers.GET(req);
 };
 
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
-
-
+export const POST = async (req: NextRequest) => {
+  return handlers.POST(req);
+};

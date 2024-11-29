@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' 
 
     - name: Log in to Docker Hub
       run: |
@@ -20,16 +25,16 @@ jobs:
     - name: Build the docker image & test
       id: build-docker-image
       run: |
-          docker build \
-          --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
-          --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
-          -t mcuron/client-connect:latest .           
-          >
-          dotnet test
-          --configuration Release
-          --logger GitHubActions
-          --
-          RunConfiguration.CollectSourceInformation=true
+          docker build -t mcuron/client-connect:latest .  #\
+          # --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+          # --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
+          # -t mcuron/client-connect:latest .           
+          # >
+          # dotnet test
+          # --configuration Release
+          # --logger GitHubActions
+          # --
+          # RunConfiguration.CollectSourceInformation=true
     
     - name: Push the docker image
       id: push-docker-image

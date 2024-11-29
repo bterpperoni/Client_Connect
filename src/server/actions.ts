@@ -3,9 +3,7 @@
 import { db } from "$/server/db";
 import { Task, TaskStatus, User } from "@prisma/client";
 import { saltAndHashPassword } from "$/lib/utils/password";
-import { signIn } from "next-auth/react";
-import AuthError from "next-auth";
-import type { LoginFormData } from "$/app/login/page";
+
 
 // Fonction pour récupérer toutes les tâches
 export async function getAllTasks(): Promise<Task[]> {
@@ -101,5 +99,3 @@ export async function createUser(): Promise<User> {
     throw new Error("Error creating user vtf");
   }
 }
-
-export async function authenticate(formData: LoginFormData) {}

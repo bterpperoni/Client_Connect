@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "$/app/components/ui/card";
-import { ChartContainer } from "$/app/components/context/chart";
+import { ChartContainer } from "$/app/components/ui/chart";
 import { type PolarViewBox } from "recharts/types/util/types";
 import { type Task } from "@prisma/client";
 // import { useStore } from "$/lib/stores/useStore";
