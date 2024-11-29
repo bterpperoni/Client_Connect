@@ -5,6 +5,7 @@ import { db } from "$/server/db";
 import { User } from "@prisma/client";
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { signInSchema } from "$/lib/utils/zod";
 
 interface Credentials {
   email: string;
@@ -21,7 +22,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         // Exemple basique : valider utilisateur
-        const { email, password } = credentials || {};
+        const { email, password } = await signInSchema.parseAsync(credentials);
 
         const user: User | null = await db.user.findUnique({
           where: { email: email as string },
@@ -29,11 +30,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (user) {
           const valid = await isPasswordValid(
-            password as string,
+            password,
             user.password
           );
-          if (valid) console.log("User: ", user);
-          return user;
+          console.log(
+            "User psswd from db: ",
+            user.password,
+            "\nCompared to: ",
+            password
+          );
+          if (valid) return user;
         }
         // Retourne null si les credentials sont invalides
         console.log("Failed to login");

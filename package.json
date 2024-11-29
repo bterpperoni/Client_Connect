@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "ci": "rimraf node_modules pnpm-lock.yaml && pnpm install"
+    "ci": "pnpm remove -rf node_modules pnpm-lock.yaml && pnpm install"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

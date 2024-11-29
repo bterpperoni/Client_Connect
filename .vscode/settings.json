@@ -21,7 +21,7 @@
       "italic": false
     },
     {
-      "tag": "$",
+      "tag": ".",
       "color": "#FF8C00",
       "strikethrough": false,
       "underline": true,
