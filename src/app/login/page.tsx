@@ -1,12 +1,11 @@
 "use client";
 
-import { authenticate } from "$/server/actions";
 import { signIn } from "next-auth/react";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "../components/ui/form";
 import { AuthError } from "next-auth";
-import { hashPassword } from "$/lib/utils/password";
+// import { saltAndHashPassword } from "$/lib/utils/password";
 
 export type LoginFormData = {
   email: string;
@@ -35,7 +34,6 @@ export default function LoginPage() {
       });
     } catch (error) {
       if (error instanceof AuthError) {
-        // @ts-ignore
         switch (error.type) {
           case "CredentialsSignin":
             throw new Error("Invalid credentials");
@@ -65,9 +63,10 @@ export default function LoginPage() {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => {
+            onChange={async (e) => {
+              
               setPassword(e.target.value);
-              console.log(hashPassword(password));
+              // console.log(saltAndHashPassword(password));
             }}
           />
           <button type="submit">Login</button>

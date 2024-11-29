@@ -1,28 +1,26 @@
-// import bcrypt from 'bcrypt';
+import { compare, hashSync, genSalt } from 'bcrypt';
 
 /**
- * Hashes and salts a password using bcrypt.
+ * ! Hashes and salts a password using bcrypt.
  * @param password - The plain text password to hash.
  * @param saltRounds - The number of salt rounds for bcrypt (default is 10).
  * @returns A promise that resolves to the hashed password.
  */
-// export async function saltAndHashPassword(password: string, saltRounds: number = 10): Promise<string> {
-//   try {
-//     const salt = await bcrypt.genSalt(saltRounds);
-//     const hashedPassword = await bcrypt.hash(password, salt);
-//     return hashedPassword;
-//   } catch (error) {
-//     throw new Error(`Error hashing password: ${error}`);
-//   }
-// }
-
-import { compare, hash } from "bcryptjs";
-
-export async function hashPassword(password: string) {
-    const hashedPassword = await hash(password, 12);
+export async function saltAndHashPassword(password: string, saltRounds: number = 10): Promise<string> {
+  try {
+    const salt = await genSalt(saltRounds);
+    const hashedPassword = hashSync(password, salt);
+    const tempPassword = hashSync(password, salt);
+    if( hashedPassword !== tempPassword ) { 
+        throw new Error("Hash doesn't work"); 
+    }
     return hashedPassword;
+  } catch (error) {
+    throw new Error(`Error hashing password: ${error}`);
+  }
 }
 
+//! This function is used to check if a password is valid by comparing it to a hashed password.
 export async function isPasswordValid(
     password: string,
     hashedPassword: string

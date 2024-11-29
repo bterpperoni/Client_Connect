@@ -1,8 +1,8 @@
 "use server";
 // app/actions.ts
 import { db } from "$/server/db";
-import { Task, TaskStatus } from "@prisma/client";
-import { hashPassword } from "$/lib/utils/password";
+import { Task, TaskStatus, User } from "@prisma/client";
+import { saltAndHashPassword } from "$/lib/utils/password";
 import { signIn } from "next-auth/react";
 import AuthError from "next-auth";
 import type { LoginFormData } from "$/app/login/page";
@@ -85,23 +85,21 @@ export async function deleteTask(id: number): Promise<Task> {
   }
 }
 
-export async function createUser(): Promise<void> {
-  const password = await hashPassword("bite");
-  const user = await db.user.create({
-    data: {
-      email: "maxime.curon@risk-horizon.be",
-      password,
-      accounts: {
-        create: {
-          provider: "credentials",
-          providerAccountId: "1",
-          type: "email",
-        },
+export async function createUser(): Promise<User> {
+  try {
+    const password = await saltAndHashPassword("password");
+    const user = await db.user.create({
+      data: {
+        email: "maxime.curon@risk-horizon.be",
+        name: "bterpperoni",
+        password: password,
       },
-    },
-  });
+    });
+    console.log("User Password= ", user.password, "\n Current hash for \"password=\"", saltAndHashPassword("password"));
+    return user;
+  } catch (error) {
+    throw new Error("Error creating user vtf");
+  }
 }
 
-export async function authenticate(formData: LoginFormData) {
-  
-}
+export async function authenticate(formData: LoginFormData) {}
