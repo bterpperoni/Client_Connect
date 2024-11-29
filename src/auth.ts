@@ -48,6 +48,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/login", // Personnalisez si nécessaire
+    signIn: "/login", 
   },
 } satisfies NextAuthConfig);
