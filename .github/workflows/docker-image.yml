@@ -16,12 +16,11 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18
-        cache: 'pnpm'
 
     - name: Install Dependencies
-      run: |
-        corepack enable
-        corepack prepare pnpm@latest --activate
+      run: | 
+        corepack enable \
+        corepack prepare pnpm@latest --activate \
         pnpm install --frozen-lockfile
 
     - name: Log in to Docker Hub
