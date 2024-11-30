@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 
 /**
@@ -9,11 +9,11 @@ import * as bcrypt from 'bcryptjs';
  */
 export async function saltAndHashPassword(
   password: string,
-  saltRounds: number = 12
+  saltRounds: number
 ): Promise<string> {
   try {
     const salt = await bcrypt.genSalt(saltRounds);
-    const hashedPassword = bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   } catch (error) {
     throw new Error(`Error hashing password: ${error}`);
@@ -22,12 +22,11 @@ export async function saltAndHashPassword(
 
 // This function is used to check if a password is valid by comparing it to a hashed password.
 export async function isPasswordValid(
-  password: string,
+  givenPassword: string,
   hashedPassword: string
 ) {
   try {
-    const passwordInput = await saltAndHashPassword(password);
-    const isValid = await bcrypt.compare(passwordInput, hashedPassword);
+    const isValid = await bcrypt.compare(givenPassword, hashedPassword);
     return isValid;
   } catch (error) {
     throw new Error(`Error comparing passwords: ${error}`);

@@ -1,9 +1,7 @@
-#$ Build Stage
+#. Build Stage
 FROM node:18 AS builder
 
 WORKDIR /app
-
-RUN apt-get update -y && apt-get install -y openssl
 
 #? Install dependencies
 COPY package.json pnpm-lock.yaml ./
@@ -16,10 +14,12 @@ COPY . .
 #? Build l'application
 RUN  pnpm build
 
-#$ Production Stage
+#. Production Stage
 FROM node:18-slim AS production
 
 WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/public ./public

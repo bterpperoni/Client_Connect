@@ -2,17 +2,12 @@
 
 import { Separator } from "$/app/components/ui/separator";
 import { useSession } from "next-auth/react";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 
 import { useEffect, useState } from "react";
 import Btn from "./ui/btn";
 import { AlignJustify, RefreshCcw } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
@@ -24,30 +19,23 @@ import {
 import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
-import { createTask, createUser } from "$/server/actions";
-
+import { createTask, createUser, insertTasks } from "$/server/actions";
 export const queryClient = new QueryClient();
 
 export default function SimpleNav() {
-  // useEffect(() => {
-  //   createUser();
-  // }, []);
 
-  // const addTask = useStore((state) => state.addTask);
-  // const fetchTasks = useStore((state) => state.fetchTasks);
   const { data: session } = useSession();
+  useEffect(() => {
+    if (session) console.log(session.user);
+    // insertTasks();
+    // createUser();
+  }, []);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
-  // const { percentage: perc, setTasks, setPercentage  } = useStore();
-
-  const {
-    mutate: createTheTask,
-    isPending,
-    isSuccess,
-  } = useMutation(
+  const { mutate: createTheTask } = useMutation(
     {
       mutationKey: ["tasks"],
       mutationFn: async ({ formdata }: { formdata: TaskFormData }) => {
@@ -71,9 +59,10 @@ export default function SimpleNav() {
         toast.success(" Task created successfully");
         setTimeout(() => {
           location.reload();
-        }, 1000);
-        // fetchTasks();
-        // addTask(data);
+        }, 2000);
+        // The timeout trigger a delay before the page reloads
+        // And the code below is triggered too
+        console.log("Task created successfully");
       },
       onError: (error) => {
         console.log(error);
