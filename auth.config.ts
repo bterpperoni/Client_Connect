@@ -18,5 +18,4 @@ export const authConfig = {
   pages: {
     signIn: "/login",
   },
-  secret: process.env.SECRET,
-} satisfies NextAuthMiddlewareOptions;
+};
