@@ -49,6 +49,7 @@ export const authOptions = {
         return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     Credentials({
       id: "credentials",
@@ -66,7 +67,7 @@ export const authOptions = {
             throw new Error("Request body is undefined");
           }
           const { email, password } = await signInSchema.parseAsync(
-            request.body || credentials
+            credentials
           );
 
           // Vérifiez si l'utilisateur existe
@@ -78,14 +79,14 @@ export const authOptions = {
 
           // Valider le mot de passe
           const valid = await isPasswordValid(password, user.password);
-          if (!valid) throw new Error("Invalid credentials");
+         
           // Retournez uniquement les informations nécessaires
           return user;
         } catch (error) {
           if (error instanceof ZodError) {
             throw new Error("Invalid input");
           }
-          throw new Error("Authentication failed");
+            return null;
         }
       },
     }),

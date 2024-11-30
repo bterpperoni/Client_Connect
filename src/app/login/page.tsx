@@ -12,7 +12,7 @@ export default function SignInPage() {
     };
 
     const result = await signIn("credentials", {
-      redirect: true,
+      redirect: false,
       email: body.email,
       password: body.password,
     });
