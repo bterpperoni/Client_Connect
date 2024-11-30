@@ -1,18 +1,19 @@
-import { JWT } from "next-auth/jwt";
-import { NextAuthMiddlewareOptions } from "next-auth/middleware";
-import { NextRequest } from "next/server";
-import { Session } from 'next-auth';
+import { Session } from "next-auth";
+import { signIn } from "next-auth/react";
 
 export const authConfig = {
   callbacks: {
-    authorized: ({ token, req }: { token: JWT | null; req: NextRequest }) => {
-      const isAuthRoute = req.nextUrl.pathname.startsWith(`/dashboard/${token?.id}`);
-      const isLoggedIn = !!token; // Le token est présent si l'utilisateur est connecté
-
-      if (isAuthRoute) {
-        return isLoggedIn; // Bloque les non-connectés sur /dashboard
+    authorized({ auth }: { auth: Session | null; token: string }) {
+      const isLoggedIn = !!auth?.user;
+      if (!isLoggedIn) {
+        return signIn("credentials", { redirect: false });
       }
-      return true; // Autorise tout le monde pour les autres routes
+      // Si l'utilisateur est connecté et tente d'accéder à une route protégée, il est autorisé
+      if (isLoggedIn) {
+        return true;
+      }
+      // Si l'utilisateur n'est pas connecté, il est redirigé vers la page de connexion
+      return false;
     },
   },
   pages: {
