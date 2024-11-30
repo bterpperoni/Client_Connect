@@ -6,7 +6,7 @@ import { Session } from 'next-auth';
 export const authConfig = {
   callbacks: {
     authorized: ({ token, req }: { token: JWT | null; req: NextRequest }) => {
-      const isAuthRoute = req.nextUrl.pathname.startsWith("/dashboard");
+      const isAuthRoute = req.nextUrl.pathname.startsWith(`/dashboard/${token?.id}`);
       const isLoggedIn = !!token; // Le token est présent si l'utilisateur est connecté
 
       if (isAuthRoute) {
