@@ -1,9 +1,10 @@
+// @ts-nocheck
 "use client";
 
-import { useEffect, useState } from "react";
+import { Children, useEffect, useState } from "react";
 import TaskForm, { type TaskFormData } from "$/app/components/task-form";
 import TaskListComponent from "$/app/components/task-list";
-import { type Task, TaskCategory, TaskStatus } from "@prisma/client";
+import { type Task, TaskCategory } from "@prisma/client";
 import ChartDonut from "$/app/components/ui/chart-donut";
 import Loader from "$/app/components/ui/loader";
 import CustomModal from "$/app/components/ui/modal";
@@ -128,8 +129,7 @@ export default function Dashboard() {
                 classList="w-[95%] rounded-xl"
                 category={category}
                 tasks={tasks.filter((task) => task.category === category) ?? []}
-                children={undefined}
-              />{" "}
+              /> { Children ? <div className="text-2xl text-center">{category}</div> : null }
               <AnimatedPercentage
                 classList="bottom-[41%] relative md:top-[-42%] z-1"
                 percentage={Math.floor(

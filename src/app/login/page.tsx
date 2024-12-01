@@ -1,6 +1,5 @@
 import { auth } from "$/server/auth/auth";
-import { json } from "stream/consumers";
-import Login from "../components/login";
+import Login from "../components/authentication/login";
 
 export default async function LoginHome() {
   const session = await auth();

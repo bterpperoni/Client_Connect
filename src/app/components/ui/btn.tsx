@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { type AnchorHTMLAttributes, type ButtonHTMLAttributes } from "react";
 
 export type ButtonProps = {

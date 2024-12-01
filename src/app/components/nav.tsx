@@ -13,23 +13,22 @@ import {
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "$/app/components/ui/sheet";
 import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
-import { createTask, createUser, insertTasks } from "$/server/actions";
+import { createTask } from "$/server/actions";
 export const queryClient = new QueryClient();
 
 export default function SimpleNav() {
 
   const { data: session } = useSession();
-  useEffect(() => {
-    if (session) console.log(session.user);
+  // useEffect(() => {
+  //   if (session) console.log(session.user);
     // insertTasks();
     // createUser();
-  }, []);
+  // }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 

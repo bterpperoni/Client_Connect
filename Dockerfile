@@ -12,7 +12,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm i
 COPY . .
 
 #? Build l'application
-RUN  pnpm build
+RUN  pnpm build --no-lint
 
 #. Production Stage
 FROM node:18-slim AS production

@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "$/app/components/ui/dialog";
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "$/app/components/ui/button";
 import { Trash, MoreHorizontal, Calendar } from "lucide-react";
 import {
@@ -65,8 +65,8 @@ export default function TaskListComponent({
   category,
   setTasks,
 }: TaskListProps) {
+
   const queryClient = new QueryClient();
-  const { data: session } = useSession();
 
   //!  /*----------------------------------------
   //!--------------DELETE TASK -----------------

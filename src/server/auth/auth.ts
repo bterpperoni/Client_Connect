@@ -16,7 +16,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         email: { label: "email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials, _req): Promise<User | null> => {
+      authorize: async (credentials): Promise<User | null> => {
         try {
           const { email, password } = await signInSchema.parseAsync(
             credentials
