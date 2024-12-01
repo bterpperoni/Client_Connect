@@ -24,13 +24,13 @@ const LoginForm = () => {
       }
     } catch (e) {
       console.error(e);
-      setError("Check your Credentials");
+      setError("On dirait que tu as oublié ton mot de passe, \n Contact nous au plus vite \n à afin de régler ce désgrément \n Contact : https://risk-horizon.be/contact .");
     }
   }
 
   return (
     <>
-      <div className="text-xl text-red-500">{error}</div>
+      <div className="text-base justify text-red-500">{error}</div>
       <form
         className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
         onSubmit={onSubmit}

@@ -5,8 +5,7 @@ import { signInSchema } from "../../lib/utils/zod";
 import { User } from "@prisma/client";
 import { isPasswordValid, saltAndHashPassword } from "../../lib/utils/password";
 import { ZodError } from "zod";
-import NextAuth, { DefaultSession } from "next-auth";
-import log from "next-auth/providers/credentials";
+import NextAuth from "next-auth";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db),
@@ -14,7 +13,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     Credentials({
       id: "credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
+        email: { label: "email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials, _req): Promise<User | null> => {

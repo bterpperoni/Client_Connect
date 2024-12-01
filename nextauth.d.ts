@@ -10,16 +10,3 @@ declare export module "next-auth" {
   }
 }
 
-// module.exports = {
-//   // other configurations
-//   reactStrictMode: true,
-//   async redirects() {
-//     return [
-//       {
-//         source: "/login",
-//         destination: "/api/auth/signin",
-//         permanent: false,
-//       },
-//     ];
-//   },
-// };
