@@ -2,10 +2,10 @@
 
 import Btn from "./components/ui/btn";
 import { useSession } from "next-auth/react";
+import UserAuthenticated from "./components/userAuthenticated";
 
 export default function Home() {
-
-const { data: session, status } = useSession();
+  const { data: session, status } = useSession();
 
   return (
     <div className="container grid grid-cols-1 gap-4 auto-rows-[minmax(100px, _auto)] items-center justify-center bg-white px-4 py-16">
@@ -20,13 +20,19 @@ const { data: session, status } = useSession();
             </div>
             <div className="text-center">
               {session ? (
-                <span className="text-2xl text-green-800">{session.user?.email}</span>
+                <span className="text-2xl text-green-800">
+                  {session.user?.email}
+                </span>
               ) : (
                 <>
-                  <span className="mb-8 text-base text-purple-800">
-                    Please sign in to manage tasks or go to the dashboard if you
-                    are a simple user.
-                  </span>
+                  {session ? (
+                    <UserAuthenticated sessionUser={session} />
+                  ) : (
+                    <span className="mb-8 text-base text-purple-800">
+                      Please sign in to manage tasks or go to the dashboard if
+                      you are a simple user.
+                    </span>
+                  )}
                 </>
               )}
             </div>

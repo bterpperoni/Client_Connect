@@ -83,35 +83,6 @@ export async function deleteTask(id: number): Promise<Task> {
   }
 }
 
-//.. Fonction pour créer un utilisateur
-export async function createUser(): Promise<User> {
-  try {
-    //! Les hashs sont différent wtf ?
-    const password = await saltAndHashPassword("password", 10);
-    const temp = await saltAndHashPassword("password", 10);
-    const user = await db.user.create({
-      data: {
-        email: "maxime.curon@risk-horizon.be",
-        name: "bterpperoni",
-        password: password,
-      },
-    });
-    //! Guete le hash dans la console
-    console.log(
-      "User Password= ",
-      user.password,
-      '\n Current hash for "password="',
-      temp,
-      "\n isValid=",
-      //! Et du coup bah ils sont pas valides forcément wtfffffffffff?
-      await isPasswordValid(temp, user.password)
-    );
-    return user;
-  } catch (error) {
-    throw new Error("Error creating user");
-  }
-}
-
 export async function insertTasks() {
   const tasks = [
     // Offensive Tasks

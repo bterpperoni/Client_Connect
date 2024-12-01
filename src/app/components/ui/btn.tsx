@@ -21,7 +21,7 @@ function Button({
   classList,
   ...props
 }: ButtonProps) {
-  // Si on fournit un href, on rend un lien (<Link>)
+  // Si on fournit un href, on rend un lien (<a>) 
   if (href) {
     return (
       <a

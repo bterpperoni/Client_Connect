@@ -46,12 +46,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           if (!valid) {
             throw new Error("Invalid password");
           }
-          const x = await signIn("credentials", credentials);
-
-          setTimeout(() => {
-            console.log("User found: ", user, "\n");
-            console.log("X: ", x);
-          }, 5000);
 
           return user;
         } catch (error) {

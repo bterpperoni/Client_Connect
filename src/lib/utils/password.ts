@@ -27,12 +27,11 @@ export async function saltAndHashPassword(
 
 
 /**
- * Hashes and salts a password using bcrypt.
+ * This function is used to check if a password is valid by comparing it to a hashed password.
  * @param clearPassword - The plain text password to compare.
  * @param hashedPassword - The hashed password to compare against. 
- * @returns A promise that resolves a boolean.
+ * @returns A promise that resolves to a boolean.
  */
-//! This function is used to check if a password is valid by comparing it to a hashed password.
 export async function isPasswordValid(
   clearPassword: string,
   hashedPassword: string

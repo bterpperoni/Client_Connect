@@ -1,13 +1,20 @@
 "use client";
 
 import { doCredentialLogin } from "$/server/auth/actions";
-
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Form, useForm } from "react-hook-form";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 const LoginForm = () => {
-  const router = useRouter();
   const [error, setError] = useState("");
+
+  const form = useForm({
+    defaultValues: {
+      email: "example@example.com",
+      password: "strong password",
+    },
+  });
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,16 +27,18 @@ const LoginForm = () => {
         console.error(response.error);
         setError(response.error);
       } else {
-        router.push("/");
+        location.assign("/");
       }
     } catch (e) {
       console.error(e);
-      setError("On dirait que tu as oublié ton mot de passe, \n Contact nous au plus vite \n à afin de régler ce désgrément \n Contact : https://risk-horizon.be/contact .");
+      setError(
+        "On dirait que tu as oublié ton mot de passe, \n Contact nous au plus vite \n à afin de régler ce désgrément \n Contact : https://risk-horizon.be/contact ."
+      );
     }
   }
 
   return (
-    <>
+    <div className="m-2 p-4 border-black border-2">
       <div className="text-base justify text-red-500">{error}</div>
       <form
         className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
@@ -62,7 +71,7 @@ const LoginForm = () => {
           Ceredential Login
         </button>
       </form>
-    </>
+    </div>
   );
 };
 

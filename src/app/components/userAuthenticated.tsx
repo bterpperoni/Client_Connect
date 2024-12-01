@@ -1,8 +1,9 @@
+'use server'
 import { Session } from "next-auth";
 
 export type UserProps = { sessionUser: NonNullable<Session["user"]> };
 
-export const User = ({ sessionUser }: UserProps) => {
+const UserAuthenticated = ({ sessionUser }: UserProps) => {
   return (
     <div>
       <h1>{sessionUser.name}</h1>
@@ -11,4 +12,4 @@ export const User = ({ sessionUser }: UserProps) => {
   );
 };
 
-export default User;
+export default UserAuthenticated;

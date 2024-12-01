@@ -13,8 +13,8 @@ export default function RootLayout({
   const queryClient = new QueryClient();
 
   return (
-    <SessionProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
         <html lang="en">
           <body className="md:overflow-y-hidden ">
             <header>
@@ -24,7 +24,7 @@ export default function RootLayout({
             <main>{children}</main>
           </body>
         </html>
-      </QueryClientProvider>
-    </SessionProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 }

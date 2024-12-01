@@ -19,6 +19,8 @@ import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
 import { createTask } from "$/server/actions";
+// import { insertTasks } from "$/server/actions";
+
 export const queryClient = new QueryClient();
 
 export default function SimpleNav() {
@@ -26,8 +28,7 @@ export default function SimpleNav() {
   const { data: session } = useSession();
   // useEffect(() => {
   //   if (session) console.log(session.user);
-    // insertTasks();
-    // createUser();
+  //   void insertTasks();
   // }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
