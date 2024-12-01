@@ -19,11 +19,12 @@ FROM node:18-slim AS production
 
 WORKDIR /app
 
-RUN apt-get update -y && apt-get install -y openssl
+# RUN apt-get update -y && apt-get install -y openssl
 
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/public ./public
+# COPY --from=builder /app/.next/standalone ./
+# COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# CMD ["node", "server.js"]
+CMD ["pnpm","start"]
