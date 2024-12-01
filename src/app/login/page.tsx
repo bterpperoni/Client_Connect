@@ -1,39 +1,24 @@
-"use client"
-import { signIn } from "next-auth/react";
-import { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { auth } from "$/server/auth/auth";
+import { json } from "stream/consumers";
+import Login from "../components/login";
 
-export default function SignInPage() {
-  const credentialsAction = async (event: React.FormEvent<HTMLFormElement>) => {
-    const target = event.currentTarget;
-    const body = {
-      email: target.email.value,
-      password: target.password.value,
-    };
-
-    const result = await signIn("credentials", {
-      redirect: false,
-      email: body.email,
-      password: body.password,
-    });
-    if (result?.error) {
-      console.error(result.error);
-    } else if (result?.ok) {
-      console.log(result);
-    }
-  };
+export default async function LoginHome() {
+  const session = await auth();
 
   return (
-    <form onSubmit={credentialsAction}>
-      <label htmlFor="credentials-email">
-        Email
-        <input type="email" id="credentials-email" name="email" />
-      </label>
-      <label htmlFor="credentials-password">
-        Password
-        <input type="password" id="credentials-password" name="password" />
-      </label>
-      <input type="submit" value="Sign In" />
-    </form>
+    <>
+      <div>
+        <h1>Welcome to LoginHome!</h1>
+        {!session && (
+          <div>
+            <Login />
+          </div>
+        )}
+        {session && <h1>Welcome {session?.user.name}!</h1>}
+      </div>
+      <div className="text-xl text-black absolute w-1/2 h-auto">
+        {JSON.stringify(session, null, 2)}
+      </div>
+    </>
   );
 }

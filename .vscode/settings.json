@@ -47,5 +47,6 @@
       "bold": false,
       "italic": false
     }
-  ]
+  ],
+  "todo-tree.tree.scanMode": "current file"
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "$/server/db";
+import {db} from "$/server/db";
 import { Task, TaskCategory, TaskStatus, User } from "@prisma/client";
 import { isPasswordValid, saltAndHashPassword } from "$/lib/utils/password";
 
