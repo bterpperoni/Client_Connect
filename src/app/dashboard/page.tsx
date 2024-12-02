@@ -122,14 +122,15 @@ export default function Dashboard() {
         {Object.values(TaskCategory).map((category) => (
           <div
             key={category}
-            className="col-span-1 flex flex-col items-center bg-white rounded-xl h-[88vh]"
+            className=" flex flex-col items-center bg-white rounded-xl"
           >
             <div className=" w-full border-box flex flex-col justify-center items-center">
               <ChartDonut
+                key={category}
                 classList="w-[95%] rounded-xl"
                 category={category}
                 tasks={tasks.filter((task) => task.category === category) ?? []}
-              /> { Children ? <div className="text-2xl text-center">{category}</div> : null }
+              /> 
               <AnimatedPercentage
                 classList="bottom-[41%] relative md:top-[-42%] z-1"
                 percentage={Math.floor(
@@ -145,7 +146,7 @@ export default function Dashboard() {
               tasksProps={tasks.filter((task) => task.category === category)}
               onEditTask={editTask}
               category={category}
-              classList="w-[95%] rounded-xl mt-2"
+              classList="w-[95%] h-max rounded-xl mt-2 relative bottom-6"
               setTasks={setTasks}
             />
           </div>

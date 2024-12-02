@@ -24,7 +24,6 @@ import { createTask } from "$/server/actions";
 export const queryClient = new QueryClient();
 
 export default function SimpleNav() {
-
   const { data: session } = useSession();
   // useEffect(() => {
   //   if (session) console.log(session.user);
@@ -76,7 +75,7 @@ export default function SimpleNav() {
 
   return (
     <>
-      <nav className="w-full inline-flex scroll items-center bg-background h-[60px]">
+      <div className="w-full inline-flex scroll items-center bg-background h-[60px]">
         <div className="container mx-4 px-4">
           <div className="flex items-center justify-between w-full">
             <Sheet>
@@ -96,12 +95,10 @@ export default function SimpleNav() {
                   <Btn href="/" onClick={() => location.assign("/")}>
                     Home
                   </Btn>
-
                   <Btn
                     href="/dashboard"
                     classList="my-2"
-                    onClick={() => location.assign("/dashboard")}
-                  >
+                    onClick={() => location.assign("/dashboard")}>
                     Dashboard
                   </Btn>
 
@@ -109,19 +106,19 @@ export default function SimpleNav() {
                     {session ? "Sign out" : "Sign in"}
                   </Btn>
                 </div>
-                {/* {session && ( */}
-                <div className="my-6">
-                  <div className="text-center">Services</div>
-                  <Btn
-                    classList="mt-2"
-                    percentageWidth={100}
-                    textSize="md"
-                    onClick={() => openModal()}
-                  >
-                    SCHEDULE TASK
-                  </Btn>
-                </div>
-                {/* )} */}
+                {session && (
+                  <div className="my-6">
+                    <div className="text-center">Services</div>
+                    <Btn
+                      classList="mt-2"
+                      percentageWidth={100}
+                      textSize="md"
+                      onClick={() => openModal()}
+                    >
+                      SCHEDULE TASK
+                    </Btn>
+                  </div>
+                )}
               </SheetContent>
             </Sheet>
 
@@ -164,7 +161,7 @@ export default function SimpleNav() {
             </CustomModal>
           </div>
         </div>
-      </nav>
+      </div>
       <Separator />
     </>
   );

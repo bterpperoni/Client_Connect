@@ -40,7 +40,6 @@ export default function ChartDonut({
     return tasks.reduce((acc, curr) => acc + curr.importanceScore, 0);
   }, [tasks]);
 
-
   return (
     <Card className={`flex flex-col mt-4 ${classList}`}>
       <CardHeader className="items-center pb-0">
@@ -109,18 +108,15 @@ export default function ChartDonut({
             </Pie>
             <Tooltip
               accessibilityLayer={true}
-labelStyle={{ color: "black" }}
+              labelStyle={{ color: "black" }}
               content={({ active, payload }) => {
                 if (active && payload?.length) {
                   const data = payload[0]?.payload;
                   return (
                     <div className="rounded-lg bg-white p-2 shadow-md dark:bg-gray-950">
-                      <p className="font-bold">{data?.name}</p>
-                      <p>Score: {data?.value}</p>
-                      <p>
-                        Percentage completed:{" "}
-                        {Math.floor((data?.value / totalScore) * 100)}%
-                      </p>
+                      <div className="font-bold">{data?.name}</div>
+                      <div>Score: {data?.value}</div>
+                      {Math.floor((data?.value / totalScore) * 100)}%
                     </div>
                   );
                 }
