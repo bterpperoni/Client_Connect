@@ -38,13 +38,13 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="m-2 p-4 border-black border-2">
+    <div className="">
       <div className="text-base justify text-red-500">{error}</div>
       <form
-        className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
+        className="my-5 flex flex-col justify-center items-center border p-3 border-gray-200 rounded-md"
         onSubmit={onSubmit}
       >
-        <div className="my-2">
+        <div className="my-2 flex flex-col">
           <label htmlFor="email">Email Address</label>
           <input
             className="border mx-2 border-gray-500 rounded"
@@ -54,7 +54,7 @@ const LoginForm = () => {
           />
         </div>
 
-        <div className="my-2">
+        <div className="my-2 flex flex-col">
           <label htmlFor="password">Password</label>
           <input
             className="border mx-2 border-gray-500 rounded"
@@ -66,7 +66,7 @@ const LoginForm = () => {
 
         <button
           type="submit"
-          className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36"
+          className="bg-orange-300 p-2 mt-4 rounded flex justify-center items-center w-36"
         >
           Ceredential Login
         </button>

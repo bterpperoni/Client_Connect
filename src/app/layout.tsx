@@ -13,10 +13,10 @@ export default function RootLayout({
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider>
+    <SessionProvider>
+      <QueryClientProvider client={queryClient}>
         <html lang="en">
-          <body className="md:overflow-y-hidden ">
+          <body className="md:overflow-y-hidden">
             <header>
               <Toaster closeButton richColors className="absolute inset-10" />
               <SimpleNav />
@@ -24,7 +24,7 @@ export default function RootLayout({
             <main>{children}</main>
           </body>
         </html>
-      </SessionProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   );
 }

@@ -2,7 +2,6 @@
 
 import Btn from "./components/ui/btn";
 import { useSession } from "next-auth/react";
-import UserAuthenticated from "./components/userAuthenticated";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -21,19 +20,13 @@ export default function Home() {
             <div className="text-center">
               {session ? (
                 <span className="text-2xl text-green-800">
-                  {session.user?.email}
+                  <div> Logged in as {session?.user?.email} </div>
                 </span>
               ) : (
-                <>
-                  {session ? (
-                    <UserAuthenticated sessionUser={session} />
-                  ) : (
-                    <span className="mb-8 text-base text-purple-800">
-                      Please sign in to manage tasks or go to the dashboard if
-                      you are a simple user.
-                    </span>
-                  )}
-                </>
+                <span className="mb-8 text-base text-purple-800">
+                  Please sign in to manage tasks or go to the dashboard if you
+                  are a simple user.
+                </span>
               )}
             </div>
           </div>

@@ -67,6 +67,7 @@ export default function TaskListComponent({
 }: TaskListProps) {
 
   const queryClient = new QueryClient();
+  const { data: session } = useSession();
 
   //!  /*----------------------------------------
   //!--------------DELETE TASK -----------------
@@ -144,7 +145,7 @@ export default function TaskListComponent({
             </div>
           </>
         ) : (
-          <ScrollArea className="h-[21rem] w-full overflow-hidden">
+          <ScrollArea className="absolute h-[21rem] w-full overflow-hidden">
             {filteredTasks.map((task) => (
               <Card key={task.id} className="my-2">
                 <CardHeader className="p-5">
@@ -170,7 +171,7 @@ export default function TaskListComponent({
                             statusColors[task.status]
                           }`}
                         >
-                          {task.status.replace("_", " ")}
+
                         </span>
                       </div>
                       <div className="flex justify-center items-center">
@@ -181,7 +182,7 @@ export default function TaskListComponent({
                             : "No deadline"}
                         </span>
                       </div>
-                      {/* {session && ( */}
+                      {session && (
                       <div className="flex space-x-1 mx-2">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -265,7 +266,7 @@ export default function TaskListComponent({
                         </Dialog>
                         <span className="sr-only">Delete task</span>
                       </div>
-                      {/* )} */}
+                      )}
                     </li>
                   </ul>
                 </CardContent>

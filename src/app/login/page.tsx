@@ -4,19 +4,16 @@ import Login from "../components/authentication/login";
 export default async function LoginHome() {
   const session = await auth();
 
+  if(session) return location.assign(`/dashboard/${session.user.id}`);
   return (
     <>
       <div>
-        <h1>Welcome to LoginHome!</h1>
+        <h1 className="w-full text-xl text-center my-4 bold ">You can login with this form as a manager</h1>
         {!session && (
           <div>
             <Login />
           </div>
         )}
-        {session && <h1>Welcome {session?.user.name}!</h1>}
-      </div>
-      <div className="text-xl text-black absolute w-1/2 h-auto">
-        {JSON.stringify(session, null, 2)}
       </div>
     </>
   );
