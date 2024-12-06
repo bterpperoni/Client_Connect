@@ -11,6 +11,7 @@ export default function Personnal() {
   return (
     <div>
       <h1 className="text-xl m-10 text-black">Personnal {id as string}</h1>
+      
     </div>
   );
 }
