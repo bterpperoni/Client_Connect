@@ -5,7 +5,12 @@ import { signIn, signOut } from "./auth";
 
 //! Cred login ------
 export async function doLogout() {
-  await signOut({ redirectTo: "/" });
+  try{
+    const response = await signOut({ redirect: false });
+    return response;
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function doCredentialLogin(
