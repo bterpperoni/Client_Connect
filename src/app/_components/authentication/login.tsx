@@ -2,19 +2,12 @@
 
 import { doCredentialLogin } from "$/server/auth/actions";
 import { useState } from "react";
-import { Form, useForm } from "react-hook-form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import Btn from "$/app/_components/ui/btn";
 
 const LoginForm = () => {
   const [error, setError] = useState("");
 
-  const form = useForm({
-    defaultValues: {
-      email: "example@example.com",
-      password: "strong password",
-    },
-  });
+
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,12 +20,12 @@ const LoginForm = () => {
         console.error(response.error);
         setError(response.error);
       } else {
-        location.assign("/");
+        location.assign(`/`);
       }
     } catch (e) {
       console.error(e);
       setError(
-        "On dirait que tu as oublié ton mot de passe, \n Contact nous au plus vite \n à afin de régler ce désgrément \n Contact : https://risk-horizon.be/contact ."
+        "Login failed. Please check your email and password and try again."
       );
     }
   }
@@ -64,12 +57,12 @@ const LoginForm = () => {
           />
         </div>
 
-        <button
+        <Btn
           type="submit"
           className="bg-orange-300 p-2 mt-4 rounded flex justify-center items-center w-36"
         >
-          Ceredential Login
-        </button>
+          Enter into the app
+        </Btn>
       </form>
     </div>
   );

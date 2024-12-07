@@ -1,6 +1,6 @@
 "use client";
 
-import { ScrollArea } from "$/app/components/ui/scroll-area";
+import { ScrollArea } from "$/app/_components/ui/scroll-area";
 import { deleteTask, updateTaskStatus } from "$/server/actions";
 import {
   Dialog,
@@ -9,23 +9,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "$/app/components/ui/dialog";
+} from "$/app/_components/ui/dialog";
 import React from "react";
-import { Button } from "$/app/components/ui/button";
+import { Button } from "$/app/_components/ui/button";
 import { Trash, MoreHorizontal, Calendar } from "lucide-react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-} from "$/app/components/ui/card";
+} from "$/app/_components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "$/app/components/ui/select";
+} from "$/app/_components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +33,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "$/app/components/ui/dropdown-menu";
+} from "$/app/_components/ui/dropdown-menu";
 import { Task } from "@prisma/client";
 import Loader from "./ui/loader";
 import { useMutation } from "react-query";
@@ -162,7 +162,7 @@ export default function TaskListComponent({
                   <ul className="space-y-2">
                     <li
                       className={`flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950 ${
-                        statusColors[task.status]
+                        statusColors[task.status] 
                       }`}
                     >
                       <div className="flex flex-grow items-center space-x-2">
@@ -171,7 +171,7 @@ export default function TaskListComponent({
                             statusColors[task.status]
                           }`}
                         >
-
+  {task.status}
                         </span>
                       </div>
                       <div className="flex justify-center items-center">

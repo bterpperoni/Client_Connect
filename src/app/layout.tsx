@@ -1,6 +1,6 @@
 "use client";
 import "$/lib/styles/globals.css";
-import SimpleNav from "$/app/components/nav";
+import SimpleNav from "$/app/_components/nav";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "sonner";

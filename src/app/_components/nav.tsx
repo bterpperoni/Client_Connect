@@ -1,6 +1,6 @@
 "use client";
 
-import { Separator } from "$/app/components/ui/separator";
+import { Separator } from "$/app/_components/ui/separator";
 import { useSession } from "next-auth/react";
 import { QueryClient, useMutation } from "@tanstack/react-query";
 
@@ -14,7 +14,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTrigger,
-} from "$/app/components/ui/sheet";
+} from "$/app/_components/ui/sheet";
 import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
@@ -102,7 +102,7 @@ export default function SimpleNav() {
                     Dashboard
                   </Btn>
 
-                  <Btn href={session ? "/api/auth/signout" : "/login"}>
+                  <Btn href="authentication">
                     {session ? "Sign out" : "Sign in"}
                   </Btn>
                 </div>

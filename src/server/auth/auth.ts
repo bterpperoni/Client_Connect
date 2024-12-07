@@ -33,7 +33,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             const newUser = await db.user.create({
               data: {
                 email: email,
-                name: email.split("-")[0],
+                name: email.split("@")[0],
                 password: hashedPasswordNewUser,
               },
             });
@@ -57,6 +57,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        secure: false
+      }
+    },
+  },
   secret: process.env.AUTH_SECRET,
   callbacks: {
     session: async ({ session, token }) => {

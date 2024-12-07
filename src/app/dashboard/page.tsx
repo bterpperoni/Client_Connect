@@ -2,14 +2,14 @@
 "use client";
 
 import { Children, useEffect, useState } from "react";
-import TaskForm, { type TaskFormData } from "$/app/components/task-form";
-import TaskListComponent from "$/app/components/task-list";
+import TaskForm, { type TaskFormData } from "$/app/_components/task-form";
+import TaskListComponent from "$/app/_components/task-list";
 import { type Task, TaskCategory } from "@prisma/client";
-import ChartDonut from "$/app/components/ui/chart-donut";
-import Loader from "$/app/components/ui/loader";
-import CustomModal from "$/app/components/ui/modal";
+import ChartDonut from "$/app/_components/ui/chart-donut";
+import Loader from "$/app/_components/ui/loader";
+import CustomModal from "$/app/_components/ui/modal";
 import { getAllTasks, getTaskById, updateTaskData } from "$/server/actions";
-import AnimatedPercentage from "$/app/components/ui/animatedPercentage";
+import AnimatedPercentage from "$/app/_components/ui/animatedPercentage";
 import React from "react";
 import { toast } from "sonner";
 

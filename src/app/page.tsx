@@ -1,6 +1,7 @@
 "use client";
 
-import Btn from "./components/ui/btn";
+import Logout from "$/app/_components/authentication/logout";
+import Btn from "$/app/_components/ui/btn";
 import { useSession } from "next-auth/react";
 
 export default function Home() {
@@ -51,9 +52,11 @@ export default function Home() {
                 : "Unauthenticated"}
             </span>
           </p>
-          <Btn href={session ? "/api/auth/signout" : "/login"}>
-            {session ? "Sign out" : "Sign in"}
-          </Btn>
+          {!session ? (
+            <Btn href="/authentication">{session ? "Sign out" : "Sign in"}</Btn>
+          ) : (
+            <Logout />
+          )}
         </div>
       </div>
     </div>

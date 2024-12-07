@@ -24,8 +24,8 @@ function Button({
   // Si on fournit un href, on rend un lien (<a>) 
   if (href) {
     return (
-      <a
-        href={href}
+      <button
+        onClick={() => location.assign(href)}
         className={`${classList} group relative inline-flex items-center overflow-hidden rounded-full border-2 border-purple-950 bg-white px-12 py-3 text-md font-medium text-purple-950 hover:bg-gray-50 hover:text-white`}
       >
         <span className="duration-400 ease absolute left-0 top-1/2 block h-0 w-full bg-purple-950 opacity-100 transition-all group-hover:top-0 group-hover:h-full"></span>
@@ -46,7 +46,7 @@ function Button({
           </svg>
         </span>
         <span className="relative">{children}</span>
-      </a>
+      </button>
     );
   }
   // sinon un simple bouton (<button>)

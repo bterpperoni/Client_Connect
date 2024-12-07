@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "$/lib/utils/utils";
-import { Button } from "$/app/components/ui/button";
-import { Calendar } from "$/app/components/ui/calendar";
+import { Button } from "$/app/_components/ui/button";
+import { Calendar } from "$/app/_components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -14,21 +14,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "$/app/components/ui/form";
+} from "$/app/_components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "$/app/components/ui/select";
-import { Input } from "$/app/components/ui/input";
-import { Textarea } from "$/app/components/ui/textarea";
+} from "$/app/_components/ui/select";
+import { Input } from "$/app/_components/ui/input";
+import { Textarea } from "$/app/_components/ui/textarea";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "$/app/components/ui/popover";
+} from "$/app/_components/ui/popover";
 import { type Task } from "@prisma/client";
 
 type TaskFormProps = {
@@ -195,7 +195,7 @@ export default function TaskForm({ task, onSubmit }: TaskFormProps) {
           )}
         />
         <div className="flex items-center justify-center w-full">
-          <Button className="w-[50%]" type="submit">
+          <Button className="w-[25%] hover:bg-white hover:text-black hover:border-black border-2" type="submit">
             {task ? "Update Task" : "Create Task"}
           </Button>
         </div>
