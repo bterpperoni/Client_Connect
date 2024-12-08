@@ -29,7 +29,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
           if (!user) {
             console.log("Creating a user...");
-            const hashedPasswordNewUser = await saltAndHashPassword(password, 10);
+            const hashedPasswordNewUser = await saltAndHashPassword(
+              password,
+              10
+            );
             const newUser = await db.user.create({
               data: {
                 email: email,
@@ -62,8 +65,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       name: "next-auth.session-token",
       options: {
         httpOnly: true,
-        secure: false
-      }
+        secure: false,
+      },
     },
   },
   secret: process.env.AUTH_SECRET,
@@ -98,14 +101,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     maxAge: 30 * 24 * 60,
   },
   logger: {
-  error(error) {
-    console.error(error);
+    error(error) {
+      console.error(error);
+    },
+    warn(code) {
+      console.warn(code);
+    },
+    debug(code, metadata) {
+      console.debug(code, metadata);
+    },
   },
-  warn(code) {
-    console.warn(code);
-  },
-  debug(code, metadata) {
-    console.debug(code, metadata);
-  },
-}
 });
