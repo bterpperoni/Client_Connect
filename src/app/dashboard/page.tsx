@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import { Children, useEffect, useState } from "react";
@@ -12,11 +11,14 @@ import { getAllTasks, getTaskById, updateTaskData } from "$/server/actions";
 import AnimatedPercentage from "$/app/_components/ui/animatedPercentage";
 import React from "react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskID, setTaskID] = useState<Task | undefined>();
   const [loading, setLoading] = useState(true);
+  const { data: session, status } = useSession();
 
   //$ ----------States for modal------
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -109,12 +111,21 @@ export default function Dashboard() {
       <div className="flex items-center justify-center w-full h-[90vh] ">
         <Loader size={100} />
       </div>
-    );
+    )
+  }
+
+  if(!session){
+    return(
+      <div className="flex items-center justify-center w-full h-[90vh] ">
+        Please sign in!
+      </div>
+
+    )
   }
 
   //*--------------RENDER Main ----------
   return (
-    <div className="flex min-h-full py-4 flex-col justify-center bg-gradient-to-b from-[#550bb6] to-[#a197d3] text-white">
+    <div className="flex min-h-full py-4 flex-col justify-center bg-gradient-to-b from-[#550bb6] to-[#3c24b8] text-white">
       <CustomModal isOpen={isModalOpen} onRequestClose={closeModal} title="">
         <TaskForm onSubmit={handleSubmit} task={taskID ?? undefined} />
       </CustomModal>
@@ -129,8 +140,7 @@ export default function Dashboard() {
                 key={category}
                 classList="w-[95%] rounded-xl"
                 category={category}
-                tasks={tasks.filter((task) => task.category === category) ?? []}
-              /> 
+                tasks={tasks.filter((task) => task.category === category) ?? []} children={undefined}              /> 
               <AnimatedPercentage
                 classList="bottom-[41%] relative md:top-[-42%] z-1"
                 percentage={Math.floor(
@@ -141,7 +151,6 @@ export default function Dashboard() {
                 )}
               />
             </div>
-            {/* Remplace avec des données réelles */}
             <TaskListComponent
               tasksProps={tasks.filter((task) => task.category === category)}
               onEditTask={editTask}
