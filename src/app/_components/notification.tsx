@@ -41,20 +41,20 @@ export default function NotificationPopover() {
 
   useEffect(() => {
     const nearDeadlineTasks = tasks.filter((task) =>
-      isTaskNearDeadline(task.deadline)
+      isTaskNearDeadline(task.deadline) && task.status !== "DONE"
     );
     setNotifications(nearDeadlineTasks);
 
     // Optional: Show browser notifications
-    // if (nearDeadlineTasks.length > 0 && "Notification" in window) {
-    //   nearDeadlineTasks.forEach((task) => {
-    //     if (Notification.permission === "granted") {
-    //       new Notification(`Task "${task.title}" is near its deadline!`);
-    //     } else if (Notification.permission !== "denied") {
-    //       Notification.requestPermission();
-    //     }
-    //   });
-    // }
+    if (nearDeadlineTasks.length > 0 && "Notification" in window) {
+      nearDeadlineTasks.forEach((task) => {
+        if (Notification.permission === "granted") {
+          new Notification(`Task "${task.title}" is near its deadline!`);
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission();
+        }
+      });
+    }
   }, [tasks]);
 
   return (
