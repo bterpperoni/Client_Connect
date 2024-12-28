@@ -178,7 +178,7 @@ export default function TaskListComponent({
                 <CardContent>
                   <ul className="space-y-2">
                     <li
-                      className={`flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950 ${
+                      className={`flex flex-grow items-center justify-between rounded-lg  p-2 shadow dark:bg-gray-950 ${
                         statusColors[task.status]
                       }`}>
                       <div className="flex flex-grow items-center space-x-2">
@@ -249,24 +249,21 @@ export default function TaskListComponent({
                               <DialogHeader className="mt-2 ">
                                 <DialogTitle
                                   id="dialog-title"
-                                  className="text-lg text-center mb-4 leading-none tracking-tight">
-                                  <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-y-2 border-red-800">
-                                    Are you sure you want to delete the task?
+                                  className="text-lg text-center mb-4 leading-none tracking-tight flex items-center justify-center flex-col">
+                                  <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-b-2 mt-2 w-max border-red-800">
+                                    Are you sure you ?
                                   </div>
                                   <br />
                                   <span className="text-black-800 font-light space-x-1 text-2xl p-1">
-                                    {task.category} :{" "}
-                                    <span className="bold">{task.title}</span>.{" "}
-                                    <span className="text-xl">
-                                      {task.content}
-                                    </span>
+                                    This Task will be deleted :
+                                  </span>
+                                  <span className="text-red-800 font-bold text-2xl p-1">
+                                    {task.title}
                                   </span>
                                 </DialogTitle>
                                 <DialogDescription id="dialog-description">
                                   <div className="text-sm color-gray-600 text-center">
-                                    Are you sure you want to delete the task
-                                    with id {task.id}? This action cannot be
-                                    undone.
+                                    This action cannot be undone.
                                   </div>
                                 </DialogDescription>
                               </DialogHeader>
