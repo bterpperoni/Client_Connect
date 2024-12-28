@@ -29,12 +29,13 @@ export default function LogoutButton() {
   }
 
   return (
-    <form onSubmit={handleLogout} className="w-full flex items-center justify-center">
+    <form onSubmit={handleLogout} className="w-full  flex items-center justify-center">
       <Btn
         percentageWidth={25}
         type="submit"
+        classList="bg-white"
       >
-        Log Out
+        Sign out
       </Btn>
     </form>
   );

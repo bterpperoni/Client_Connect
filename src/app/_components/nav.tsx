@@ -18,8 +18,9 @@ import {
 import TaskForm, { TaskFormData } from "./task-form";
 import CustomModal from "./ui/modal";
 import { Task, TaskStatus } from "@prisma/client";
-import { createTask } from "$/server/actions";
+import { createTask, insertTasks } from "$/server/actions";
 // import { insertTasks } from "$/server/actions";
+import NotificationPopover from './notification';
 
 export const queryClient = new QueryClient();
 
@@ -101,6 +102,7 @@ export default function SimpleNav() {
                     onClick={() => location.assign("/dashboard")}>
                     Dashboard
                   </Btn>
+                  
 
                   <Btn href="authentication">
                     {session ? "Sign out" : "Sign in"}

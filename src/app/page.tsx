@@ -25,8 +25,7 @@ export default function Home() {
                 </span>
               ) : (
                 <span className="mb-8 text-base text-purple-800">
-                  Please sign in to manage tasks or go to the dashboard if you
-                  are a simple user.
+                  Please sign in to access access to the features.
                 </span>
               )}
             </div>

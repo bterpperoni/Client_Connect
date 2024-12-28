@@ -32,12 +32,11 @@ const LoginForm = () => {
 
   return (
     <div className="">
-      <div className="text-base justify text-red-500">{error}</div>
+      {error && (<div className="text-base justify bg-red-500 text-white border-2 border-white rounded-md p-2">{error}</div>)}
       <form
-        className="my-5 flex flex-col justify-center items-center border p-3 border-gray-200 rounded-md"
-        onSubmit={onSubmit}
-      >
-        <div className="my-2 flex flex-col">
+        className="my-5 flex flex-col justify-center items-center border p-3 border-gray-200 bg-[#3b166c] rounded-md"
+        onSubmit={onSubmit}>
+        <div className="my-2 text-white flex flex-col">
           <label htmlFor="email">Email Address</label>
           <input
             className="border mx-2 border-gray-500 rounded"
@@ -47,10 +46,10 @@ const LoginForm = () => {
           />
         </div>
 
-        <div className="my-2 flex flex-col">
+        <div className="my-2 text-white flex flex-col">
           <label htmlFor="password">Password</label>
           <input
-            className="border mx-2 border-gray-500 rounded"
+            className="border mx-2 mb-6 border-gray-500 rounded"
             type="password"
             name="password"
             id="password"
@@ -58,10 +57,12 @@ const LoginForm = () => {
         </div>
 
         <Btn
+          classList="mt-2 bg-white border-2 border-white text-"
+          percentageWidth={50}
+          textSize="md"
           type="submit"
-          className="bg-orange-300 p-2 mt-4 rounded flex justify-center items-center w-36"
-        >
-          Enter into the app
+          >
+          Sign in
         </Btn>
       </form>
     </div>

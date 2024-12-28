@@ -49,7 +49,7 @@ export default function Dashboard() {
     fetchTasks();
   }, []);
 
-  //todo-------FOCUS  ON THIS TASK---------.
+  //!------- FOCUS ON THIS TASK ---------.
   const editTask = async (taskID: number): Promise<void> => {
     if (taskID) {
       const task = await getTaskById(taskID);
@@ -60,7 +60,7 @@ export default function Dashboard() {
     }
   };
 
-  //todo --------------UPDATE  TASK---------
+  //!-------------- UPDATE TASK ---------
   const handleSubmit = async (data: TaskFormData): Promise<void> => {
     const taskTemp = {
       title: data.title,
@@ -87,7 +87,7 @@ export default function Dashboard() {
     }
   };
 
-  // todo--------------Percentage completed foreach categories--------
+  //!--------------Percentage completed foreach categories--------
   const calcPercentage = (tasks: Task[], category: TaskCategory) => {
     const tasksByCategory = tasks.filter((task) => task.category === category);
 

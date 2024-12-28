@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "$/app/_components/ui/dialog";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "$/app/_components/ui/button";
 import { Trash, MoreHorizontal, Calendar } from "lucide-react";
 import {
@@ -40,6 +40,7 @@ import { useMutation } from "react-query";
 import { toast } from "sonner";
 import { QueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import NotificationPopover from "./notification";
 // import { useStore } from "$/stores/useStore";
 
 //? -----------------------------------------------------------
@@ -56,6 +57,19 @@ const statusColors: { [key in Task["status"]]: string } = {
   IN_PROGRESS: "!bg-blue-100 text-blue-800",
   DONE: "!bg-green-100 text-green-800",
 };
+
+//!--------------CHECK IF TASK IS NEAR DEADLINE -----------------
+function isTaskNearDeadline(
+  deadline: Date | null,
+  daysThreshold: number = 14
+): boolean {
+  if (!deadline) return false;
+  const currentDate = new Date();
+  const timeDifference = deadline.getTime() - currentDate.getTime();
+  const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+  return daysDifference <= daysThreshold;
+}
+
 //? -----------------------------------------------------------
 
 export default function TaskListComponent({
@@ -67,10 +81,9 @@ export default function TaskListComponent({
 }: TaskListProps) {
   const queryClient = new QueryClient();
   const { data: session } = useSession();
+  const [notifications, setNotifications] = React.useState<Task[]>([]);
 
-  //!  /*----------------------------------------
   //!--------------DELETE TASK -----------------
-  //!-----------------------------------------*/
   const mutationDelete = useMutation(deleteTask, {
     onSuccess: () => {
       toast.success("Task deleted successfully");
@@ -88,7 +101,7 @@ export default function TaskListComponent({
     }
   };
 
-  //!--------------UPDATE TASK STATUS MUTATION -------/
+  //!--------------UPDATE TASK STATUS MUTATION -------
   const mutationUpdateStatus = useMutation(
     ({ id, status }: { id: number; status: Task["status"] }) =>
       updateTaskStatus(id, status),
@@ -118,6 +131,26 @@ export default function TaskListComponent({
     }
   };
 
+  const filteredTasks = tasksProps.filter((task) => task.category === category);
+
+  useEffect(() => {
+    const nearDeadlineTasks = tasksProps.filter((task) =>
+      isTaskNearDeadline(task.deadline)
+    );
+    setNotifications(nearDeadlineTasks);
+
+    // Optional: Show browser notifications
+    // if (nearDeadlineTasks.length > 0 && "Notification" in window) {
+    //   nearDeadlineTasks.forEach((task) => {
+    //     if (Notification.permission === "granted") {
+    //       new Notification(`Task "${task.title}" is near its deadline!`);
+    //     } else if (Notification.permission !== "denied") {
+    //       Notification.requestPermission();
+    //     }
+    //   });
+    // }
+  }, [tasksProps]);
+
   //? ----------------------------------------
   //?--------------RENDER --------
   //?-----------------------------------------
@@ -129,11 +162,24 @@ export default function TaskListComponent({
     );
   }
 
-  const filteredTasks = tasksProps.filter((task) => task.category === category);
-
   return (
     <Card className={`${classList} p-0`} key={category}>
       <CardContent>
+        {/* Notification Bar
+        {notifications.length > 0 && (
+          <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 mb-4">
+            <h3 className="font-bold">Upcoming Deadlines</h3>
+            <ul>
+              {notifications.map((task) => (
+                <li key={task.id}>
+                  <strong>{task.title}</strong>: Due on{" "}
+                  {task.deadline?.toLocaleDateString() || "No deadline"}.
+                </li>
+              ))}
+            </ul>
+          </div>
+        )} */}
+        <NotificationPopover notifications={tasksProps} />
         {filteredTasks.length === 0 ? (
           <>
             <CardHeader>
@@ -162,14 +208,12 @@ export default function TaskListComponent({
                     <li
                       className={`flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950 ${
                         statusColors[task.status]
-                      }`}
-                    >
+                      }`}>
                       <div className="flex flex-grow items-center space-x-2">
                         <span
                           className={`rounded-full px-1 py-1 text-xs font-semibold ${
                             statusColors[task.status]
-                          }`}
-                        >
+                          }`}>
                           {task.status}
                         </span>
                       </div>
@@ -194,8 +238,7 @@ export default function TaskListComponent({
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
-                                onClick={() => onEditTask?.(task.id)}
-                              >
+                                onClick={() => onEditTask?.(task.id)}>
                                 Edit
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
@@ -209,8 +252,7 @@ export default function TaskListComponent({
                                     value: Task["status"]
                                   ) =>
                                     await handleUpdateTaskStatus(task.id, value)
-                                  }
-                                >
+                                  }>
                                   <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Status" />
                                   </SelectTrigger>
@@ -227,8 +269,7 @@ export default function TaskListComponent({
                           </DropdownMenu>
                           <Dialog
                             aria-labelledby="dialog-title"
-                            aria-describedby="dialog-description"
-                          >
+                            aria-describedby="dialog-description">
                             <DialogTrigger>
                               <Trash className="h-4 w-4" />
                             </DialogTrigger>
@@ -236,8 +277,7 @@ export default function TaskListComponent({
                               <DialogHeader className="mt-2 ">
                                 <DialogTitle
                                   id="dialog-title"
-                                  className="text-lg text-center mb-4 leading-none tracking-tight"
-                                >
+                                  className="text-lg text-center mb-4 leading-none tracking-tight">
                                   <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-y-2 border-red-800">
                                     Are you sure you want to delete the task?
                                   </div>
@@ -262,8 +302,7 @@ export default function TaskListComponent({
                                 onClick={async () =>
                                   await handleDeleteTask(task.id)
                                 }
-                                className="bg-red-500 hover:bg-red-700 w-[50%] text-center text-white font-bold py-2 px-4 rounded-full"
-                              >
+                                className="bg-red-500 hover:bg-red-700 w-[50%] text-center text-white font-bold py-2 px-4 rounded-full">
                                 Yes
                               </Button>
                             </DialogContent>
