@@ -115,17 +115,21 @@ export default function Dashboard() {
   }
 
   if(!session){
-    return(
-      <div className="flex items-center justify-center w-full h-[90vh] ">
-        Please sign in!
+    return (
+      <div className="flex items-center flex-col justify-center text-white text-xl  border-white w-full h-[90vh] ">
+        <h1 className="mb-4 text-2xl">Unauthorized content.</h1>
+        <span 
+          className="border-2 rounded-md cursor-pointer p-2 border-white hover:bg-white hover:text-[#550bb6] hover:border-[#550bb6] bg-[#550bb6]"
+          onClick={() => {location.href="/authentication"}}>
+          Sign in here!
+        </span>
       </div>
-
-    )
+    );
   }
 
   //*--------------RENDER Main ----------
   return (
-    <div className="flex min-h-full py-4 flex-col justify-center bg-gradient-to-b from-[#550bb6] to-[#3c24b8] text-white">
+    <div className="flex min-h-full py-4 flex-col justify-center  text-white">
       <CustomModal isOpen={isModalOpen} onRequestClose={closeModal} title="">
         <TaskForm onSubmit={handleSubmit} task={taskID ?? undefined} />
       </CustomModal>
@@ -133,7 +137,7 @@ export default function Dashboard() {
         {Object.values(TaskCategory).map((category) => (
           <div
             key={category}
-            className=" flex flex-col items-center bg-white rounded-xl"
+            className=" flex flex-col items-center  rounded-xl"
           >
             <div className=" w-full border-box flex flex-col justify-center items-center">
               <ChartDonut

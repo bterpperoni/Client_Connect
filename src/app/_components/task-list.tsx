@@ -58,17 +58,6 @@ const statusColors: { [key in Task["status"]]: string } = {
   DONE: "!bg-green-100 text-green-800",
 };
 
-//!--------------CHECK IF TASK IS NEAR DEADLINE -----------------
-function isTaskNearDeadline(
-  deadline: Date | null,
-  daysThreshold: number = 14
-): boolean {
-  if (!deadline) return false;
-  const currentDate = new Date();
-  const timeDifference = deadline.getTime() - currentDate.getTime();
-  const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-  return daysDifference <= daysThreshold;
-}
 
 //? -----------------------------------------------------------
 
@@ -133,23 +122,6 @@ export default function TaskListComponent({
 
   const filteredTasks = tasksProps.filter((task) => task.category === category);
 
-  useEffect(() => {
-    const nearDeadlineTasks = tasksProps.filter((task) =>
-      isTaskNearDeadline(task.deadline)
-    );
-    setNotifications(nearDeadlineTasks);
-
-    // Optional: Show browser notifications
-    // if (nearDeadlineTasks.length > 0 && "Notification" in window) {
-    //   nearDeadlineTasks.forEach((task) => {
-    //     if (Notification.permission === "granted") {
-    //       new Notification(`Task "${task.title}" is near its deadline!`);
-    //     } else if (Notification.permission !== "denied") {
-    //       Notification.requestPermission();
-    //     }
-    //   });
-    // }
-  }, [tasksProps]);
 
   //? ----------------------------------------
   //?--------------RENDER --------
@@ -179,7 +151,7 @@ export default function TaskListComponent({
             </ul>
           </div>
         )} */}
-        <NotificationPopover notifications={tasksProps} />
+        {/* <NotificationPopover notifications={notifications} /> */}
         {filteredTasks.length === 0 ? (
           <>
             <CardHeader>
@@ -206,7 +178,7 @@ export default function TaskListComponent({
                 <CardContent>
                   <ul className="space-y-2">
                     <li
-                      className={`flex flex-grow items-center justify-between rounded-lg bg-white p-2 shadow dark:bg-gray-950 ${
+                      className={`flex flex-grow items-center justify-between rounded-lg  p-2 shadow dark:bg-gray-950 ${
                         statusColors[task.status]
                       }`}>
                       <div className="flex flex-grow items-center space-x-2">
@@ -277,24 +249,21 @@ export default function TaskListComponent({
                               <DialogHeader className="mt-2 ">
                                 <DialogTitle
                                   id="dialog-title"
-                                  className="text-lg text-center mb-4 leading-none tracking-tight">
-                                  <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-y-2 border-red-800">
-                                    Are you sure you want to delete the task?
+                                  className="text-lg text-center mb-4 leading-none tracking-tight flex items-center justify-center flex-col">
+                                  <div className="text-lg font-sans text-gray-600 p-2 leading-snug border-b-2 mt-2 w-max border-red-800">
+                                    Are you sure you ?
                                   </div>
                                   <br />
                                   <span className="text-black-800 font-light space-x-1 text-2xl p-1">
-                                    {task.category} :{" "}
-                                    <span className="bold">{task.title}</span>.{" "}
-                                    <span className="text-xl">
-                                      {task.content}
-                                    </span>
+                                    This Task will be deleted :
+                                  </span>
+                                  <span className="text-red-800 font-bold text-2xl p-1">
+                                    {task.title}
                                   </span>
                                 </DialogTitle>
                                 <DialogDescription id="dialog-description">
                                   <div className="text-sm color-gray-600 text-center">
-                                    Are you sure you want to delete the task
-                                    with id {task.id}? This action cannot be
-                                    undone.
+                                    This action cannot be undone.
                                   </div>
                                 </DialogDescription>
                               </DialogHeader>
