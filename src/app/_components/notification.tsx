@@ -2,8 +2,61 @@ import { Popover, PopoverTrigger, PopoverContent } from "$/app/_components/ui/po
 import { Bell } from "lucide-react";
 import { Button } from "./ui/button";
 import { Task } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { getAllTasks } from "$/server/actions";
 
-export default function NotificationPopover({ notifications }: { notifications: Task[] }) {
+//!--------------CHECK IF TASK IS NEAR DEADLINE -----------------
+function isTaskNearDeadline(
+  deadline: Date | null,
+  daysThreshold: number = 14
+): boolean {
+  if (!deadline) return false;
+  const currentDate = new Date();
+  const timeDifference = deadline.getTime() - currentDate.getTime();
+  const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+  return daysDifference <= daysThreshold;
+}
+
+
+export default function NotificationPopover() {
+
+  const [notifications, setNotifications] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        const fetchedTasks = await getAllTasks();
+        setTasks(fetchedTasks);
+      } catch (err) {
+        console.error("Error fetching tasks:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTasks();
+  }, []);
+
+  useEffect(() => {
+    const nearDeadlineTasks = tasks.filter((task) =>
+      isTaskNearDeadline(task.deadline)
+    );
+    setNotifications(nearDeadlineTasks);
+
+    // Optional: Show browser notifications
+    // if (nearDeadlineTasks.length > 0 && "Notification" in window) {
+    //   nearDeadlineTasks.forEach((task) => {
+    //     if (Notification.permission === "granted") {
+    //       new Notification(`Task "${task.title}" is near its deadline!`);
+    //     } else if (Notification.permission !== "denied") {
+    //       Notification.requestPermission();
+    //     }
+    //   });
+    // }
+  }, [tasks]);
+
   return (
     <Popover>
       <PopoverTrigger className="relative">

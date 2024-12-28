@@ -126,18 +126,15 @@ export default function SimpleNav() {
 
             {session && (
               <div className="flex flex-row justify-center items-center">
-                <RefreshCcw
-                  className="mr-2 border-2 border-black p-2 rounded-xl w-12 h-auto cursor-pointer hover:bg-black hover:text-white"
-                  onClick={() => location.reload()} // Pour recharger la page
-                />
                 <Btn
                   classList="px-4"
                   percentageWidth={200}
                   textSize="md"
                   onClick={() => openModal()}
                 >
-                  SCHEDULE TASK
+                  Schedule task
                 </Btn>
+                <NotificationPopover /> 
               </div>
             )}
 

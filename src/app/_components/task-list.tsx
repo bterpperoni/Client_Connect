@@ -58,17 +58,6 @@ const statusColors: { [key in Task["status"]]: string } = {
   DONE: "!bg-green-100 text-green-800",
 };
 
-//!--------------CHECK IF TASK IS NEAR DEADLINE -----------------
-function isTaskNearDeadline(
-  deadline: Date | null,
-  daysThreshold: number = 14
-): boolean {
-  if (!deadline) return false;
-  const currentDate = new Date();
-  const timeDifference = deadline.getTime() - currentDate.getTime();
-  const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-  return daysDifference <= daysThreshold;
-}
 
 //? -----------------------------------------------------------
 
@@ -133,23 +122,6 @@ export default function TaskListComponent({
 
   const filteredTasks = tasksProps.filter((task) => task.category === category);
 
-  useEffect(() => {
-    const nearDeadlineTasks = tasksProps.filter((task) =>
-      isTaskNearDeadline(task.deadline)
-    );
-    setNotifications(nearDeadlineTasks);
-
-    // Optional: Show browser notifications
-    // if (nearDeadlineTasks.length > 0 && "Notification" in window) {
-    //   nearDeadlineTasks.forEach((task) => {
-    //     if (Notification.permission === "granted") {
-    //       new Notification(`Task "${task.title}" is near its deadline!`);
-    //     } else if (Notification.permission !== "denied") {
-    //       Notification.requestPermission();
-    //     }
-    //   });
-    // }
-  }, [tasksProps]);
 
   //? ----------------------------------------
   //?--------------RENDER --------
@@ -179,7 +151,7 @@ export default function TaskListComponent({
             </ul>
           </div>
         )} */}
-        <NotificationPopover notifications={tasksProps} />
+        {/* <NotificationPopover notifications={notifications} /> */}
         {filteredTasks.length === 0 ? (
           <>
             <CardHeader>
