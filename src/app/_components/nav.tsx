@@ -117,7 +117,7 @@ export default function SimpleNav() {
                       textSize="md"
                       onClick={() => openModal()}
                     >
-                      SCHEDULE TASK
+                      Schedule Task
                     </Btn>
                   </div>
                 )}

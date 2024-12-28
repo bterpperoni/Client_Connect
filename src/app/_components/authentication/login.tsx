@@ -34,7 +34,7 @@ const LoginForm = () => {
     <div className="">
       {error && (<div className="text-base justify bg-red-500 text-white border-2 border-white rounded-md p-2">{error}</div>)}
       <form
-        className="my-5 flex flex-col justify-center items-center border p-3 border-gray-200 bg-[#550bb6]  rounded-md"
+        className="my-5 flex flex-col justify-center items-center border p-3 border-gray-200  rounded-md"
         onSubmit={onSubmit}>
         <div className="my-2 text-white flex flex-col">
           <label htmlFor="email">Email Address</label>

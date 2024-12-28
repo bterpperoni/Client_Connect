@@ -137,7 +137,7 @@ export default function Dashboard() {
         {Object.values(TaskCategory).map((category) => (
           <div
             key={category}
-            className=" flex flex-col items-center bg-white rounded-xl"
+            className=" flex flex-col items-center  rounded-xl"
           >
             <div className=" w-full border-box flex flex-col justify-center items-center">
               <ChartDonut
