@@ -3,7 +3,7 @@
 
 ## Startup
 
-The initial step is to launch the development server. This is achieved by entering the command "npm run dev dev" into the command line.
+The initial step is to launch the development server. This is achieved by entering the command "npm run dev" into the command line.
 
 To view the result, navigate to [http://localhost:3000] in your browser.
 
