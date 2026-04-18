@@ -11,7 +11,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm i
 
 COPY . .
 
-RUN  pnpm build
+RUN pnpm build
 
 # RUN apt-get update -y && apt-get install -y openssl
 
